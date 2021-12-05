@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="postgresql"/>
+    <changeSet author="bossbuwi" id="20211120-003">
+        <insert tableName="uni_roles">
+            <column name="name" value="ROLE_OWNER"/>
+            <column name="description" value="This is the existence's creator. Has access to everything and can do anything."/>
+            <column name="rank" value="0"/>
+            <column name="creation_date" valueDate="${now}"/>
+        </insert>
+        <insert tableName="uni_roles">
+            <column name="name" value="ROLE_SUPERUSER"/>
+            <column name="description" value="Second in rank only to the owner, these roles can do anything that the owner can, save for a few special things."/>
+            <column name="rank" value="1"/>
+            <column name="creation_date" valueDate="${now}"/>
+        </insert>
+        <insert tableName="uni_roles">
+            <column name="name" value="ROLE_ADMIN"/>
+            <column name="description" value="They are the guardians of existence and patrols its data, capable of banning abusers from the domain."/>
+            <column name="rank" value="2"/>
+            <column name="creation_date" valueDate="${now}"/>
+        </insert>
+        <insert tableName="uni_roles">
+            <column name="name" value="ROLE_USER"/>
+            <column name="description" value="These are just your average users, nothing special and does not have any substantial power."/>
+            <column name="rank" value="3"/>
+            <column name="creation_date" valueDate="${now}"/>
+        </insert>
+        <insert tableName="uni_roles">
+            <column name="name" value="ROLE_BANNED"/>
+            <column name="description" value="These malevolent beings could wreak havoc on data and are thus banned from existence."/>
+            <column name="rank" value="1000"/>
+            <column name="creation_date" valueDate="${now}"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
