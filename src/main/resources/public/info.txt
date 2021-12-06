@@ -1,1 +1,0 @@
-This directory is the destination for the Angular production files.
