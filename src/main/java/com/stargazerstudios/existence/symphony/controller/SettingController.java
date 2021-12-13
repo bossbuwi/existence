@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin
 @RestController
-@RequestMapping("/metaverse/midas/settings")
+@RequestMapping("/symphony/settings")
 public class SettingController {
 
     @Autowired
-    SettingServiceImpl settingService;
+    private SettingServiceImpl settingService;
 
     @GetMapping("/index")
     public ResponseEntity<List<SettingDTO>> getAllSettings() {
@@ -30,7 +30,7 @@ public class SettingController {
         return new ResponseEntity<>(settingService.getSettingById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/setting/{id}")
+    @PutMapping("/setting/{id}")
     public ResponseEntity<SettingDTO> modifySetting(@PathVariable("id") long id) {
         return null;
     }

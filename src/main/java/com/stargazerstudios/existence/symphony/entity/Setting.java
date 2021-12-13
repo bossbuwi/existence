@@ -21,6 +21,9 @@ public class Setting {
     @Column(name = "value")
     private String value;
 
+    @Column(name = "length")
+    private long length;
+
     @Column(name = "type")
     private String type;
 

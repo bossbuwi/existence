@@ -1,6 +1,7 @@
-package com.stargazerstudios.existence.conductor;
+package com.stargazerstudios.existence.conductor.model;
 
-public class Existence {
+public class About {
+    public static String APP_NAME = "Existence";
     public static String NAMED_RELEASE = "alpha";
     public static String VERSION_NUMBER = "0.1";
 

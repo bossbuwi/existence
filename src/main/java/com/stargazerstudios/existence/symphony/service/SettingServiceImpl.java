@@ -41,8 +41,15 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
-    public Optional<Setting> getSettingByKey(String key) {
-        return Optional.empty();
+    public SettingDTO getSettingByKey(String key)
+            throws EntityNotFoundException {
+        Optional<Setting> settingData = settingDAO.findSettingByKey(key);
+        if (settingData.isPresent()) {
+            Setting setting = settingData.get();
+            return new SettingDTO(setting);
+        } else {
+            throw new EntityNotFoundException("Setting with key: " + key + " not found.");
+        }
     }
 
     @Override

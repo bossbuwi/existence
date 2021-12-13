@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+/* The styles below are for the loading screen
+ * and the error screen. */
+ #outer {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+
+#inner {
+  margin: auto;
+}
+
+#failure-message {
+  display: none;
+}
+
+body.failed #loading-message {
+  display: none;
+}
+
+body.failed #failure-message {
+  display: block;
+}

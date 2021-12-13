@@ -5,8 +5,9 @@ import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFound
 import com.stargazerstudios.existence.conductor.erratum.universal.GatewayTimeoutException;
 import com.stargazerstudios.existence.conductor.erratum.universal.UserNotFoundException;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
+import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
 
 public interface AuthenticationService {
-    UserDTO login(String username, String password)
+    UserDTO login(UserWrapper user)
             throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException;
 }

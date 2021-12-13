@@ -17,6 +17,9 @@
             <column name="value" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="length" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
             <column name="type" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>

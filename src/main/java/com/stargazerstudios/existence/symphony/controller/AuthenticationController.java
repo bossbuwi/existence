@@ -3,14 +3,16 @@ package com.stargazerstudios.existence.symphony.controller;
 import com.stargazerstudios.existence.conductor.erratum.universal.*;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.service.AuthenticationServiceImpl;
+import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin
 @RestController
 @RequestMapping("/concerto/")
 public class AuthenticationController {
@@ -19,9 +21,9 @@ public class AuthenticationController {
     private AuthenticationServiceImpl authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@ModelAttribute("user") UserDTO user)
+    public ResponseEntity<UserDTO> login(@RequestBody UserWrapper user)
             throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException {
-        return new ResponseEntity<>(authenticationService.login(user.getUsername(), user.getPassword()), HttpStatus.OK);
+        return new ResponseEntity<>(authenticationService.login(user), HttpStatus.OK);
     }
 
     // TODO Not yet done

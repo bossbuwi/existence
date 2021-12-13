@@ -11,6 +11,7 @@
         <insert tableName="uni_settings">
             <column name="key" value="loglevel"/>
             <column name="value" value="V"/>
+            <column name="length" value="1"/>
             <column name="type" value="F"/>
             <column name="description" value="Controls the logging level of the frontend client."/>
             <column name="default_value" value="V"/>
@@ -22,6 +23,7 @@
         <insert tableName="uni_settings">
             <column name="key" value="tabdesign"/>
             <column name="value" value="M"/>
+            <column name="length" value="1"/>
             <column name="type" value="F"/>
             <column name="description" value="Controls the logging level of the frontend client."/>
             <column name="default_value" value="M"/>

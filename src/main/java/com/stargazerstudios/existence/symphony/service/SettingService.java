@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface SettingService {
     List<SettingDTO> getAllSettings() throws BadJsonWebTokenException;
     SettingDTO getSettingById(long id) throws BadJsonWebTokenException, EntityNotFoundException;
-    Optional<Setting> getSettingByKey(String key) throws BadJsonWebTokenException;
+    SettingDTO getSettingByKey(String key) throws EntityNotFoundException;
     List<Setting> getSettingByType(String type) throws BadJsonWebTokenException;
     Optional<Setting> modifySetting(Setting setting)
             throws BadJsonWebTokenException, UserNotFoundException, UserUnauthorizedException;

@@ -8,6 +8,46 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <!-- The appearance/disappearance of the elements below are controlled by CSS. -->
+    <div id="outer" class="container">
+      <div id="inner">
+        <!-- This is for the startup error.
+          -- It will only be shown if the startup failed. -->
+        <div id="failure-message">
+          <h3><span>It is embarrassing but it seems that the app has encountered a fatal error.</span></h3>
+          <small class="failure-message">Please contact the administrators for the error to be investigated. Thank you.</small><br>
+        </div>
+        <!-- This is for the loading screen.
+          -- It will be shown while the app is booting up instead of a plain white screen. -->
+        <h3 id="loading-message"><span id="loading-text"></span>
+        <div class="spinner-border text-secondary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div></h3>
+      </div>
+    </div>
+    <!-- Below are javascripts for the loading screen. -->
+    <script type="text/javascript">
+      //this selects a phrase from the array at random and
+      //shows it while the app is still loading
+      const phrases = [
+        'Please wait..',
+        'Application is booting up..',
+        'Checking server connection..',
+        'Finding a new calendar..',
+        'Reminiscing about the past..',
+        'Daydreaming about the future..',
+        'Brewing your coffee..',
+        'Opening Clash of Clans..',
+        'Streaming a Youtube video..',
+        'Launching Call of the Wild..',
+        'Loading your crypto portfolio..',
+        'Binge watching Survivor..',
+        'Binge watching The Amazing Race..'
+      ];
+      const random = Math.floor(Math.random() * phrases.length);
+      document.getElementById("loading-text").innerHTML = phrases[random];
+    </script>
+  </app-root>
 </body>
 </html>

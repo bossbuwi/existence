@@ -11,6 +11,7 @@ public class SettingDTO {
     private long id;
     private String key;
     private String value;
+    private long length;
     private String type;
     private String desc;
     private String default_value;
@@ -23,6 +24,7 @@ public class SettingDTO {
         setId(setting.getId());
         setKey(setting.getKey());
         setValue(setting.getValue());
+        setLength(setting.getLength());
         setType(setting.getType());
         setDesc(setting.getDescription());
         setDefault_value(setting.getDefaultValue());

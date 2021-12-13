@@ -46,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(WebSecurityURI.Unguarded.URI_TEST).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_LOGIN).permitAll()
+                .antMatchers(WebSecurityURI.Unguarded.URI_CONCERTO).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_FRONTEND_ROOT).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_FRONTEND_PATHS).permitAll()
                 .anyRequest().authenticated()

@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface SettingDAO extends JpaRepository<Setting, Long> {
-    Optional<Setting> findSettingByKey(String key) throws EntityNotFoundException;
+    Optional<Setting> findSettingByKey(String key);
     List<Setting> findSettingByType(String type);
 }

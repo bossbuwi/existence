@@ -10,6 +10,7 @@ import com.stargazerstudios.existence.symphony.entity.Role;
 import com.stargazerstudios.existence.symphony.repository.RoleDAO;
 import com.stargazerstudios.existence.symphony.repository.UserDAO;
 import com.stargazerstudios.existence.symphony.entity.User;
+import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,8 +51,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDTO login(String username, String password)
+    public UserDTO login(UserWrapper wUser)
             throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException {
+        HashMap<String, String> parsedJSON = wUser.getUser();
+        String username = parsedJSON.get("username");
+        String password = parsedJSON.get("password");
         Optional<User> userData = userDAO.findByUsername(username);
         // If user is found, check if raw password matches with hash
         if (userData.isPresent()) {
