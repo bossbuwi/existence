@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { FormGroup } from '@angular/forms';
+import { Observable, Subject } from 'rxjs';
 
 import { LoggerService } from 'src/app/conductor/services/logger.service';
 import { User } from 'src/app/symphony/models/user';
@@ -21,7 +20,7 @@ export class BackendService {
     this.initialize();
   }
 
-  private initialize() {
+  private initialize(): void {
     this.logger.logVerbose(this.className, "initialize", "Initializing service.");
     this.serverError = new RestError();
     this.loginSub = new Subject<number>();
@@ -32,38 +31,67 @@ export class BackendService {
     return this.serverError;
   }
 
-  subLogin(): Observable<number> {
+  subLoginStatus(): Observable<number> {
     return this.loginSub.asObservable();
   }
 
-  login(formGroup: FormGroup) {
+  postLogin(user: User): void {
     this.loginSub.next(RequestStatus.PENDING);
-    let user: User = formGroup.value;
-    this.logger.logVerbose(this.className, "login", user);
-    this.logger.logVerbose(this.className, "login", "Initiating server communications.");
-    return this.http.post<User>(RestURI.LOGIN, { user }).subscribe({
+    this.logger.logVerbose(this.className, "postLogin", user);
+    this.logger.logVerbose(this.className, "postLogin", "Initiating server communications.");
+    this.http.post<User>(RestURI.LOGIN, { user }).subscribe({
       next:
         data => {
           if (data) {
-            this.logger.logVerbose(this.className, "login", "Data received from server.");
+            this.logger.logVerbose(this.className, "postLogin", "Data received from server.");
             console.log(data);
             this.loginSub.next(RequestStatus.OK);
           } else {
-            this.logger.logVerbose(this.className, "login", "Server reply unknown.");
+            this.logger.logVerbose(this.className, "postLogin", "Server reply unknown.");
             this.loginSub.next(RequestStatus.ERROR);
           }
         },
       error: error => {
-        this.serverError = error.error;
-        this.logger.logVerbose(this.className, "login", "Server replied with an error.");
-        this.logger.logVerbose(this.className, "login", "Server time: " + this.serverError.timestamp);
-        this.logger.logVerbose(this.className, "login", "Error code: " + this.serverError.status);
-        this.logger.logVerbose(this.className, "login", "Server message: " + this.serverError.message);
-        this.loginSub.next(RequestStatus.ERROR);
-      },
+          this.serverError = error.error;
+          this.logger.logVerbose(this.className, "postLogin", "Server replied with an error.");
+          this.logger.logVerbose(this.className, "postLogin", "Server time: " + this.serverError.timestamp);
+          this.logger.logVerbose(this.className, "postLogin", "Error code: " + this.serverError.status);
+          this.logger.logVerbose(this.className, "postLogin", "Server message: " + this.serverError.message);
+          this.loginSub.next(RequestStatus.ERROR);
+        },
       complete: () => {
-        this.logger.logVerbose(this.className, "login", "Server communications complete.");
-      }
+          this.logger.logVerbose(this.className, "postLogin", "Server communications complete.");
+        }
+    });
+  }
+
+  postLogout(user: User): void {
+    this.loginSub.next(RequestStatus.PENDING);
+    this.logger.logVerbose(this.className, "postLogout", user);
+    this.logger.logVerbose(this.className, "postLogout", "Initiating server communications.");
+    this.http.post<boolean>(RestURI.LOGOUT, user).subscribe({
+      next:
+        data => {
+          if (data) {
+            this.logger.logVerbose(this.className, "postLogout", "Data received from server.");
+            console.log(data);
+            this.loginSub.next(RequestStatus.OK);
+          } else {
+            this.logger.logVerbose(this.className, "postLogout", "Server reply unknown.");
+            this.loginSub.next(RequestStatus.ERROR);
+          }
+        },
+      error: error => {
+          this.serverError = error.error;
+          this.logger.logVerbose(this.className, "postLogout", "Server replied with an error.");
+          this.logger.logVerbose(this.className, "postLogout", "Server time: " + this.serverError.timestamp);
+          this.logger.logVerbose(this.className, "postLogout", "Error code: " + this.serverError.status);
+          this.logger.logVerbose(this.className, "postLogout", "Server message: " + this.serverError.message);
+          this.loginSub.next(RequestStatus.ERROR);
+        },
+      complete: () => {
+          this.logger.logVerbose(this.className, "postLogout", "Server communications complete.");
+        }
     });
   }
 }

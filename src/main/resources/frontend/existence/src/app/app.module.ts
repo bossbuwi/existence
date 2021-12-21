@@ -9,7 +9,8 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BootService } from 'src/app/conductor/services/boot.service';
-import {LoggerService } from 'src/app/conductor/services/logger.service';
+import { LoggerService } from 'src/app/conductor/services/logger.service';
+import { AuthService } from 'src/app/conductor/services/auth.service';
 
 import { NavbarComponent } from './symphony/components/navbar/navbar.component';
 import { SonataHomeComponent } from './sonata/components/sonata-home/sonata-home.component';
@@ -38,7 +39,8 @@ import { FatalerrorComponent } from './conductor/components/fatalerror/fatalerro
       deps: [ BootService ]
     },
     BootService,
-    LoggerService
+    LoggerService,
+    AuthService
   ],
   bootstrap: [AppComponent]
 })

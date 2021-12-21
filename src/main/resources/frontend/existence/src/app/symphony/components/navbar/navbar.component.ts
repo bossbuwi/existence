@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
 
-import { BootService } from 'src/app/conductor/services/boot.service';
-import { BackendService } from 'src/app/conductor/services/backend.service';
 import { LoggerService } from 'src/app/conductor/services/logger.service';
-
+import { AuthService } from 'src/app/conductor/services/auth.service';
 import { RequestStatus } from 'src/app/conductor/constants/properties';
 
 @Component({
@@ -19,51 +16,20 @@ export class NavbarComponent implements OnInit {
   isMenuCollapsed: boolean = true;
   loginStatus: number = RequestStatus.NONE;
   loginForm!: FormGroup;
+  private userOnline!: boolean;
 
 
-  constructor(private boot: BootService, private backend: BackendService,
-    private logger: LoggerService, private router: Router) { }
+  constructor(private logger: LoggerService, private auth: AuthService) { }
 
   ngOnInit(): void {
-    this.logger.logVerbose(this.className, "ngOnInit", "Checking for app status.");
-    if (this.boot.getAppStatus() === RequestStatus.ERROR) {
-      this.fatalError = true;
-      this.logger.logVerbose(this.className, "ngOnInit", this.fatalError);
-      this.router.navigate(['fatalerror']);
-    } else {
-      this.initialize();
-    }
+    this.initialize();
   }
 
   private initialize() {
     this.logger.logVerbose(this.className, "initialize", "Initializing component.");
     this.loginForm = this.createLoginFormGroup();
-
-    this.backend.subLogin().subscribe({
-      next: response => {
-        switch (response) {
-          case RequestStatus.OK:
-            this.loginStatus = RequestStatus.OK;
-            this.loginOK();
-            break;
-          case RequestStatus.PENDING:
-            this.loginStatus = RequestStatus.PENDING;
-            this.loginPending();
-            break;
-          case RequestStatus.ERROR:
-            this.loginStatus = RequestStatus.ERROR;
-            this.loginError();
-            break;
-          case RequestStatus.DONE:
-              break;
-          default:
-            this.loginStatus = RequestStatus.NONE;
-
-            break;
-        }
-      }
-    });
-
+    this.userOnline = false;
+    this.watchLoginStatus();
     this.logger.logVerbose(this.className, "initialize", "Initialization complete.");
   }
 
@@ -76,9 +42,53 @@ export class NavbarComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.logger.logVerbose(this.className, "onSubmit", "User with username: " + this.loginForm.get("username")?.value
-      + " is trying to login.");
-    this.backend.login(this.loginForm);
+    this.logger.logVerbose(this.className, "onSubmit",
+      "User with username: " + this.loginForm.get("username")?.value + " is trying to login.");
+    this.auth.authUser(this.loginForm);
+  }
+
+  logOut(): void {
+    this.auth.logoutUser();
+  }
+
+  private watchLoginStatus(): void {
+    this.auth.subLoginStatus().subscribe({
+      next: response => {
+        switch (response) {
+          case RequestStatus.OK:
+            if (!this.userOnline) {
+              this.loginStatus = RequestStatus.OK;
+              this.loginOK();
+            } else {
+              this.loginStatus = RequestStatus.OK;
+              this.logoutOK();
+            }
+            break;
+          case RequestStatus.PENDING:
+            if (!this.userOnline) {
+              this.loginStatus = RequestStatus.PENDING;
+              this.loginPending();
+            } else {
+              this.loginStatus = RequestStatus.PENDING;
+              this.logoutPending();
+            }
+            break;
+          case RequestStatus.ERROR:
+            if (!this.userOnline) {
+              this.loginStatus = RequestStatus.ERROR;
+              this.loginError();
+            } else {
+              this.loginStatus = RequestStatus.ERROR;
+              this.logoutError();
+            }
+            break;
+          case RequestStatus.DONE:
+              break;
+          default:
+            break;
+        }
+      }
+    });
   }
 
   private loginPending(): void {
@@ -90,6 +100,21 @@ export class NavbarComponent implements OnInit {
   }
 
   private loginOK(): void {
+    this.userOnline = !this.userOnline;
+    this.loginForm.reset(this.loginForm.value);
+  }
+
+  private logoutPending(): void {
+    this.loginForm.disable();
+  }
+
+  private logoutError(): void {
+    this.loginStatus = RequestStatus.OK;
+    this.loginForm.disable();
+  }
+
+  private logoutOK(): void {
+    this.userOnline = !this.userOnline;
     this.loginForm.enable();
   }
 

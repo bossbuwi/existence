@@ -4,10 +4,12 @@ import com.stargazerstudios.existence.conductor.erratum.universal.*;
 import com.stargazerstudios.existence.symphony.dto.SettingDTO;
 import com.stargazerstudios.existence.symphony.repository.SettingDAO;
 import com.stargazerstudios.existence.symphony.entity.Setting;
+import com.stargazerstudios.existence.symphony.wrapper.SettingWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,13 +55,32 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
-    public List<Setting> getSettingByType(String type) {
-        return null;
+    public List<SettingDTO> getSettingsByType(String type) throws EntityNotFoundException {
+        List<SettingDTO> settingDtoList = new ArrayList<>();
+        List<Setting> settingList = settingDAO.findSettingByType(type);
+        if (!settingList.isEmpty()) {
+            for (Setting setting: settingList) {
+                SettingDTO settingDTO = new SettingDTO(setting);
+                settingDtoList.add(settingDTO);
+            }
+        } else {
+            throw new EntityNotFoundException("Settings of type: " + type + " not found.");
+        }
+        return settingDtoList;
     }
 
     @Override
-    public Optional<Setting> modifySetting(Setting setting)
-            throws UserNotFoundException, UserUnauthorizedException {
-        return Optional.empty();
+    public SettingDTO modifySetting(SettingWrapper wSetting) throws EntityNotFoundException  {
+        HashMap<String, String> parsedJSON = wSetting.getSetting();
+        String key = parsedJSON.get("key");
+        Optional<Setting> settingData = settingDAO.findSettingByKey(key);
+        if (settingData.isPresent()) {
+            Setting setting = settingData.get();
+            setting.setValue(parsedJSON.get("value"));
+
+        } else {
+            throw new EntityNotFoundException("Setting with key: " + key + " not found.");
+        }
+        return null;
     }
 }
