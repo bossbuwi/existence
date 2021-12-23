@@ -11,6 +11,14 @@ export class RequestStatus {
   public static DONE: number = 4;
 }
 
+export class FormStatus {
+  public static UNKNOWN: number = 0;
+  public static INSERT: number = 1;
+  public static LOADING: number = 2;
+  public static ERROR: number = 3;
+  public static DONE: number = 4;
+}
+
 export class LoggingLevel {
   public static NONE: string = 'N';
   public static VERBOSE: string = 'V';
@@ -19,9 +27,9 @@ export class LoggingLevel {
   public static ERRORS: string = 'E';
 }
 
-export class FormMode {
-  public static INSERT: string = 'I';
-  public static EDIT: string = 'E';
-  public static CONFIRM: string = 'C';
-  public static ERROR: string = 'X';
+export class AuthProps {
+  public static TOKEN_NULL: string = 'tundra';
+  public static JWT_KEY: string = 'vanuatu';
+  public static HEADER_AUTH: string = 'Authorization';
+  public static HEADER_BEARER: string = 'Bearer ';
 }

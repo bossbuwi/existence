@@ -77,7 +77,7 @@ export class BootService {
           this.logger('startupChain', 'Deleting subscriptions.');
           serverCheck.unsubscribe();
           logLevel.unsubscribe();
-          this.logger('startupChain', 'Sending boot success confirmation.');
+          this.logger('startupChain', 'Broadcasting boot success confirmation.');
           this.bootStatus.next(RequestStatus.DONE);
         }
       }

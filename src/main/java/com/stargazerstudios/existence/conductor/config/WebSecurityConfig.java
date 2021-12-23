@@ -41,6 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.cors();
         http.csrf().disable()
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
@@ -48,7 +49,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(WebSecurityURI.Unguarded.URI_LOGIN).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_CONCERTO).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_FRONTEND_ROOT).permitAll()
-//                .antMatchers(WebSecurityURI.Unguarded.URI_FRONTEND_PATHS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

@@ -2,17 +2,20 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule  } from '@angular/forms';
 import { formatDate } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { AppComponent } from 'src/app/app.component';
 
 import { BootService } from 'src/app/conductor/services/boot.service';
 import { LoggerService } from 'src/app/conductor/services/logger.service';
 import { AuthService } from 'src/app/conductor/services/auth.service';
+import { AuthInterceptorService } from 'src/app/conductor/interceptors/authinterceptor.service';
 
-import { NavbarComponent } from './symphony/components/navbar/navbar.component';
+import { NavbarComponent } from 'src/app/symphony/components/navbar/navbar.component';
+import { SettingComponent } from 'src/app/symphony/components/setting/setting.component';
 import { SonataHomeComponent } from './sonata/components/sonata-home/sonata-home.component';
 import { FatalerrorComponent } from './conductor/components/fatalerror/fatalerror.component';
 
@@ -20,6 +23,7 @@ import { FatalerrorComponent } from './conductor/components/fatalerror/fatalerro
   declarations: [
     AppComponent,
     NavbarComponent,
+    SettingComponent,
     SonataHomeComponent,
     FatalerrorComponent
   ],
@@ -37,6 +41,11 @@ import { FatalerrorComponent } from './conductor/components/fatalerror/fatalerro
       useFactory: initializeApp,
       multi: true,
       deps: [ BootService ]
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true
     },
     BootService,
     LoggerService,

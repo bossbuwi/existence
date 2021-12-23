@@ -10,7 +10,7 @@
   <!-- Step 2: Add the ngbCollapse directive to the element below. -->
   <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
     <span class="navbar-nav mr-auto ml-auto"></span>
-    <form id="loginForm" class="form-inline my-2 my-lg-0" [formGroup]="loginForm" (ngSubmit)="onSubmit()" *ngIf="loginStatus !== 1" [hidden]="loginStatus === 2" novalidate>
+    <form id="loginForm" class="form-inline my-2 my-lg-0" [formGroup]="loginForm" (ngSubmit)="onSubmit()" *ngIf="formStatus !== 4" [hidden]="formStatus === 2" novalidate>
       <input
         class="form-control mr-sm-2"
         type="username"
@@ -25,21 +25,22 @@
         aria-label="Password">
     </form>
     <div class="btn-group">
-      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" form="loginForm" *ngIf="loginStatus !== 2 && loginStatus !== 1">Login</button>
-      <button class="btn btn-outline-primary my-2 my-sm-0" type="button" *ngIf="loginStatus === 2" disabled>
+      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" form="loginForm" *ngIf="formStatus !== 2 && formStatus !== 4">Login</button>
+      <button class="btn btn-outline-primary my-2 my-sm-0" type="button" *ngIf="formStatus === 2" disabled>
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         <span class="sr-only">Loading...</span>
       </button>
-      <div class="btn-group" ngbDropdown display="dynamic" placement="bottom-left" role="group" aria-label="User prrofile" *ngIf="loginStatus === 1">
-        <button class="btn btn-outline-primary my-2 my-sm-0 dropdown-toggle-split" ngbDropdownToggle>Profile&nbsp;</button>
+      <div class="btn-group" ngbDropdown display="dynamic" placement="bottom-left" role="group" aria-label="User profile" *ngIf="formStatus === 4">
+        <button class="btn btn-outline-primary my-2 my-sm-0 dropdown-toggle-split" ngbDropdownToggle>Options&nbsp;</button>
         <div class="dropdown-menu" ngbDropdownMenu>
+          <a ngbDropdownItem [routerLink]="'home'">Settings</a>
           <a ngbDropdownItem [routerLink]="'home'">Authorities</a>
           <a ngbDropdownItem [routerLink]="'home'">About</a>
           <div class="dropdown-divider"></div>
           <a ngbDropdownItem (click)="logOut()">Log out</a>
         </div>
       </div>
-      <div class="btn-group" ngbDropdown display="dynamic" placement="bottom-right" role="group" aria-label="Change sites">
+      <div class="btn-group" ngbDropdown display="dynamic" placement="bottom-right" role="group" aria-label="Change sites" *ngIf="formStatus === 4">
         <button class="btn btn-outline-primary my-2 my-sm-0 dropdown-toggle-split" ngbDropdownToggle>Sites&nbsp;</button>
         <div class="dropdown-menu" ngbDropdownMenu>
           <a ngbDropdownItem [routerLink]="'sonata'">Sonata</a>

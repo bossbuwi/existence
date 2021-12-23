@@ -27,10 +27,11 @@ public class AuthenticationController {
 
     // TODO Not yet done
     @PostMapping("/autologin")
-    public ResponseEntity<UserDTO> autoLogin() throws UserNotFoundException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        return null;
+    public ResponseEntity<UserDTO> autoLogin(String token) throws UserNotFoundException {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        String username = auth.getName();
+//        return null;
+        return new ResponseEntity<>(authenticationService.autologin(token), HttpStatus.OK);
     }
 
     @PostMapping("/logout")

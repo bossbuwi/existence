@@ -65,6 +65,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                 user.setPassword(password);
                 String token = generateToken(user);
                 user.setToken(token);
+
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
                 return new UserDTO(user);
             } else {
                 throw new UserNotFoundException();
@@ -82,6 +85,23 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         }
     }
 
+    @Override
+    public UserDTO autologin(String token) throws UserNotFoundException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String _token = generateTokenFromAuth(auth);
+
+        Optional<User> userData = userDAO.findByUsername(auth.getName());
+        if (userData.isPresent()) {
+            User user = userData.get();
+            user.setPassword(null);
+            user.setToken(_token);
+            return new UserDTO(user);
+        } else {
+            throw new UserNotFoundException();
+        }
+    }
+
     private String generateToken(User user) throws AuthenticationException {
         Authentication authentication = authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
@@ -94,6 +114,10 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         return jwtUtil.generateToken(authentication);
     }
 
+    private String generateTokenFromAuth(Authentication authentication) {
+        return jwtUtil.generateToken(authentication);
+    }
+
     private boolean authViaLDAP(String username, String password) throws UserNotFoundException, GatewayTimeoutException {
         Mono<User> userMono = webClient.post()
                 .uri(uriBuilder -> uriBuilder.path("/login")
@@ -102,11 +126,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                         .build())
                 .retrieve()
                 .bodyToMono(User.class)
-                .timeout(Duration.ofMillis(5000))
+                .timeout(Duration.ofMillis(20000))
                 .onErrorReturn(new User());
 
         try {
-            User user = userMono.block(Duration.ofMillis(10000));
+            User user = userMono.block(Duration.ofMillis(20000));
             if (user != null) {
                 if (user.getUsername().equals(username)) {
                     return true;

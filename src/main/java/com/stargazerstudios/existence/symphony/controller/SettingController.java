@@ -1,7 +1,6 @@
 package com.stargazerstudios.existence.symphony.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.BadJsonWebTokenException;
-import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.universal.*;
 import com.stargazerstudios.existence.symphony.dto.SettingDTO;
 import com.stargazerstudios.existence.symphony.service.SettingServiceImpl;
 import com.stargazerstudios.existence.symphony.wrapper.SettingWrapper;
