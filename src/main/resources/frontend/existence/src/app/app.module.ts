@@ -4,10 +4,10 @@ import { ReactiveFormsModule, FormsModule  } from '@angular/forms';
 import { formatDate } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { AppComponent } from 'src/app/app.component';
+
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BootService } from 'src/app/conductor/services/boot.service';
 import { LoggerService } from 'src/app/conductor/services/logger.service';
@@ -15,17 +15,23 @@ import { AuthService } from 'src/app/conductor/services/auth.service';
 import { AuthInterceptorService } from 'src/app/conductor/interceptors/authinterceptor.service';
 
 import { NavbarComponent } from 'src/app/symphony/components/navbar/navbar.component';
-import { SettingComponent } from 'src/app/symphony/components/setting/setting.component';
 import { SonataHomeComponent } from './sonata/components/sonata-home/sonata-home.component';
-import { FatalerrorComponent } from './conductor/components/fatalerror/fatalerror.component';
+import { SettingNavtabsComponent } from './symphony/components/setting/setting-navtabs/setting-navtabs.component';
+import { SettingSysconfigComponent } from './symphony/components/setting/setting-sysconfig/setting-sysconfig.component';
+import { SettingUsersComponent } from './symphony/components/setting/setting-users/setting-users.component';
+import { SettingDisplayComponent } from './symphony/components/setting/setting-display/setting-display.component';
+import { SonataNavtabsComponent } from './sonata/components/sonata-navtabs/sonata-navtabs.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    SettingComponent,
     SonataHomeComponent,
-    FatalerrorComponent
+    SettingNavtabsComponent,
+    SettingSysconfigComponent,
+    SettingUsersComponent,
+    SettingDisplayComponent,
+    SonataNavtabsComponent
   ],
   imports: [
     BrowserModule,

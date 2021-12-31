@@ -1,0 +1,14 @@
+package com.stargazerstudios.existence.conductor.erratum.universal;
+
+import org.springframework.http.HttpStatus;
+
+public class InvalidInputException extends Exception {
+
+    public InvalidInputException(String key) {
+        super("Key: " + key + " not found or contains invalid values. Please restructure the request and try again.");
+    }
+
+    public HttpStatus getHttpStatus() {
+        return HttpStatus.BAD_REQUEST;
+    }
+}

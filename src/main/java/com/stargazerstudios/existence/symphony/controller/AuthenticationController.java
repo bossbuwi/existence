@@ -7,8 +7,6 @@ import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -25,12 +23,8 @@ public class AuthenticationController {
         return new ResponseEntity<>(authenticationService.login(user), HttpStatus.OK);
     }
 
-    // TODO Not yet done
     @PostMapping("/autologin")
     public ResponseEntity<UserDTO> autoLogin(String token) throws UserNotFoundException {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        String username = auth.getName();
-//        return null;
         return new ResponseEntity<>(authenticationService.autologin(token), HttpStatus.OK);
     }
 

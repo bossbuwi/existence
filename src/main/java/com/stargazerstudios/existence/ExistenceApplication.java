@@ -13,4 +13,5 @@ public class ExistenceApplication {
 	// TODO Create a class that will hold the backup properties of the ones defined in the application properties
 	// TODO Add useful comments on the sources for easier reading
 	// TODO There is a lot of code cleaning to be done
+	// TODO Create utils for the entities on symphony project
 }

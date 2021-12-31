@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="postgresql"/>
+    <changeSet author="bossbuwi" id="20211120-003">
+        <insert tableName="uni_settings">
+            <column name="key" value="loglevel"/>
+            <column name="value" value="V"/>
+            <column name="length" value="1"/>
+            <column name="type" value="F"/>
+            <column name="description" value="Controls the logging level of the frontend client."/>
+            <column name="default_value" value="V"/>
+            <column name="valid_values" value="N,I,V,W,E"/>
+            <column name="added_by" value="0.1-alpha"/>
+            <column name="changed_by" value="admin"/>
+            <column name="last_changed_date" valueDate="${now}"/>
+        </insert>
+        <insert tableName="uni_settings">
+            <column name="key" value="tabdesign"/>
+            <column name="value" value="M"/>
+            <column name="length" value="1"/>
+            <column name="type" value="F"/>
+            <column name="description" value="Controls the navigation tabs design of the frontend client."/>
+            <column name="default_value" value="M"/>
+            <column name="valid_values" value="C,M"/>
+            <column name="added_by" value="0.1-alpha"/>
+            <column name="changed_by" value="admin"/>
+            <column name="last_changed_date" valueDate="${now}"/>
+        </insert>
+        <insert tableName="uni_settings">
+            <column name="key" value="encryptionKey"/>
+            <column name="value" value="th3w0rld1sw4it1ngfoRy0u"/>
+            <column name="length" value="25"/>
+            <column name="type" value="B"/>
+            <column name="description" value="Encrypts the JSON web token used for authorization. Changing this will log off all users upon next app reload."/>
+            <column name="default_value" value="th3w0rld1sw4it1ngfoRy0u"/>
+            <column name="valid_values" value="alphanumeric"/>
+            <column name="added_by" value="0.1-alpha"/>
+            <column name="changed_by" value="admin"/>
+            <column name="last_changed_date" valueDate="${now}"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

@@ -7,6 +7,7 @@ import { User } from 'src/app/symphony/models/user';
 import { RestURI } from 'src/app/conductor/constants/resturi';
 import { RestError } from 'src/app/conductor/models/error';
 import { AuthProps, RequestStatus } from 'src/app/conductor/constants/properties';
+import { Setting } from 'src/app/symphony/models/setting';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ import { AuthProps, RequestStatus } from 'src/app/conductor/constants/properties
 export class BackendService {
   private className: string = "BackendService";
   private loginSub!: Subject<number>;
+  private settingsSub!: Subject<number>;
   private serverError! : RestError;
   private data: any;
 
@@ -25,16 +27,25 @@ export class BackendService {
     this.logger.logVerbose(this.className, "initialize", "Initializing service.");
     this.serverError = new RestError();
     this.loginSub = new Subject<number>();
+    this.settingsSub = new Subject<number>();
     this.logger.logVerbose(this.className, "initialize", "Initialization complete.");
   }
 
-  getServerError(): RestError {
-    return this.serverError;
-  }
+  /*
+   * Below are methods that allow other classes to access this service's subjects.
+  */
 
   subLoginStatus(): Observable<number> {
     return this.loginSub.asObservable();
   }
+
+  subSettingsStatus(): Observable<number> {
+    return this.settingsSub.asObservable();
+  }
+
+  /*
+   * Below are methods that are related to user authentication.
+  */
 
   postLogin(user: User): void {
     this.logger.logVerbose(this.className, "postLogin", "Received request for user login.");
@@ -113,7 +124,7 @@ export class BackendService {
               this.loginSub.next(RequestStatus.OK);
             } else {
               this.logger.logVerbose(this.className, "postAutologin", "Server reply unknown.");
-              this.loginSub.next(RequestStatus.ERROR);
+              this.loginSub.next(RequestStatus.DONE);
             }
           },
         error: error => {
@@ -122,7 +133,7 @@ export class BackendService {
             this.logger.logVerbose(this.className, "postAutologin", "Server time: " + this.serverError.timestamp);
             this.logger.logVerbose(this.className, "postAutologin", "Error code: " + this.serverError.status);
             this.logger.logVerbose(this.className, "postAutologin", "Server message: " + this.serverError.message);
-            this.loginSub.next(RequestStatus.ERROR);
+            this.loginSub.next(RequestStatus.DONE);
           },
         complete: () => {
             this.logger.logVerbose(this.className, "postAutologin", "Server communications complete.");
@@ -131,7 +142,80 @@ export class BackendService {
     }
   }
 
-  getData(): any {
+  /*
+   * Below are methods that are related to settings.
+  */
+
+  getSettings(): void {
+    this.logger.logVerbose(this.className, "getSettings", "Sending request to server.");
+    this.settingsSub.next(RequestStatus.PENDING);
+    this.http.get<Setting[]>(RestURI.GET_SETTING_INDEX).subscribe({
+      next:
+        data => {
+          if (data) {
+            this.logger.logVerbose(this.className, "getSettings", "Data received from server.");
+            this.data = data;
+            console.log(data);
+            this.settingsSub.next(RequestStatus.OK);
+          } else {
+            this.logger.logVerbose(this.className, "getSettings", "Server reply unknown.");
+            this.settingsSub.next(RequestStatus.ERROR);
+          }
+        },
+      error: error => {
+          this.serverError = error.error;
+          this.logger.logVerbose(this.className, "getSettings", "Server replied with an error.");
+          this.logger.logVerbose(this.className, "getSettings", "Server time: " + this.serverError.timestamp);
+          this.logger.logVerbose(this.className, "getSettings", "Error code: " + this.serverError.status);
+          this.logger.logVerbose(this.className, "getSettings", "Server message: " + this.serverError.message);
+          this.settingsSub.next(RequestStatus.ERROR);
+        },
+      complete: () => {
+          this.logger.logVerbose(this.className, "getSettings", "Server communications complete.");
+        }
+    });
+  }
+
+  putSettings(setting: any): void {
+    this.logger.logVerbose(this.className, "putSettings", "Sending request to server.");
+    this.settingsSub.next(RequestStatus.PENDING);
+    this.http.put<Setting>(RestURI.PUT_SETTING, { setting: setting }).subscribe({
+      next:
+        data => {
+          if (data) {
+            this.logger.logVerbose(this.className, "putSettings", "Data received from server.");
+            this.data = data;
+            console.log(data);
+            this.settingsSub.next(RequestStatus.OK);
+          } else {
+            this.logger.logVerbose(this.className, "putSettings", "Server reply unknown.");
+            this.settingsSub.next(RequestStatus.ERROR);
+          }
+          this.settingsSub.next(RequestStatus.OK);
+        },
+      error: error => {
+          this.serverError = error.error;
+          this.logger.logVerbose(this.className, "putSettings", "Server replied with an error.");
+          this.logger.logVerbose(this.className, "putSettings", "Server time: " + this.serverError.timestamp);
+          this.logger.logVerbose(this.className, "putSettings", "Error code: " + this.serverError.status);
+          this.logger.logVerbose(this.className, "putSettings", "Server message: " + this.serverError.message);
+          this.settingsSub.next(RequestStatus.ERROR);
+        },
+      complete: () => {
+          this.logger.logVerbose(this.className, "putSettings", "Server communications complete.");
+        }
+    });
+  }
+
+  /*
+   * Below are methods that allow other classes to access this service's private fields.
+  */
+
+  provideData(): any {
     return this.data;
+  }
+
+  provideServerError(): RestError {
+    return this.serverError;
   }
 }

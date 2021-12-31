@@ -33,7 +33,7 @@
       <div class="btn-group" ngbDropdown display="dynamic" placement="bottom-left" role="group" aria-label="User profile" *ngIf="formStatus === 4">
         <button class="btn btn-outline-primary my-2 my-sm-0 dropdown-toggle-split" ngbDropdownToggle>Options&nbsp;</button>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <a ngbDropdownItem [routerLink]="'home'">Settings</a>
+          <a ngbDropdownItem [routerLink]="'settings'">Settings</a>
           <a ngbDropdownItem [routerLink]="'home'">Authorities</a>
           <a ngbDropdownItem [routerLink]="'home'">About</a>
           <div class="dropdown-divider"></div>
@@ -43,9 +43,7 @@
       <div class="btn-group" ngbDropdown display="dynamic" placement="bottom-right" role="group" aria-label="Change sites" *ngIf="formStatus === 4">
         <button class="btn btn-outline-primary my-2 my-sm-0 dropdown-toggle-split" ngbDropdownToggle>Sites&nbsp;</button>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <a ngbDropdownItem [routerLink]="'sonata'">Sonata</a>
-          <a ngbDropdownItem [routerLink]="'home'">None yet</a>
-          <a ngbDropdownItem [routerLink]="'home'">None yet</a>
+          <a ngbDropdownItem *ngFor="let item of constellations; let i = index" (click)="onDropdownClick(i)">{{item}}</a>
         </div>
       </div>
     </div>

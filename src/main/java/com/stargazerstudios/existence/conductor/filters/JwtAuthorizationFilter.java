@@ -51,20 +51,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtil.getUsernameFromToken(authToken);
             } catch (IllegalArgumentException e) {
-                logger.warn("An error occurred while fetching Username from Token", e);
+                logger.warn("An error occurred while fetching username from token", e);
                 SecurityContextHolder.clearContext();
-                BadJsonWebTokenException ex = new BadJsonWebTokenException();
-                resolver.resolveException(request, response, null, ex);
             } catch (ExpiredJwtException e) {
                 logger.warn("The token has expired", e);
                 SecurityContextHolder.clearContext();
-                BadJsonWebTokenException ex = new BadJsonWebTokenException();
-                resolver.resolveException(request, response, null, ex);
             } catch(SignatureException e){
                 logger.warn("Authentication Failed. Username or Password not valid.");
                 SecurityContextHolder.clearContext();
-                BadJsonWebTokenException ex = new BadJsonWebTokenException();
-                resolver.resolveException(request, response, null, ex);
             }
         } else {
             SecurityContextHolder.clearContext();
@@ -78,7 +72,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication = jwtUtil.getAuthenticationToken(
                         authToken, SecurityContextHolder.getContext().getAuthentication(), userDetails);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                logger.info("authenticated user " + username + ", setting security context");
+                logger.info("authenticated user: " + username + ", setting security context");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
@@ -94,7 +88,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_LOGIN);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_CONCERTO);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_FRONTEND_ROOT);
-//        excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_FRONTEND_PATHS);
         return excludeUrlPatterns.stream().anyMatch(p -> pathMatcher.match(p, request.getServletPath()));
     }
 }

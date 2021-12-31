@@ -33,3 +33,8 @@ export class AuthProps {
   public static HEADER_AUTH: string = 'Authorization';
   public static HEADER_BEARER: string = 'Bearer ';
 }
+
+export class ValidationConstants {
+  public static ALPHANUMERIC: string = 'alphanumeric';
+  public static NUMERIC: string = 'numeric';
+}

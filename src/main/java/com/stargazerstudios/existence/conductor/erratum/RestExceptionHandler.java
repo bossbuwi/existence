@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<Object> handleEntityNotFound(
+    protected ResponseEntity<Object> handleEntityNotFoundError(
             UserNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
@@ -22,7 +22,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<Object> handleEntityNotFound(
+    protected ResponseEntity<Object> handleEntityNotFoundError(
             EntityNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
@@ -30,7 +30,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(BadGatewayException.class)
-    protected ResponseEntity<Object> handleGatewayErrors(
+    protected ResponseEntity<Object> handleGatewayError(
             BadGatewayException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
@@ -38,7 +38,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(GatewayTimeoutException.class)
-    protected ResponseEntity<Object> handleGatewayErrors(
+    protected ResponseEntity<Object> handleGatewayError(
             GatewayTimeoutException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
@@ -46,7 +46,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(BadJsonWebTokenException.class)
-    protected ResponseEntity<Object> handleJwtErrors(
+    protected ResponseEntity<Object> handleJwtError(
             BadJsonWebTokenException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
@@ -59,6 +59,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         UserNotLoggedInException _ex = new UserNotLoggedInException();
         ErrorResponse errorResponse = new ErrorResponse(_ex.getHttpStatus());
         errorResponse.setMessage(_ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
+    @ExceptionHandler(DuplicateEntityException.class)
+    protected ResponseEntity<Object> handleDuplicateEntityError(
+            DuplicateEntityException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
         return buildResponseEntity(errorResponse);
     }
 

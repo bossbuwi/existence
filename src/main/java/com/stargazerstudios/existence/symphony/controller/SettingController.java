@@ -37,7 +37,8 @@ public class SettingController {
     }
 
     @PutMapping("/setting")
-    public ResponseEntity<SettingDTO> modifySetting(@RequestBody SettingWrapper settingWrapper) {
-        return null;
+    public ResponseEntity<SettingDTO> modifySetting(@RequestBody SettingWrapper settingWrapper)
+            throws EntityNotFoundException {
+        return new ResponseEntity<>(settingService.modifySetting(settingWrapper), HttpStatus.OK);
     }
 }

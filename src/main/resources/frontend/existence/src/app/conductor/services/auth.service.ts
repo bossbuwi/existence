@@ -72,6 +72,7 @@ export class AuthService {
             this.loginStatus.next(RequestStatus.ERROR);
             break;
           case RequestStatus.DONE:
+            this.clearToken();
             this.loginStatus.next(RequestStatus.DONE);
             break;
           default:
@@ -111,7 +112,7 @@ export class AuthService {
     this.logger.logVerbose(this.className, "changeUserStatus", "Broadcasting user's login status to other components.");
     this.userOnlineStatus.next(this.isUserOnline);
     if (this.isUserOnline) {
-      this.user = this.backend.getData();
+      this.user = this.backend.provideData();
       this.clearToken();
       this.setToken();
     } else {

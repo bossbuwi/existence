@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet author="bossbuwi" id="20211121-001">
+        <createTable tableName="sonata_events">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="start_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="jira_case" type="VARCHAR(255)"/>
+            <column name="features_on" type="VARCHAR(255)"/>
+            <column name="features_off" type="VARCHAR(255)"/>
+            <column name="compiled_sources" type="VARCHAR(255)"/>
+            <column name="api_used" type="VARCHAR(255)"/>
+            <column name="system_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_date" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_changed_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_changed_date" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="sonata_events"
+                baseColumnNames="system_id"
+                constraintName="fk_system_id"
+                referencedTableName="sonata_systems"
+                referencedColumnNames="id"/>
+        <rollback>
+            <dropTable tableName="sonata_events"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

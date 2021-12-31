@@ -7,8 +7,8 @@ import com.stargazerstudios.existence.symphony.wrapper.SettingWrapper;
 import java.util.List;
 
 public interface SettingService {
-    List<SettingDTO> getAllSettings() throws BadJsonWebTokenException;
-    SettingDTO getSettingById(long id) throws BadJsonWebTokenException, EntityNotFoundException;
+    List<SettingDTO> getAllSettings();
+    SettingDTO getSettingById(long id) throws EntityNotFoundException;
     SettingDTO getSettingByKey(String key) throws EntityNotFoundException;
     List<SettingDTO> getSettingsByType(String type) throws EntityNotFoundException;
     SettingDTO modifySetting(SettingWrapper settingWrapper) throws EntityNotFoundException;

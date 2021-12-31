@@ -1,0 +1,39 @@
+<div class="container-fluid">
+  <form class="form" [formGroup]="settingsForm" novalidate>
+    <div formArrayName="settings" class="form-array">
+      <div *ngFor="let setting of settings.controls; let i=index">
+        <div [formGroupName]="i">
+          <div class="card mb-3 mt-2 config-details w-75">
+            <div class="card-body">
+              <h5 class="card-title">{{setting.get('key')?.value}}</h5>
+              <div class="card-text mb-4 text-muted">{{setting.get('desc')?.value}}</div>
+              <div class="form-row w-50 mb-4">
+                <label for="value{{i}}" class="form-label">Current Value</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="value{{i}}" formControlName="value"
+                    (keyup)="onChange(i)"
+                    [ngClass]="{'is-invalid': setting.get('value')?.invalid}">
+                  <div class="input-group-append">
+                    <button class="btn" type="button" id="submitButton{{i}}"
+                      (click)="onSubmit(i)"
+                      [ngClass]="setting.get('submit')?.invalid ? 'btn-outline-danger' : 'btn-outline-primary'"
+                      *ngIf="setting.get('value')?.dirty && setting.get('value')?.valid">{{setting.get('submit')?.value}}</button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <small>Length: {{setting.get('length')?.value}}</small><br>
+                <small>Valid values are {{setting.get('validValues')?.value}}.</small><br>
+                <small>Default value is {{setting.get('defaultValue')?.value}}.</small><br>
+                <small>Added by {{setting.get('addedBy')?.value}}.</small><br>
+              </div>
+            </div>
+            <div class="card-footer">
+              <small>Last modified by {{setting.get('lastChangedBy')?.value}} on {{setting.get('lastChangedDate')?.value}}.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

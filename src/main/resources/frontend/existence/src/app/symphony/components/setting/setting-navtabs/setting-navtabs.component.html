@@ -1,0 +1,14 @@
+<div class="container-fluid">
+  <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-pills">
+      <li [ngbNavItem]="1" (click)="navigate(1)">
+        <a ngbNavLink>System Configuration</a>
+      </li>
+      <li [ngbNavItem]="2" (click)="navigate(2)">
+        <a ngbNavLink>Users</a>
+      </li>
+      <li [ngbNavItem]="3" (click)="navigate(3)">
+        <a ngbNavLink>Display</a>
+      </li>
+  </ul>
+</div>
+<router-outlet></router-outlet>

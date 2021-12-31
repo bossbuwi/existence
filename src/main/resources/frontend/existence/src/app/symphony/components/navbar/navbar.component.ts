@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { LoggerService } from 'src/app/conductor/services/logger.service';
 import { AuthService } from 'src/app/conductor/services/auth.service';
 import { RequestStatus, FormStatus } from 'src/app/conductor/constants/properties';
+import { Constellations } from 'src/app/conductor/constants/constellations';
 
 @Component({
   selector: 'app-navbar',
@@ -16,10 +18,12 @@ export class NavbarComponent implements OnInit {
   isMenuCollapsed: boolean = true;
   loginForm!: FormGroup;
   formStatus: number = FormStatus.UNKNOWN;
+  constellations!: string[];
   private userOnline!: boolean;
 
 
-  constructor(private logger: LoggerService, private auth: AuthService) { }
+  constructor(private logger: LoggerService, private auth: AuthService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.initialize();
@@ -29,6 +33,7 @@ export class NavbarComponent implements OnInit {
     this.logger.logVerbose(this.className, "initialize", "Initializing component.");
     this.loginForm = this.createLoginFormGroup();
     this.userOnline = false;
+    this.constellations = Constellations.CONSTELLATIONS;
     this.watchLoginStatus();
     this.autoLogin();
     this.logger.logVerbose(this.className, "initialize", "Initialization complete.");
@@ -50,6 +55,11 @@ export class NavbarComponent implements OnInit {
 
   logOut(): void {
     this.auth.logoutUser();
+  }
+
+  onDropdownClick(index: any) {
+    console.log(index);
+    this.router.navigate([this.constellations[index].toLowerCase()]);
   }
 
   private autoLogin(): void {
@@ -123,6 +133,7 @@ export class NavbarComponent implements OnInit {
     this.userOnline = !this.userOnline;
     this.formStatus = FormStatus.INSERT;
     this.loginForm.enable();
+    this.router.navigate(['home']);
   }
 
   private autoLoginFailed(): void {

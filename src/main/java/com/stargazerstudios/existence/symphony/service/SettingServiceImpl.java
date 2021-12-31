@@ -77,10 +77,10 @@ public class SettingServiceImpl implements SettingService{
         if (settingData.isPresent()) {
             Setting setting = settingData.get();
             setting.setValue(parsedJSON.get("value"));
-
+            setting.setChangedBy(parsedJSON.get("last_changed_by"));
+            return new SettingDTO(settingDAO.save(setting));
         } else {
             throw new EntityNotFoundException("Setting with key: " + key + " not found.");
         }
-        return null;
     }
 }

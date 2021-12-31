@@ -6,6 +6,7 @@ import { Subject, Subscription } from 'rxjs';
 import { RequestStatus } from 'src/app/conductor/constants/properties';
 import { Setting } from 'src/app/symphony/models/setting';
 import { RestURI } from 'src/app/conductor/constants/resturi';
+import { Constellations } from 'src/app/conductor/constants/constellations';
 import { Existence } from 'src/app/conductor/models/existence';
 import { RestError } from 'src/app/conductor/models/error';
 
@@ -21,6 +22,8 @@ export class BootService {
   private backendDetails!: Existence;
   private serverCheckStatus!: Subject<number>;
   private logLevelStatus!: Subject<number>;
+  private validateConstellationsStatus!: Subject<number>;
+  private constellations!: string[];
 
   constructor(private http: HttpClient) {
     this.initialize();
@@ -31,6 +34,7 @@ export class BootService {
     this.bootStatus = new Subject<number>();
     this.serverCheckStatus = new Subject<number>();
     this.logLevelStatus = new Subject<number>();
+    this.validateConstellationsStatus = new Subject<number>();
     this.serverError = new RestError();
     this.backendDetails = new Existence();
     this.logLevel = new Setting();
@@ -77,6 +81,7 @@ export class BootService {
           this.logger('startupChain', 'Deleting subscriptions.');
           serverCheck.unsubscribe();
           logLevel.unsubscribe();
+          validateConstellations.unsubscribe();
           this.logger('startupChain', 'Broadcasting boot success confirmation.');
           this.bootStatus.next(RequestStatus.DONE);
         }
@@ -89,10 +94,23 @@ export class BootService {
       next: data => {
         if (data === RequestStatus.DONE) {
           this.logger('startupChain', 'Server check complete.');
+          this.logger('startupChain', 'Attempting to initiate validation of constellations.');
+          this.validateConstellations();
+        } else {
+          this.logger('startupChain', 'Server check encountered an error.');
+          this.bootStatus.next(RequestStatus.ERROR);
+        }
+      }
+    });
+
+    let validateConstellations: Subscription = this.validateConstellationsStatus.subscribe({
+      next: data => {
+        if (data === RequestStatus.DONE) {
+          this.logger('startupChain', 'Validation of constellations complete.');
           this.logger('startupChain', 'Attempting to fetch frontend logging level setting.');
           this.fetchLogLevel();
         } else {
-          this.logger('startupChain', 'Server check encountered an error.');
+          this.logger('startupChain', 'A constellation error has been detected.');
           this.bootStatus.next(RequestStatus.ERROR);
         }
       }
@@ -131,6 +149,32 @@ export class BootService {
         this.serverCheckStatus.next(RequestStatus.ERROR);
       }
     });
+  }
+
+  private validateConstellations(): void {
+    this.logger('validateConstellations', "Checking for constellation mismatch.");
+    let hasError: boolean = false;
+    this.constellations = Constellations.CONSTELLATIONS;
+    let _constellations: string[] = this.backendDetails.constellations;
+
+    (this.constellations.length !== _constellations.length) ? hasError = true : hasError = false;
+
+    if (!hasError) {
+      for (let i = 0; i < this.constellations.length; i++) {
+        if (this.constellations[i] !== _constellations[i]) {
+          this.logger('validateConstellations', "Constellation mismatch detected.");
+          this.logger('validateConstellations', "Aborting validation process.");
+          hasError = true;
+          break;
+        }
+      }
+    }
+
+    if (hasError) {
+      this.validateConstellationsStatus.next(RequestStatus.ERROR);
+    } else {
+      this.validateConstellationsStatus.next(RequestStatus.DONE);
+    }
   }
 
   private fetchLogLevel(): void {
