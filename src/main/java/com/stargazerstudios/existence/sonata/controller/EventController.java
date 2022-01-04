@@ -27,6 +27,12 @@ public class EventController {
         return new ResponseEntity<>(eventService.getAllEvents(), HttpStatus.OK);
     }
 
+    @GetMapping("/date")
+    public ResponseEntity<List<EventDTO>> getEventsOnDate(@RequestParam String date)
+            throws InvalidInputException {
+        return new ResponseEntity<>(eventService.getEventsByDate(date), HttpStatus.OK);
+    }
+
     @PostMapping("event")
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventWrapper event)
             throws EntityNotFoundException, InvalidInputException {

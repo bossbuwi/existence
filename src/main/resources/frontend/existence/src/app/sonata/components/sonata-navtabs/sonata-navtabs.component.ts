@@ -20,19 +20,22 @@ export class SonataNavtabsComponent implements OnInit {
 
   private initialize() {
     this.logger.logVerbose(this.className, "initialize", "Initializing component.");
-
+    this.navigate(2);
     this.logger.logVerbose(this.className, "initialize", "Initialization complete.");
   }
 
   navigate(tabNumber: number): void {
     switch (tabNumber) {
       case 1:
-        this.router.navigate(['home'], {relativeTo:this.route});
+        // this.active = 1;
+        this.router.navigate(['calendar'], {relativeTo:this.route});
         break;
       case 2:
-        this.router.navigate(['users'], {relativeTo:this.route});
+        this.active = 2;
+        this.router.navigate(['new-event'], {relativeTo:this.route});
         break;
       case 3:
+        // this.active = 3;
         this.router.navigate(['display'], {relativeTo:this.route});
         break;
       default:

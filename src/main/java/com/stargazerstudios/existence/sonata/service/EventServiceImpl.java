@@ -19,8 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
@@ -58,8 +58,24 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDTO getEventByDate(String date) throws EntityNotFoundException {
-        return null;
+    public List<EventDTO> getEventsByDate(String date) throws InvalidInputException {
+        LocalDate localDate;
+        try {
+            localDate = LocalDate.parse(date);
+        } catch (DateTimeParseException e) {
+            throw new InvalidInputException("date");
+        }
+
+
+        List<EventDTO> eventsList = new ArrayList<>();
+        List<Event> events = eventDAO.findEventsByDate(localDate);
+        if (!events.isEmpty()) {
+            for (Event event: events) {
+                EventDTO eventDTO = eventUtil.wrapEvent(event);
+                eventsList.add(eventDTO);
+            }
+        }
+        return eventsList;
     }
 
     @Override
@@ -72,8 +88,8 @@ public class EventServiceImpl implements EventService {
         System system;
         Set<Zone> zones = new HashSet<>();
         Set<EventType> eventTypes = new HashSet<>();
-        Date startDate;
-        Date endDate;
+        LocalDate startDate;
+        LocalDate endDate;
         String createdBy;
         String lastChangedBy;
 
@@ -130,16 +146,17 @@ public class EventServiceImpl implements EventService {
 
         // For the start date
         try {
-            startDate = new SimpleDateFormat("yyyy-MM-dd").parse(wEvent.getStart_date());
-        } catch (ParseException e) {
+            startDate = LocalDate.parse(wEvent.getStart_date());
+        } catch (DateTimeParseException e) {
             throw new InvalidInputException("start_date");
         }
 
+
         // For the end date
         try {
-            endDate = new SimpleDateFormat("yyyy-MM-dd").parse(wEvent.getEnd_date());
-        } catch (ParseException e) {
-            throw new InvalidInputException("end_date");
+            endDate = LocalDate.parse(wEvent.getEnd_date());
+        } catch (DateTimeParseException e) {
+            throw new InvalidInputException("start_date");
         }
 
         // For the users

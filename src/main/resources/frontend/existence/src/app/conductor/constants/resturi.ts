@@ -14,4 +14,10 @@ export class RestURI {
 
   public static GET_USER_INDEX: string = this.SERVER + "/concerto/login";
   public static GET_USER_USERNAME: string = this.SERVER + "/concerto/login";
+
+  public static GET_EVENTS_OF_DATE: string = this.SERVER + "/sonata/events/date";
+  public static POST_EVENT: string = this.SERVER + "/sonata/events/event";
+
+  public static GET_SYSTEMS_INDEX: string = this.SERVER + "/sonata/systems/index";
+  public static GET_EVENT_TYPES_INDEX: string = this.SERVER + "/sonata/event-types/index";
 }

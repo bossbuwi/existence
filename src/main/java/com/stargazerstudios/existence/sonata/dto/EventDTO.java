@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 @Getter @Setter @NoArgsConstructor
 public class EventDTO {
@@ -13,8 +13,8 @@ public class EventDTO {
     private String system;
     private ArrayList<String> zones;
     private ArrayList<String> event_types;
-    private Date start_date;
-    private Date end_date;
+    private LocalDate start_date;
+    private LocalDate end_date;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String jira_case;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

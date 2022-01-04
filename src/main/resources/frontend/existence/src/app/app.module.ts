@@ -21,6 +21,8 @@ import { SettingSysconfigComponent } from './symphony/components/setting/setting
 import { SettingUsersComponent } from './symphony/components/setting/setting-users/setting-users.component';
 import { SettingDisplayComponent } from './symphony/components/setting/setting-display/setting-display.component';
 import { SonataNavtabsComponent } from './sonata/components/sonata-navtabs/sonata-navtabs.component';
+import { SonataCalendarComponent } from './sonata/components/sonata-calendar/sonata-calendar.component';
+import { SonataEventComponent } from './sonata/components/sonata-event/sonata-event.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { SonataNavtabsComponent } from './sonata/components/sonata-navtabs/sonat
     SettingSysconfigComponent,
     SettingUsersComponent,
     SettingDisplayComponent,
-    SonataNavtabsComponent
+    SonataNavtabsComponent,
+    SonataCalendarComponent,
+    SonataEventComponent
   ],
   imports: [
     BrowserModule,

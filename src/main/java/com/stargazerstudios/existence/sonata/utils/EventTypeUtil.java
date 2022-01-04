@@ -9,7 +9,7 @@ public class EventTypeUtil {
 
     public EventTypeDTO wrapEventType(EventType eventType) {
         EventTypeDTO eventTypeDTO = new EventTypeDTO();
-        eventTypeDTO.setId(eventTypeDTO.getId());
+        eventTypeDTO.setId(eventType.getId());
         eventTypeDTO.setCode(eventType.getCode());
         eventTypeDTO.setName(eventType.getName());
         eventTypeDTO.setDescription(eventType.getDescription());

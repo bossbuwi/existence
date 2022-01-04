@@ -1,0 +1,126 @@
+<div class="container-fluid">
+  <div class="container-fluid form-title">
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-row">
+        <div class="form-group col-1 mr-2">
+          <label for="system">System</label>
+          <select class="custom-select" (change)="onSystemChange($event.target!)" id="system" name="system" formControlName="system">
+            <option *ngFor="let system of systems; let i = index" [value]="systems[i].global_prefix">
+              {{systems[i].global_prefix}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group col-1">
+          <label for="zones">Zones</label>
+          <div ngbDropdown id="zones">
+            <button class="btn btn-outline-secondary" ngbDropdownToggle>-Select-&nbsp;</button>
+            <div class="dropdown-menu" ngbDropdownMenu>
+              <div class="form-check ml-3" *ngFor="let zone of zones; let i = index">
+                <input class="form-check-input" type="checkbox" [value]="zones[i]">
+                <label class="form-check-label" for="defaultCheck1">
+                  {{zones[i]}}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-2">
+          <label for="eventTypes">Event Types</label>
+          <div ngbDropdown id="eventTypes">
+            <button class="btn btn-outline-secondary" ngbDropdownToggle>-Select-&nbsp;</button>
+            <div class="dropdown-menu" ngbDropdownMenu>
+              <div class="form-check ml-2 mr-2" *ngFor="let eventType of eventTypes; let i = index">
+                <input class="form-check-input" type="checkbox" [value]="eventTypes[i]">
+                <label class="form-check-label">
+                  {{eventTypes[i].name}}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- <div class="container-fluid">
+  <div class="container-fluid form-title">
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-row">
+        <div class="form-group col-1">
+          <label for="system">System</label>
+          <select class="custom-select" (change)="onSystemChange($event.target!)" id="system" name="system" formControlName="system">
+            <option *ngFor="let system of systems; let i = index" [value]="systems[i].globalPrefix">
+              {{systems[i].globalPrefix}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group col-2">
+          <label for="zone">Zone</label>
+          <select class="custom-select" id="zone" name="zone" formControlName="zone">
+            <option *ngFor="let zone of zones; let i = index" [value]="zones[i]">
+              {{zones[i]}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group col-3">
+          <label for="type">Event Type</label>
+          <select class="custom-select" (change)="onEventChange($event.target!)" id="type" name="type" formControlName="type">
+            <option *ngFor="let eventCode of eventCodes; let i = index" [value]="eventCodes[i]">
+              {{eventCodes[i]}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group col">
+          <label for="jiracase">JIRA Case</label>
+          <input type="text" class="form-control" id="jiraCase" name="jiraCase" aria-describedby="jiracaseHelp" formControlName="jiraCase">
+          <small id="jiracaseHelp" class="form-text text-muted">Please use comma and space to separate entries. e.g. MD-12345, MD-12346</small>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-2">
+          <label for="startDate">Start Date</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd" id="startDate" name="startDate" ngbDatepicker #startDate="ngbDatepicker" aria-describedby="startDateHelp" formControlName="startDate">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" (click)="startDate.toggle()" type="button">Calendar</button>
+            </div>
+          </div>
+          <small id="startDateHelp" class="form-text text-muted">Please use the suggested date format or pick from the calendar.</small>
+        </div>
+        <div class="form-group col-2">
+          <label for="startDate">End Date</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd" id="endDate" name="endDate" ngbDatepicker #endDate="ngbDatepicker" aria-describedby="endDateHelp" formControlName="endDate">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" (click)="endDate.toggle()" type="button">Calendar</button>
+            </div>
+          </div>
+          <small id="endDateHelp" class="form-text text-muted">Please use the suggested date format or pick from the calendar.</small>
+        </div>
+        <div class="form-group col">
+          <label for="featureon">Features turned ON</label>
+          <input type="text" class="form-control" id="featureon" name="featureon" aria-describedby="featureonHelp" formControlName="featureOn">
+          <small id="featureonHelp" class="form-text text-muted">Please use comma and space to separate mutiple entries. e.g. CAP205, CAP207</small>
+        </div>
+        <div class="form-group col">
+          <label for="featureoff">Features turned OFF</label>
+          <input type="text" class="form-control" id="featureoff" name="featureoff" aria-describedby="featureoffHelp" formControlName="featureOff">
+          <small id="featureoffHelp" class="form-text text-muted">Please use comma and space to separate mutiple entries. e.g. CRE010, CSW220</small>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col">
+          <label for="featureon">Compiled Sources</label>
+          <input type="text" class="form-control" id="compiledsources" name="featureon" aria-describedby="compiledsourcesHelp" formControlName="compiledSources">
+          <small id="compiledsourcesHelp" class="form-text text-muted">Please use comma and space to separate mutiple entries. e.g. LEC06A, FTC0630</small>
+        </div>
+        <div class="form-group col">
+          <label for="apiused">APIs Used</label>
+          <input type="text" class="form-control" id="apiused" name="apiused" aria-describedby="apiusedHelp" formControlName="apiUsed">
+          <small id="apiusedHelp" class="form-text text-muted">Please use comma and space to separate mutiple entries. e.g. OPAY, IPAY</small>
+        </div>
+      </div>
+      <button type="submit" class="btn" [disabled]="eventForm.invalid">Submit</button>
+    </form>
+  </div>
+</div> -->

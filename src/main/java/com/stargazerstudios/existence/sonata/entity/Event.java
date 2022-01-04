@@ -6,7 +6,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -19,10 +20,10 @@ public class Event {
     private long id;
 
     @Column(name = "start_date", columnDefinition = "DATE")
-    private Date startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date", columnDefinition = "DATE")
-    private Date endDate;
+    private LocalDate endDate;
 
     @Column(name = "jira_case")
     private String jiraCase;
@@ -67,7 +68,8 @@ public class Event {
                     @JoinColumn(name = "zone_id", referencedColumnName = "id")
             }
     )
-    private Set<Zone> zones;
+    @OrderBy("id")
+    private Set<Zone> zones = new LinkedHashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -79,5 +81,6 @@ public class Event {
                     @JoinColumn(name = "event_type_id", referencedColumnName = "id")
             }
     )
-    private Set<EventType> eventTypes;
+    @OrderBy("id")
+    private Set<EventType> eventTypes = new LinkedHashSet<>();
 }

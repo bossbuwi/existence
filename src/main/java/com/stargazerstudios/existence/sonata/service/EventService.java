@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface EventService {
     List<EventDTO> getAllEvents();
-    EventDTO getEventByDate(String date) throws EntityNotFoundException;
+    List<EventDTO> getEventsByDate(String date) throws InvalidInputException;
     EventDTO createEvent(EventWrapper event) throws EntityNotFoundException, InvalidInputException;
     EventDTO updateEvent(EventWrapper event) throws EntityNotFoundException;
 }

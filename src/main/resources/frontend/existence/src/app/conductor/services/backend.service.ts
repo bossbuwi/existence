@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
+import { DatePipe } from '@angular/common';
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 
 import { LoggerService } from 'src/app/conductor/services/logger.service';
 import { User } from 'src/app/symphony/models/user';
@@ -8,6 +10,9 @@ import { RestURI } from 'src/app/conductor/constants/resturi';
 import { RestError } from 'src/app/conductor/models/error';
 import { AuthProps, RequestStatus } from 'src/app/conductor/constants/properties';
 import { Setting } from 'src/app/symphony/models/setting';
+import { Event } from 'src/app/sonata/models/event';
+import { EventType } from 'src/app/sonata/models/eventtype';
+import { System } from 'src/app/sonata/models/system';
 
 @Injectable({
   providedIn: 'root'
@@ -191,7 +196,6 @@ export class BackendService {
             this.logger.logVerbose(this.className, "putSettings", "Server reply unknown.");
             this.settingsSub.next(RequestStatus.ERROR);
           }
-          this.settingsSub.next(RequestStatus.OK);
         },
       error: error => {
           this.serverError = error.error;
@@ -205,6 +209,64 @@ export class BackendService {
           this.logger.logVerbose(this.className, "putSettings", "Server communications complete.");
         }
     });
+  }
+
+  /*
+   * Below are methods related to calendar
+  */
+
+  getEventsOnDate(date: Date): Observable<Event[]> {
+    this.logger.logVerbose(this.className, "getEventsOnDate", "Building HTTP parameters.");
+    let pipe: DatePipe = new DatePipe('en-US');
+    let fDate: string = pipe.transform(date, 'yyyy-MM-dd')!;
+    const params: HttpParams = new HttpParams()
+      .set('date', fDate);
+    this.logger.logVerbose(this.className, "getEventsOnDate", "Building rxjs observable.");
+    return this.http.get<Event[]>(RestURI.GET_EVENTS_OF_DATE, {params}).pipe(
+      map(res => {
+        let events: Event[] = [];
+        if (res.length > 0) {
+          for (let i = 0; i < res.length; i++) {
+            let event: Event = new Event(res[i]);
+            event.stringify();
+            events.push(event);
+          }
+        }
+        return events;
+      }),
+      catchError(error => {
+        this.logger.logVerbose(this.className, "getEventsOnDate", "Error encountered.");
+        this.logger.logVerbose(this.className, "getEventsOnDate", error);
+        this.logger.logVerbose(this.className, "getEventsOnDate", "Replacing error with valid empty object.");
+        return of([])
+      })
+    );
+  }
+
+  /*
+   * Below are methods that are related to event CRUD
+  */
+
+  getEventTypes(): Observable<EventType[]> {
+    return this.http.get<EventType[]>(RestURI.GET_EVENT_TYPES_INDEX).pipe(
+      catchError(error => {
+        this.logger.logVerbose(this.className, "getEventTypes", "Error encountered.");
+        this.logger.logVerbose(this.className, "getEventTypes", error);
+        this.logger.logVerbose(this.className, "getEventTypes", "Replacing error with valid empty object.");
+        return of([])
+      })
+    );
+  }
+
+  getSystems(): Observable<System[]> {
+    return this.http.get<System[]>(RestURI.GET_SYSTEMS_INDEX).pipe(
+      catchError(error => {
+        this.logger.logVerbose(this.className, "getEventTypes", "Error encountered.");
+        this.logger.logVerbose(this.className, "getEventTypes", error);
+        this.logger.logVerbose(this.className, "getEventTypes", "Replacing error with valid empty object.");
+        return of([])
+      })
+    );
   }
 
   /*

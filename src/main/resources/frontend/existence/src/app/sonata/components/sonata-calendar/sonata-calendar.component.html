@@ -1,0 +1,122 @@
+<div class="row">
+  <!-- Row 1, Column 1
+    -- This is the column for the calendar -->
+  <div class="col">
+    <!-- Row 1, Column 1, Row 1-->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-5">
+          <ul class="list-group-flush">
+            <li class="list-group-item"><small class="reminder">Click a date on the calendar to display the events for that day.</small></li>
+            <li class="list-group-item"><small class="reminder">Click an event (if there are any) on the table to right of the calendar to display its details</small></li>
+          </ul>
+        </div>
+        <div class="col">
+          <ngb-datepicker #picker [(ngModel)]="calendar" (dateSelect)="onDateSelection($event)" outsideDays="hidden"></ngb-datepicker>
+        </div>
+      </div>
+      <!-- End of Row 1, Column 1, Row 1-->
+      <!-- Row 1, Column 1, Row 2-->
+      <div class="row">
+        <div class="col-12">
+          <form *ngIf="hasEvents">
+            <div class="form-row">
+              <div class="form-group col">
+                <label for="username">Username</label>
+                <input type="text" [ngModel]="eventDetail.last_changed_by" class="form-control form-control-sm" id="username" name="username" disabled>
+              </div>
+              <div class="form-group col">
+                <label for="zone">Zone</label>
+                <input type="text" [ngModel]="eventDetail.zonesStr" class="form-control form-control-sm" id="zone" name="zone" disabled>
+              </div>
+              <div class="form-group col">
+                <label for="eventtype">Event Type</label>
+                <input type="text" [ngModel]="eventDetail.event_typesStr" class="form-control form-control-sm" id="eventtype" name="eventtype" disabled>
+              </div>
+              <div class="form-group col">
+                <label for="jiracase">JIRA Case</label>
+                <input type="text" [ngModel]="eventDetail.jira_case" class="form-control form-control-sm" id="jiracase" name="jiracase" disabled>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-3">
+                <label for="startdate">Start Date</label>
+                <input type="text" [ngModel]="eventDetail.start_date" class="form-control form-control-sm" id="startdate" name="startdate" disabled>
+              </div>
+              <div class="form-group col-3">
+                <label for="enddate">End Date</label>
+                <input type="text" [ngModel]="eventDetail.end_date" class="form-control form-control-sm" id="enddate" name="enddate" disabled>
+              </div>
+              <div class="form-group col-6">
+                <label for="apiused">APIs Used</label>
+                <input type="text" [ngModel]="eventDetail.api_used" class="form-control form-control-sm" id="apiused" name="apiused" disabled>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label for="featureon">Features turned ON</label>
+                <input type="text" [ngModel]="eventDetail.features_on" class="form-control form-control-sm" id="featureon" name="featureon" disabled>
+              </div>
+              <div class="form-group col-6">
+                <label for="featureoff">Features turned OFF</label>
+                <input type="text" [ngModel]="eventDetail.features_off" class="form-control form-control-sm" id="featureoff" name="featureoff" disabled>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col">
+                <label for="featureon">Compiled Sources</label>
+                <input type="text" [ngModel]="eventDetail.compiled_sources" class="form-control form-control-sm" id="compiledSources" name="compiledSources" disabled>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- End of Row 1, Column 1, Row 2-->
+    </div>
+  </div>
+  <!-- End of Row 1, Column 1-->
+  <!-- Row 1, Column 2
+    -- This is the column for the event details
+    -- selected by the user from column 1 of
+    -- the same row. -->
+  <div class="col">
+    <table class="table table-hover" *ngIf="hasEvents">
+      <thead>
+        <tr class="d-flex">
+          <th scope="col" class="col-2">User</th>
+          <th scope="col" class="col-3">System-Zone</th>
+          <th scope="col" class="col-3">Event</th>
+          <th scope="col" class="col-2">Start Date</th>
+          <th scope="col" class="col-2">End Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="d-flex" *ngFor="let event of events; index as i" (click)="rowClicked(i)">
+          <!-- <ng-template #popTitle>Options</ng-template> -->
+          <!-- <ng-template #popContent>
+            <small *ngIf="!isOnline">Please log in to access.</small>
+            <a class="pLink text-primary" (click)="editEvent(event._id)" *ngIf="isOnline">Edit</a>
+          </ng-template> -->
+          <th class="col-2" scope="row"><a>{{ event.last_changed_by }}</a></th>
+          <td class="col-3"><a>{{ event.system + '/' + event.zonesStr }}</a></td>
+          <td class="col-3"><a>{{ event.event_typesStr }}</a></td>
+          <td class="col-2"><a>{{ event.start_date }}</a></td>
+          <td class="col-2"><a>{{ event.end_date }}</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="container-fluid" *ngIf="!hasEvents">
+      <h6 class="list-title">There are no events for the day. Below are some of the things that you can do.</h6>
+      <ul class="list-group">
+        <li class="list-group-item">Grab a coffee. ☕</li>
+        <li class="list-group-item">Submit your timesheet &#8987;(if it's the end of week).</li>
+        <li class="list-group-item">Have a conversation with a friend. 🗣</li>
+        <li class="list-group-item">Help someone in need. 😢</li>
+        <li class="list-group-item">Cook a nice meal. 🍲</li>
+        <li class="list-group-item">Eat a bread with cheese. 🍞🧀</li>
+        <li class="list-group-item">Or continue waiting, maybe the events are yet to be loaded. ↻</li>
+      </ul>
+    </div>
+  </div>
+  <!-- End of Row 1, Column 2 -->
+</div>
