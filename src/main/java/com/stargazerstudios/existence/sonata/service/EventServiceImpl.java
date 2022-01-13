@@ -107,6 +107,7 @@ public class EventServiceImpl implements EventService {
         }
 
         // For zones
+        if (wEvent.getZones().length <= 0) throw new InvalidInputException("zones");//check if zones are empty
         ArrayList<String> wZonePrefixes = new ArrayList<>(Arrays.asList(wEvent.getZones())); //array from request
         if (hasDuplicates(wZonePrefixes)) throw new InvalidInputException("zones"); //check if array has duplicates
         ArrayList<Zone> dbZones = new ArrayList<>(system.getZones()); //array of zones from database
@@ -126,6 +127,7 @@ public class EventServiceImpl implements EventService {
         }
 
         // For event types
+        if (wEvent.getEvent_types().length <= 0) throw new InvalidInputException("event_types"); //check if event types are empty
         ArrayList<String> wEventTypes = new ArrayList<>(Arrays.asList(wEvent.getEvent_types())); //array from request
         if (hasDuplicates(wEventTypes)) throw new InvalidInputException("event_types"); //check if array has duplicates
         ArrayList<EventType> dbEventTypes = new ArrayList<>(eventTypeDAO.findAll()); //array of event types from database
@@ -151,13 +153,15 @@ public class EventServiceImpl implements EventService {
             throw new InvalidInputException("start_date");
         }
 
-
         // For the end date
         try {
             endDate = LocalDate.parse(wEvent.getEnd_date());
         } catch (DateTimeParseException e) {
-            throw new InvalidInputException("start_date");
+            throw new InvalidInputException("end_date");
         }
+
+        // Compare start and end dates, start date must not be later than end date
+        if (startDate.isAfter(endDate)) throw new InvalidInputException("start_date");
 
         // For the users
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -183,8 +187,111 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDTO updateEvent(EventWrapper event) throws EntityNotFoundException {
-        return null;
+    public EventDTO updateEvent(EventWrapper eventWrapper) throws EntityNotFoundException, InvalidInputException {
+        EventWrapper wEvent;
+        wEvent = eventWrapper;
+
+        Optional<Event> eventData = eventDAO.findById(wEvent.getId());
+        if (!eventData.isPresent()) throw new EntityNotFoundException("Event with id: " + wEvent.getId() + " not found.");
+        Event event = eventData.get();
+
+        // Create fields to be used for the new event
+        System system;
+        Set<Zone> zones = new HashSet<>();
+        Set<EventType> eventTypes = new HashSet<>();
+        LocalDate startDate;
+        LocalDate endDate;
+        String lastChangedBy;
+
+        // For the system
+        String wGlobalPrefix = wEvent.getSystem();
+        if (wGlobalPrefix != null && !wGlobalPrefix.isEmpty()) {
+            Optional<System> systemData = systemDAO.findByGlobalPrefix(wGlobalPrefix);
+            if (systemData.isPresent()) {
+                system = systemData.get();
+            } else {
+                throw new EntityNotFoundException("System with global prefix: " + wGlobalPrefix + " not found.");
+            }
+        } else {
+            throw new InvalidInputException("system");
+        }
+
+        // For zones
+        if (wEvent.getZones().length <= 0) throw new InvalidInputException("zones");//check if zones are empty
+        ArrayList<String> wZonePrefixes = new ArrayList<>(Arrays.asList(wEvent.getZones())); //array from request
+        if (hasDuplicates(wZonePrefixes)) throw new InvalidInputException("zones"); //check if array has duplicates
+        ArrayList<Zone> dbZones = new ArrayList<>(system.getZones()); //array of zones from database
+        ArrayList<String> dbZonePrefixes = new ArrayList<>();
+
+        for (Zone zone : dbZones) {
+            dbZonePrefixes.add(zone.getZonalPrefix());
+        }
+
+        for (int i = 0; i < wZonePrefixes.size(); i++) {
+            if (dbZonePrefixes.contains(wZonePrefixes.get(i))) {
+                zones.add(dbZones.get(i));
+            } else {
+                throw new EntityNotFoundException("System with global prefix "
+                        + wGlobalPrefix + " does not have a zone with prefix: " + wZonePrefixes.get(i));
+            }
+        }
+
+
+        // For event types
+        if (wEvent.getEvent_types().length <= 0) throw new InvalidInputException("event_types");//check if event types are empty
+        ArrayList<String> wEventTypes = new ArrayList<>(Arrays.asList(wEvent.getEvent_types())); //array from request
+        if (hasDuplicates(wEventTypes)) throw new InvalidInputException("event_types"); //check if array has duplicates
+        ArrayList<EventType> dbEventTypes = new ArrayList<>(eventTypeDAO.findAll()); //array of event types from database
+        ArrayList<String> dbEventTypeCodes = new ArrayList<>();
+
+        for (EventType eventType : dbEventTypes) {
+            dbEventTypeCodes.add(eventType.getCode());
+        }
+
+        for (int i = 0; i < wEventTypes.size(); i++) {
+            if (dbEventTypeCodes.contains(wEventTypes.get(i))) {
+                eventTypes.add(dbEventTypes.get(i));
+            } else {
+                throw new EntityNotFoundException("Event type with code: "
+                        + wEventTypes.get(i) + " not found.");
+            }
+        }
+
+        // For the start date
+        try {
+            startDate = LocalDate.parse(wEvent.getStart_date());
+        } catch (DateTimeParseException e) {
+            throw new InvalidInputException("start_date");
+        }
+
+        // For the end date
+        try {
+            endDate = LocalDate.parse(wEvent.getEnd_date());
+        } catch (DateTimeParseException e) {
+            throw new InvalidInputException("end_date");
+        }
+
+        // Compare start and end dates, start date must not be later than end date
+        if (startDate.isAfter(endDate)) throw new InvalidInputException("start_date");
+
+        // For the users
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        lastChangedBy = auth.getName();
+
+        // Finally, update the event to be saved and returned to the client
+        event.setSystem(system);
+        event.setZones(zones);
+        event.setEventTypes(eventTypes);
+        event.setStartDate(startDate);
+        event.setEndDate(endDate);
+        event.setJiraCase(wEvent.getJira_case());
+        event.setFeaturesOn(wEvent.getFeatures_on());
+        event.setFeaturesOff(wEvent.getFeatures_off());
+        event.setCompiledSources(wEvent.getCompiled_sources());
+        event.setApiUsed(wEvent.getApi_used());
+        event.setApiUsed(wEvent.getApi_used());
+        event.setLastChangedBy(lastChangedBy);
+        return eventUtil.wrapEvent(eventDAO.saveAndFlush(event));
     }
 
     private <T> boolean hasDuplicates(Iterable<T> all) {

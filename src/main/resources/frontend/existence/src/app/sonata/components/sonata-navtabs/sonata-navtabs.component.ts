@@ -20,7 +20,7 @@ export class SonataNavtabsComponent implements OnInit {
 
   private initialize() {
     this.logger.logVerbose(this.className, "initialize", "Initializing component.");
-    this.navigate(2);
+    this.navigate(1);
     this.logger.logVerbose(this.className, "initialize", "Initialization complete.");
   }
 

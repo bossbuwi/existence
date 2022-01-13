@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 import { RequestStatus } from 'src/app/conductor/constants/properties';
 import { Setting } from 'src/app/symphony/models/setting';
@@ -24,17 +24,21 @@ export class BootService {
   private logLevelStatus!: Subject<number>;
   private validateConstellationsStatus!: Subject<number>;
   private constellations!: string[];
+  private logLevelSub!: Subject<Setting>;
 
   constructor(private http: HttpClient) {
     this.initialize();
   }
 
+  // the http methods need a rework
+  // pattern it after backend's calendar methods
   private initialize() {
     this.logger("initialize", "Initializing service.");
     this.bootStatus = new Subject<number>();
     this.serverCheckStatus = new Subject<number>();
     this.logLevelStatus = new Subject<number>();
     this.validateConstellationsStatus = new Subject<number>();
+    this.logLevelSub = new Subject<Setting>();
     this.serverError = new RestError();
     this.backendDetails = new Existence();
     this.logLevel = new Setting();
@@ -57,6 +61,7 @@ export class BootService {
           if (status === RequestStatus.DONE) {
             this.logger('startup', 'Startup done.');
             this.logger('startup', 'Promise is kept.');
+            this.appStatus = RequestStatus.OK
             resolve(true);
           } else {
             this.logger('startup', 'Startup done.');
@@ -184,6 +189,7 @@ export class BootService {
         if (data) {
           this.logger('fetchLogLevel', "Data received.");
           this.logLevel = data;
+          this.logLevelSub.next(this.logLevel);
           this.logLevelStatus.next(RequestStatus.DONE);
         } else {
           this.logger('fetchLogLevel', "Server reply unknown.");
@@ -197,6 +203,10 @@ export class BootService {
         this.logLevelStatus.next(RequestStatus.ERROR);
       }
     });
+  }
+
+  subLogLevel(): Observable<Setting> {
+    return this.logLevelSub.asObservable();
   }
 
   getAppStatus(): number {

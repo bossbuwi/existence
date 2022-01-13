@@ -11,5 +11,5 @@ public interface EventService {
     List<EventDTO> getAllEvents();
     List<EventDTO> getEventsByDate(String date) throws InvalidInputException;
     EventDTO createEvent(EventWrapper event) throws EntityNotFoundException, InvalidInputException;
-    EventDTO updateEvent(EventWrapper event) throws EntityNotFoundException;
+    EventDTO updateEvent(EventWrapper event) throws EntityNotFoundException, InvalidInputException;
 }

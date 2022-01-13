@@ -19,15 +19,15 @@ export class LoggerService {
 
   private initialize() {
     this.logVerbose(this.className, "initialize", "Initializing service.");
-    let appStatus: number = this.boot.getAppStatus();
-    if (appStatus === RequestStatus.ERROR) {
-      this.loggingLevel = LoggingLevel.VERBOSE;
-      this.logError(this.className, "initialize", "Application is in a state of error.");
-    } else {
-      let logLevel: Setting = this.boot.getLogLevel();
-      this.loggingLevel = logLevel.value;
-      this.logVerbose(this.className, "initialize", "Initialization complete.");
-    }
+    // this is a temporary workaround for the frontend to respect the logging level
+    // set in the database
+    // the correct solution would be to totally rework the boot service and pattern
+    // the http methods after the backend service's calendar methods
+    this.boot.subLogLevel().subscribe({
+      next: data => {
+        this.loggingLevel = data.value
+      }
+    });
   }
 
   private shouldLog(level: LoggingLevel) {

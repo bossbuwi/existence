@@ -269,6 +269,10 @@ export class BackendService {
     );
   }
 
+  postEvent(event: Event): Observable<Event> {
+    return this.http.post<Event>(RestURI.POST_EVENT, event).pipe();
+  }
+
   /*
    * Below are methods that allow other classes to access this service's private fields.
   */

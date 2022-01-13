@@ -24,6 +24,8 @@ import { SonataNavtabsComponent } from './sonata/components/sonata-navtabs/sonat
 import { SonataCalendarComponent } from './sonata/components/sonata-calendar/sonata-calendar.component';
 import { SonataEventComponent } from './sonata/components/sonata-event/sonata-event.component';
 
+// TODO Fix logger service not respecting the setting on the database
+// This is because the logger service is prematurely called before the boot service has a chance to fetch the log level.
 @NgModule({
   declarations: [
     AppComponent,
