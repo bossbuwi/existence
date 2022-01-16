@@ -10,6 +10,7 @@ import com.stargazerstudios.existence.sonata.entity.Zone;
 import com.stargazerstudios.existence.sonata.repository.EventDAO;
 import com.stargazerstudios.existence.sonata.repository.EventTypeDAO;
 import com.stargazerstudios.existence.sonata.repository.SystemDAO;
+import com.stargazerstudios.existence.sonata.utils.EventExporterUtil;
 import com.stargazerstudios.existence.sonata.utils.EventUtil;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -37,6 +42,9 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private EventUtil eventUtil;
+
+    @Autowired
+    private EventExporterUtil exporterUtil;
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
@@ -292,6 +300,18 @@ public class EventServiceImpl implements EventService {
         event.setApiUsed(wEvent.getApi_used());
         event.setLastChangedBy(lastChangedBy);
         return eventUtil.wrapEvent(eventDAO.saveAndFlush(event));
+    }
+
+    @Override
+    public void exportEvents(HttpServletResponse response) throws IOException {
+        List<Event> events = eventDAO.findAll();
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=events_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        exporterUtil.exportToWorkbook(response, events);
     }
 
     private <T> boolean hasDuplicates(Iterable<T> all) {

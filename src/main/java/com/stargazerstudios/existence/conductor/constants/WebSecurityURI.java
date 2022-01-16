@@ -6,7 +6,6 @@ public class WebSecurityURI {
         public static String URI_LOGIN = "/concerto/login";
         public static String URI_CONCERTO = "/conductor/**";
         public static String URI_FRONTEND_ROOT = "/*";
-        public static String URI_FRONTEND_PATHS = "/*/*";
-        public static String URI_TEST = "/test/**";
+        public static String URI_TEST = "/sonata/events/export";
     }
 }

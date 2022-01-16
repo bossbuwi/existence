@@ -5,6 +5,8 @@ import com.stargazerstudios.existence.conductor.erratum.universal.InvalidInputEx
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 public interface EventService {
@@ -12,4 +14,5 @@ public interface EventService {
     List<EventDTO> getEventsByDate(String date) throws InvalidInputException;
     EventDTO createEvent(EventWrapper event) throws EntityNotFoundException, InvalidInputException;
     EventDTO updateEvent(EventWrapper event) throws EntityNotFoundException, InvalidInputException;
+    void exportEvents(HttpServletResponse response) throws IOException;
 }
