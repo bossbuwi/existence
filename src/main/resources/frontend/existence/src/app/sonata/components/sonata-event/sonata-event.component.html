@@ -1,16 +1,20 @@
 <div class="container-fluid">
-  <h3>Event</h3>
-  <div class="row">
+  <h3 *ngIf="formStatus != 4">Create Event</h3>
+  <div class="row" *ngIf="formStatus != 4">
     <div class="col">
       <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="mt-2" novalidate>
         <div class="form-row">
-          <div class="form-group col-2 mr-2">
+          <div class="form-group col-5 mr-5">
             <label for="system">System</label>
             <select class="custom-select" (change)="onSystemChange($event.target!)" id="system" name="system" formControlName="system">
               <option *ngFor="let system of systems; let i = index" [value]="systems[i].global_prefix">
                 {{systems[i].global_prefix}}
               </option>
             </select>
+          </div>
+          <div class="form-group col-5">
+            <label for="featureoff">JIRA Case</label>
+            <input type="text" class="form-control" id="jiracase" name="jiracase" aria-describedby="jiracaseHelp" formControlName="jiraCase">
           </div>
         </div>
         <div class="form-row">
@@ -41,8 +45,8 @@
                 <div formArrayName="types" class="form-array">
                   <div *ngFor="let type of types.controls; let i=index" class="container-fluid">
                     <div [formGroupName]="i" class="container-fluid">
-                      <input type="checkbox" class="form-check-input" id="{{i}}" formControlName="checked" (change)="onEventTypeChange($event)" [checked]="type.get('checked')?.value">
-                      <label class="form-check-label" for="{{i}}">
+                      <input type="checkbox" class="form-check-input" id="eventType{{i}}" formControlName="checked" (change)="onEventTypeChange($event)" [checked]="type.get('checked')?.value">
+                      <label class="form-check-label" for="eventType{{i}}">
                         {{type.get('name')?.value}}
                       </label>
                     </div>
@@ -99,11 +103,75 @@
             <small id="compiledsourcesHelp" class="form-text text-muted">Please use comma and space to separate mutiple entries. e.g. LEC06A, FTC0630</small>
           </div>
         </div>
-        <button type="submit" class="btn btn-outline-primary mt-3 mb-5" [disabled]="eventForm.invalid">Submit</button>
+        <button type="submit" class="btn mt-3 mb-5" [disabled]="eventForm.invalid"
+          [ngClass]="{'btn-light':eventForm.invalid, 'btn-primary':eventForm.valid}">Submit</button>
       </form>
     </div>
-    <div class="col-3">
-      The results will be placed here.
+  </div>
+  <h3 *ngIf="formStatus == 4">New Event Created</h3>
+  <div class="row" *ngIf="formStatus == 4">
+    <div class="col-6">
+      <table class="table table-striped table-hover table-sm">
+        <tbody>
+          <tr>
+            <th scope="row">System</th>
+            <td>{{event.system}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Zones</th>
+            <td>{{event.zonesStr}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Event Types</th>
+            <td>{{event.event_typesStr}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Start Date</th>
+            <td>{{event.start_date}}</td>
+          </tr>
+          <tr>
+            <th scope="row">End Date</th>
+            <td>{{event.end_date}}</td>
+          </tr>
+          <tr>
+            <th scope="row">JIRA Case</th>
+            <td>{{event.jira_case}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Features On</th>
+            <td>{{event.features_on}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Features Off</th>
+            <td>{{event.features_off}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Compiled Sources</th>
+            <td>{{event.compiled_sources}}</td>
+          </tr>
+          <tr>
+            <th scope="row">API Used</th>
+            <td>{{event.api_used}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Created By</th>
+            <td>{{event.created_by}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Creation Date</th>
+            <td>{{event.creation_date}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Last Modified By</th>
+            <td>{{event.last_changed_by}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Last Modified Date</th>
+            <td>{{event.last_changed_date}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
+  <!-- <button type="button" class="btn btn-primary" *ngIf="formStatus == 4" (click)="navigateToCalendar()">Back to Calendar</button> -->
 </div>

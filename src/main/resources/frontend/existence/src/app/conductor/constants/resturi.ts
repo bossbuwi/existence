@@ -1,6 +1,11 @@
 export class RestURI {
   public static SERVER: string = "http://localhost:8080";
 
+  public static TEST_GET_ERROR: string = this.SERVER + "/conductor/erratum/get";
+  public static TEST_POST_ERROR: string = this.SERVER + "/conductor/erratum/post";
+  public static TEST_PUT_ERROR: string = this.SERVER + "/conductor/erratum/put";
+  public static TEST_DELETE_ERROR: string = this.SERVER + "/conductor/erratum/delete";
+
   public static GET_INIT_HANDSHAKE: string = this.SERVER + "/conductor/init";
   public static GET_INIT_LOGLEVEL: string = this.SERVER + "/conductor/loglevel";
 
@@ -17,6 +22,8 @@ export class RestURI {
 
   public static GET_EVENTS_OF_DATE: string = this.SERVER + "/sonata/events/date";
   public static POST_EVENT: string = this.SERVER + "/sonata/events/event";
+
+  public static GET_REPORT: string = this.SERVER + "/sonata/events/export";
 
   public static GET_SYSTEMS_INDEX: string = this.SERVER + "/sonata/systems/index";
   public static GET_EVENT_TYPES_INDEX: string = this.SERVER + "/sonata/event-types/index";

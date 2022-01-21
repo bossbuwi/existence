@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -160,7 +160,6 @@ export class BackendService {
           if (data) {
             this.logger.logVerbose(this.className, "getSettings", "Data received from server.");
             this.data = data;
-            console.log(data);
             this.settingsSub.next(RequestStatus.OK);
           } else {
             this.logger.logVerbose(this.className, "getSettings", "Server reply unknown.");
@@ -190,7 +189,6 @@ export class BackendService {
           if (data) {
             this.logger.logVerbose(this.className, "putSettings", "Data received from server.");
             this.data = data;
-            console.log(data);
             this.settingsSub.next(RequestStatus.OK);
           } else {
             this.logger.logVerbose(this.className, "putSettings", "Server reply unknown.");
@@ -248,6 +246,7 @@ export class BackendService {
   */
 
   getEventTypes(): Observable<EventType[]> {
+    this.logger.logVerbose(this.className, "getEventTypes", "Building rxjs observable.");
     return this.http.get<EventType[]>(RestURI.GET_EVENT_TYPES_INDEX).pipe(
       catchError(error => {
         this.logger.logVerbose(this.className, "getEventTypes", "Error encountered.");
@@ -259,6 +258,7 @@ export class BackendService {
   }
 
   getSystems(): Observable<System[]> {
+    this.logger.logVerbose(this.className, "getSystems", "Building rxjs observable.");
     return this.http.get<System[]>(RestURI.GET_SYSTEMS_INDEX).pipe(
       catchError(error => {
         this.logger.logVerbose(this.className, "getEventTypes", "Error encountered.");
@@ -270,7 +270,17 @@ export class BackendService {
   }
 
   postEvent(event: Event): Observable<Event> {
+    this.logger.logVerbose(this.className, "postEvent", "Building rxjs observable.");
     return this.http.post<Event>(RestURI.POST_EVENT, event).pipe();
+  }
+
+  /*
+   * Reports
+  */
+
+  getReport(): Observable<HttpResponse<Blob>> {
+    this.logger.logVerbose(this.className, "getReport", "Building rxjs observable.");
+    return this.http.get<Blob>(RestURI.GET_REPORT, { observe: 'response', responseType: 'blob' as 'json' }).pipe();
   }
 
   /*

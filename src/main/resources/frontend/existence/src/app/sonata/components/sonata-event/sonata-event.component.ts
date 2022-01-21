@@ -8,6 +8,7 @@ import { System } from '../../models/system';
 import { EventType } from '../../models/eventtype';
 import { Event } from '../../models/event';
 import { DatePipe } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-sonata-event',
@@ -37,6 +38,7 @@ export class SonataEventComponent implements OnInit {
     this.formStatus = FormStatus.UNKNOWN;
     this.getData();
     this.eventForm = this.createEventForm();
+    this.formStatus = FormStatus.INSERT;
     this.logger.logVerbose(this.className, "initialize", "Initialization complete.");
   }
 
@@ -46,14 +48,12 @@ export class SonataEventComponent implements OnInit {
     this.backend.getEventTypes().subscribe({
       next: res => {
         this.eventTypes = res;
-        console.log(this.eventTypes)
         this.populateEventTypes();
       }
     });
     this.backend.getSystems().subscribe({
       next: res => {
         this.systems = res;
-        console.log(this.systems)
       }
     });
   }
@@ -216,6 +216,10 @@ export class SonataEventComponent implements OnInit {
     });
   }
 
+  navigateToCalendar() {
+
+  }
+
   private formPending(): void {
     this.formStatus = FormStatus.LOADING;
     this.eventForm.disable();
@@ -223,6 +227,9 @@ export class SonataEventComponent implements OnInit {
 
   private formInsert(): void {
     this.formStatus = FormStatus.INSERT
+    // // TODO: Needs to clear form values before reenabling again.
+    this.eventForm.reset();
+    this.populateEventTypes();
     this.eventForm.enable();
     this.eventForm.get('zoneText')?.disable();
     this.eventForm.get('typeText')?.disable();
@@ -234,6 +241,9 @@ export class SonataEventComponent implements OnInit {
 
   private formComplete(data: Event): void {
     this.eventForm.disable();
+    let formData: Event = new Event(data);
+    this.event = formData.stringify();
+    this.formStatus = FormStatus.DONE;
   }
 
   private getStringDate(datepicker: NgbDate): string {

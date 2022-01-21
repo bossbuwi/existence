@@ -9,6 +9,7 @@ import com.stargazerstudios.existence.sonata.entity.Zone;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -19,8 +20,8 @@ public class EventUtil {
     public EventDTO wrapEvent(Event event) {
         EventDTO eventDTO = new EventDTO();
         eventDTO.setId(event.getId());
-        eventDTO.setStart_date(event.getStartDate());
-        eventDTO.setEnd_date(event.getEndDate());
+        eventDTO.setStart_date(event.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        eventDTO.setEnd_date(event.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         eventDTO.setJira_case(event.getJiraCase());
         eventDTO.setFeatures_on(event.getFeaturesOn());
         eventDTO.setFeatures_off(event.getFeaturesOff());

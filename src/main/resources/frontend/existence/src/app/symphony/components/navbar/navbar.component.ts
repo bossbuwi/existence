@@ -58,7 +58,6 @@ export class NavbarComponent implements OnInit {
   }
 
   onDropdownClick(index: any) {
-    console.log(index);
     this.router.navigate([this.constellations[index].toLowerCase()]);
   }
 

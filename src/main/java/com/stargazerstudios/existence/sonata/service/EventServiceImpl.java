@@ -310,7 +310,7 @@ public class EventServiceImpl implements EventService {
         String currentDateTime = dateFormatter.format(new Date());
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=events_" + currentDateTime + ".xlsx";
-        response.setHeader(headerKey, headerValue);
+        response.addHeader(headerKey, headerValue);
         exporterUtil.exportToWorkbook(response, events);
     }
 

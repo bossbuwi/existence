@@ -26,8 +26,12 @@ export class SonataNavtabsComponent implements OnInit {
 
   navigate(tabNumber: number): void {
     switch (tabNumber) {
+      case 0:
+        this.active = 0;
+        this.router.navigate(['systems'], {relativeTo:this.route});
+        break;
       case 1:
-        // this.active = 1;
+        this.active = 1;
         this.router.navigate(['calendar'], {relativeTo:this.route});
         break;
       case 2:
@@ -35,8 +39,8 @@ export class SonataNavtabsComponent implements OnInit {
         this.router.navigate(['new-event'], {relativeTo:this.route});
         break;
       case 3:
-        // this.active = 3;
-        this.router.navigate(['display'], {relativeTo:this.route});
+        this.active = 3;
+        this.router.navigate(['reports'], {relativeTo:this.route});
         break;
       default:
         break;

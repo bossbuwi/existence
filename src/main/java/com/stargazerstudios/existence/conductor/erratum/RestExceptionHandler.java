@@ -13,6 +13,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(GenericErrorException.class)
+    protected ResponseEntity<Object> handleGenericError(
+            GenericErrorException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFoundError(
             UserNotFoundException ex) {

@@ -148,8 +148,6 @@ export class SettingSysconfigComponent implements OnInit {
   private changePending(index: number): void {
     this.logger.logVerbose(this.className, "changePending", "Putting form in a waiting state.");
     this.settings.controls[index].get('submit')?.setValue('Saving..');
-    console.log(this.settings.controls[index].get('submit'))
-    // this.settingsForm.disable();
   }
 
   private changeDone(index: number): void {

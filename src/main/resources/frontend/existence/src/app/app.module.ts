@@ -23,6 +23,8 @@ import { SettingDisplayComponent } from './symphony/components/setting/setting-d
 import { SonataNavtabsComponent } from './sonata/components/sonata-navtabs/sonata-navtabs.component';
 import { SonataCalendarComponent } from './sonata/components/sonata-calendar/sonata-calendar.component';
 import { SonataEventComponent } from './sonata/components/sonata-event/sonata-event.component';
+import { SonataReportsComponent } from './sonata/components/sonata-reports/sonata-reports.component';
+import { SonataSystemsComponent } from './sonata/components/sonata-systems/sonata-systems.component';
 
 // TODO Fix logger service not respecting the setting on the database
 // This is because the logger service is prematurely called before the boot service has a chance to fetch the log level.
@@ -37,7 +39,9 @@ import { SonataEventComponent } from './sonata/components/sonata-event/sonata-ev
     SettingDisplayComponent,
     SonataNavtabsComponent,
     SonataCalendarComponent,
-    SonataEventComponent
+    SonataEventComponent,
+    SonataReportsComponent,
+    SonataSystemsComponent
   ],
   imports: [
     BrowserModule,
