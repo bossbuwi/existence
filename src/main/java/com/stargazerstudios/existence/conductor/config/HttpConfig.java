@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
@@ -19,18 +18,24 @@ public class HttpConfig implements WebMvcConfigurer {
         List<String> allowedOrigins = new ArrayList<>();
         allowedOrigins.add("*");
 
-        List<String> allowedMethods = new ArrayList<>();
-        allowedMethods.add("HEAD");
-        allowedMethods.add("GET");
-        allowedMethods.add("POST");
-        allowedMethods.add("PUT");
-        allowedMethods.add("DELETE");
-        allowedMethods.add("PATCH");
+        // Deprecated due to the use of Java 17
+//        List<String> allowedMethods = new ArrayList<>();
+//        allowedMethods.add("HEAD");
+//        allowedMethods.add("GET");
+//        allowedMethods.add("POST");
+//        allowedMethods.add("PUT");
+//        allowedMethods.add("DELETE");
+//        allowedMethods.add("PATCH");
 
-        List<String> allowedHeaders = new ArrayList<>();
-        allowedHeaders.add("Authorization");
-        allowedHeaders.add("Cache-Control");
-        allowedHeaders.add("Content-Type");
+        List<String> allowedMethods = List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH");
+
+        // Deprecated due to the use of Java 17
+//        List<String> allowedHeaders = new ArrayList<>();
+//        allowedHeaders.add("Authorization");
+//        allowedHeaders.add("Cache-Control");
+//        allowedHeaders.add("Content-Type");
+
+        List<String> allowedHeaders = List.of("Authorization", "Cache-Control", "Content-Type");
 
         final CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(allowedOrigins);

@@ -12,12 +12,14 @@ import com.stargazerstudios.existence.sonata.utils.SystemUtil;
 import com.stargazerstudios.existence.sonata.wrapper.SystemWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class SystemServiceImpl implements SystemService {
 
     @Autowired

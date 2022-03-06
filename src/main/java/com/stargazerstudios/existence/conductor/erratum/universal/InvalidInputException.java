@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 public class InvalidInputException extends Exception {
 
     public InvalidInputException(String key) {
-        super("Key: " + key + " not found or contains invalid values. Please restructure the request and try again.");
+        super("Key: " + key + " - not found on the input or contains invalid values. " +
+                "Please restructure the request and try again.");
     }
 
     public HttpStatus getHttpStatus() {

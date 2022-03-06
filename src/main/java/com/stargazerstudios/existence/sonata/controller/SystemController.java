@@ -17,7 +17,6 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/sonata/systems")
-@Transactional
 public class SystemController {
 
     @Autowired

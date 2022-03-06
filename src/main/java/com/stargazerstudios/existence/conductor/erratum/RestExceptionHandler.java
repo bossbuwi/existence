@@ -22,7 +22,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<Object> handleEntityNotFoundError(
+    protected ResponseEntity<Object> handleUserNotFoundError(
             UserNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
@@ -46,7 +46,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(GatewayTimeoutException.class)
-    protected ResponseEntity<Object> handleGatewayError(
+    protected ResponseEntity<Object> handleGatewayTimeoutError(
             GatewayTimeoutException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
@@ -73,6 +73,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DuplicateEntityException.class)
     protected ResponseEntity<Object> handleDuplicateEntityError(
             DuplicateEntityException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    protected ResponseEntity<Object> handleInvalidInputError(
+            InvalidInputException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
         return buildResponseEntity(errorResponse);

@@ -19,7 +19,6 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/sonata/events")
-@Transactional
 public class EventController {
 
     @Autowired

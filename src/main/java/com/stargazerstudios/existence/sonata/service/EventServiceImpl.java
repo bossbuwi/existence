@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +30,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
+@Transactional
 public class EventServiceImpl implements EventService {
 
     @Autowired
@@ -89,6 +91,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDTO createEvent(EventWrapper eventWrapper)
             throws EntityNotFoundException, InvalidInputException {
+        // TODO: Handle the case where there is a missing key on the wrapper
         EventWrapper wEvent;
         wEvent = eventWrapper;
 

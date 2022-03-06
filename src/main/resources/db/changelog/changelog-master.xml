@@ -23,4 +23,9 @@
     <include file="db/changelog/changes/sonata/create-events-table-changelog-5.xml"/>
     <include file="db/changelog/changes/sonata/create-events-zones-table-changelog-6.xml"/>
     <include file="db/changelog/changes/sonata/create-events-event-types-table-changelog-7.xml"/>
+
+    <!-- Ballad -->
+    <include file="db/changelog/changes/ballad/create-stories-table-changelog-1.xml"/>
+    <include file="db/changelog/changes/ballad/create-tags-table-changelog-2.xml"/>
+    <include file="db/changelog/changes/ballad/create-stories-tags-table-changelog-3.xml"/>
 </databaseChangeLog>
