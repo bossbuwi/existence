@@ -7,7 +7,15 @@ import org.springframework.stereotype.Service;
 public class StringUtil {
 
     public String checkInput(String in) {
-        if (in != null && !in.isEmpty()) {
+        if (in != null && !in.isBlank()) {
+            return in;
+        } else {
+            return EnumUtilOutput.EMPTY.toString();
+        }
+    }
+
+    public String checkInputToUpper(String in) {
+        if (in != null && !in.isBlank()) {
             String out = in.trim();
             if (out.length() == 0) return EnumUtilOutput.EMPTY.toString();
             return out.toUpperCase();
