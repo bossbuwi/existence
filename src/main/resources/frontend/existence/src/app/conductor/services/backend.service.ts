@@ -56,6 +56,7 @@ export class BackendService {
     this.logger.logVerbose(this.className, "postLogin", "Received request for user login.");
     this.loginSub.next(RequestStatus.PENDING);
     this.logger.logVerbose(this.className, "postLogin", "Initiating server communications.");
+    // TODO: Remove the braces enclosing the user to prevent Angular from sending it as a hashmap inside a key-value pair
     this.http.post<User>(RestURI.LOGIN, { user }).subscribe({
       next:
         data => {
