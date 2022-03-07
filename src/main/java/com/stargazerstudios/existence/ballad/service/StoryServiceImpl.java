@@ -8,7 +8,7 @@ import com.stargazerstudios.existence.ballad.repository.TagDAO;
 import com.stargazerstudios.existence.ballad.utils.StoryUtil;
 import com.stargazerstudios.existence.ballad.utils.TagUtil;
 import com.stargazerstudios.existence.ballad.wrapper.StoryWrapper;
-import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
+import com.stargazerstudios.existence.conductor.constants.EnumUtilOutputConstant;
 import com.stargazerstudios.existence.conductor.erratum.universal.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
 import com.stargazerstudios.existence.conductor.erratum.universal.InvalidCollectionException;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,7 +54,7 @@ public class StoryServiceImpl implements StoryService{
     @Override
     public StoryDTO getStory(StoryWrapper story) throws EntityNotFoundException, InvalidInputException {
         String storyName = stringUtil.checkInputToUpper(story.getName());
-        if (storyName.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
+        if (storyName.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
         Optional<Story> storyData = storyDAO.findByName(storyName);
         if (storyData.isPresent()) {
             StoryDTO storyDTO = storyUtil.wrapStory(storyData.get());
@@ -68,7 +67,7 @@ public class StoryServiceImpl implements StoryService{
     @Override
     public StoryDTO createStory(StoryWrapper wStory) throws DuplicateEntityException, InvalidInputException {
         String name = stringUtil.checkInputToUpper(wStory.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
+        if (name.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
         Optional<Story> storyData = storyDAO.findByName(name);
         if (storyData.isPresent()) throw new DuplicateEntityException("Story with name: " + name + " already exists.");
         Story story = new Story();
@@ -80,10 +79,10 @@ public class StoryServiceImpl implements StoryService{
     public StoryDTO updateStory(StoryWrapper wStory)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
         String name = stringUtil.checkInputToUpper(wStory.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
+        if (name.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
 
         String newName = stringUtil.checkInputToUpper(wStory.getNew_name());
-        if (newName.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("new_name");
+        if (newName.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("new_name");
 
         Optional<Story> storyData = storyDAO.findByName(name);
         if (storyData.isEmpty()) throw new EntityNotFoundException("Story with name: " + name + " not found.");
@@ -101,7 +100,7 @@ public class StoryServiceImpl implements StoryService{
     public StoryDTO addTags(StoryWrapper wStory)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
         String name = stringUtil.checkInputToUpper(wStory.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
+        if (name.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
 
         String[] tags = wStory.getTags();
         if (tags == null || tags.length == 0) throw new InvalidInputException("tags");
@@ -109,7 +108,7 @@ public class StoryServiceImpl implements StoryService{
 
         for (String tag : tags) {
             String item = stringUtil.checkInputToUpper(tag);
-            if (item.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
+            if (item.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
             tagQuery.add(item);
         }
 
@@ -139,7 +138,7 @@ public class StoryServiceImpl implements StoryService{
     public StoryDTO removeTags(StoryWrapper wStory)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
         String name = stringUtil.checkInputToUpper(wStory.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
+        if (name.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
 
         String[] tags = wStory.getTags();
         if (tags == null || tags.length == 0) throw new InvalidInputException("tags");
