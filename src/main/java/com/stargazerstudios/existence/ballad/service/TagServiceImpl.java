@@ -53,7 +53,7 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public TagDTO getTag(TagWrapper tag) throws EntityNotFoundException, InvalidInputException {
-        String tagName = stringUtil.checkInputToUpper(tag.getName());
+        String tagName = stringUtil.checkInputTrimToUpper(tag.getName());
         if (tagName.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
         Optional<Tag> tagData = tagDAO.findByName(tagName);
         if (tagData.isPresent()) {
@@ -66,7 +66,7 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public TagDTO createTag(TagWrapper wTag) throws DuplicateEntityException, InvalidInputException {
-        String name = stringUtil.checkInputToUpper(wTag.getName());
+        String name = stringUtil.checkInputTrimToUpper(wTag.getName());
         if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
         Optional<Tag> tagData = tagDAO.findByName(name);
         if (tagData.isPresent()) throw new DuplicateEntityException("Tag with name: " + name + " already exists.");
@@ -78,10 +78,10 @@ public class TagServiceImpl implements TagService{
     @Override
     public TagDTO updateTag(TagWrapper wTag)
             throws EntityNotFoundException, DuplicateEntityException, InvalidInputException {
-        String name = stringUtil.checkInputToUpper(wTag.getName());
+        String name = stringUtil.checkInputTrimToUpper(wTag.getName());
         if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
 
-        String newName = stringUtil.checkInputToUpper(wTag.getNew_name());
+        String newName = stringUtil.checkInputTrimToUpper(wTag.getNew_name());
         if (newName.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("new_name");
 
         Optional<Tag> tagData = tagDAO.findByName(name);
@@ -99,7 +99,7 @@ public class TagServiceImpl implements TagService{
     @Override
     public TagDTO addStories(TagWrapper wTag)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
-        String name = stringUtil.checkInputToUpper(wTag.getName());
+        String name = stringUtil.checkInputTrimToUpper(wTag.getName());
         if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
 
         String[] stories = wTag.getStories();
@@ -107,7 +107,7 @@ public class TagServiceImpl implements TagService{
         Set<String> storyQuery = new HashSet<>();
 
         for (String story : stories) {
-            String item = stringUtil.checkInputToUpper(story);
+            String item = stringUtil.checkInputTrimToUpper(story);
             if (item.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
             storyQuery.add(item);
         }
@@ -137,7 +137,7 @@ public class TagServiceImpl implements TagService{
     @Override
     public TagDTO removeStories(TagWrapper wTag)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
-        String name = stringUtil.checkInputToUpper(wTag.getName());
+        String name = stringUtil.checkInputTrimToUpper(wTag.getName());
         if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
 
         String[] stories = wTag.getStories();
@@ -152,7 +152,7 @@ public class TagServiceImpl implements TagService{
 
         Set<String> inputStoryNames = new HashSet<>();
         for (String story: stories) {
-            inputStoryNames.add(stringUtil.checkInputToUpper(story));
+            inputStoryNames.add(stringUtil.checkInputTrimToUpper(story));
         }
         if (!dbStoryNames.containsAll(inputStoryNames)) throw new InvalidCollectionException("stories");
 

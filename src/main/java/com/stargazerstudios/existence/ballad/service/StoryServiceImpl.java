@@ -53,7 +53,7 @@ public class StoryServiceImpl implements StoryService{
 
     @Override
     public StoryDTO getStory(StoryWrapper story) throws EntityNotFoundException, InvalidInputException {
-        String storyName = stringUtil.checkInputToUpper(story.getName());
+        String storyName = stringUtil.checkInputTrimToUpper(story.getName());
         if (storyName.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
         Optional<Story> storyData = storyDAO.findByName(storyName);
         if (storyData.isPresent()) {
@@ -66,7 +66,7 @@ public class StoryServiceImpl implements StoryService{
 
     @Override
     public StoryDTO createStory(StoryWrapper wStory) throws DuplicateEntityException, InvalidInputException {
-        String name = stringUtil.checkInputToUpper(wStory.getName());
+        String name = stringUtil.checkInputTrimToUpper(wStory.getName());
         if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
         Optional<Story> storyData = storyDAO.findByName(name);
         if (storyData.isPresent()) throw new DuplicateEntityException("Story with name: " + name + " already exists.");
@@ -78,10 +78,10 @@ public class StoryServiceImpl implements StoryService{
     @Override
     public StoryDTO updateStory(StoryWrapper wStory)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
-        String name = stringUtil.checkInputToUpper(wStory.getName());
+        String name = stringUtil.checkInputTrimToUpper(wStory.getName());
         if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
 
-        String newName = stringUtil.checkInputToUpper(wStory.getNew_name());
+        String newName = stringUtil.checkInputTrimToUpper(wStory.getNew_name());
         if (newName.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("new_name");
 
         Optional<Story> storyData = storyDAO.findByName(name);
@@ -99,7 +99,7 @@ public class StoryServiceImpl implements StoryService{
     @Override
     public StoryDTO addTags(StoryWrapper wStory)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
-        String name = stringUtil.checkInputToUpper(wStory.getName());
+        String name = stringUtil.checkInputTrimToUpper(wStory.getName());
         if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
 
         String[] tags = wStory.getTags();
@@ -107,7 +107,7 @@ public class StoryServiceImpl implements StoryService{
         Set<String> tagQuery = new HashSet<>();
 
         for (String tag : tags) {
-            String item = stringUtil.checkInputToUpper(tag);
+            String item = stringUtil.checkInputTrimToUpper(tag);
             if (item.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
             tagQuery.add(item);
         }
@@ -137,7 +137,7 @@ public class StoryServiceImpl implements StoryService{
     @Override
     public StoryDTO removeTags(StoryWrapper wStory)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
-        String name = stringUtil.checkInputToUpper(wStory.getName());
+        String name = stringUtil.checkInputTrimToUpper(wStory.getName());
         if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
 
         String[] tags = wStory.getTags();
@@ -152,7 +152,7 @@ public class StoryServiceImpl implements StoryService{
 
         Set<String> inputTagNames = new HashSet<>();
         for (String tag: tags) {
-            inputTagNames.add(stringUtil.checkInputToUpper(tag));
+            inputTagNames.add(stringUtil.checkInputTrimToUpper(tag));
         }
         if (!dbTagNames.containsAll(inputTagNames)) throw new InvalidCollectionException("tags");
 

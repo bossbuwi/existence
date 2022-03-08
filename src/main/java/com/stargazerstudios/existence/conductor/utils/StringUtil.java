@@ -14,7 +14,7 @@ public class StringUtil {
         }
     }
 
-    public String checkInputToUpper(String in) {
+    public String checkInputTrimToUpper(String in) {
         if (in != null && !in.isBlank()) {
             String out = in.trim();
             if (out.length() == 0) return EnumUtilOutput.EMPTY.toString();
