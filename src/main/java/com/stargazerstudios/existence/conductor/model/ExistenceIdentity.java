@@ -2,13 +2,15 @@ package com.stargazerstudios.existence.conductor.model;
 
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.HashMap;
 
 @Getter @Setter
 public class ExistenceIdentity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+
     private String name;
     private String version;
     private String release;

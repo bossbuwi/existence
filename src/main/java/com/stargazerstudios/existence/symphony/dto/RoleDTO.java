@@ -22,24 +22,26 @@ public class RoleDTO {
     private long rank;
     @JsonIgnore
     private Timestamp dateAdded;
+//    @JsonInclude(Include.NON_EMPTY)
+//    private List<UserDTO> users = new ArrayList<>();
     @JsonInclude(Include.NON_EMPTY)
-    private List<UserDTO> users = new ArrayList<>();
+    private List<String> users;
 
 
-    public RoleDTO(Role role) {
-        setId(role.getId());
-        setName(role.getName());
-        setDescription(role.getDescription());
-    }
+//    public RoleDTO(Role role) {
+//        setId(role.getId());
+//        setName(role.getName());
+//        setDescription(role.getDescription());
+//    }
 
-    public RoleDTO(Role role, boolean withUsers) {
-        setId(role.getId());
-        setName(role.getName());
-        setDescription(role.getDescription());
-        for (User user: role.getUsers()) {
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUsername(user.getUsername());
-            users.add(userDTO);
-        }
-    }
+//    public RoleDTO(Role role, boolean withUsers) {
+//        setId(role.getId());
+//        setName(role.getName());
+//        setDescription(role.getDescription());
+//        for (User user: role.getUsers()) {
+//            UserDTO userDTO = new UserDTO();
+//            userDTO.setUsername(user.getUsername());
+//            users.add(userDTO);
+//        }
+//    }
 }

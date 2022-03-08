@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/conductor/erratum")
 public class ErrorController {
+    // TODO: Delete this class after use.
+    //  This is just a test endpoint that always output an error.
 
     @Autowired
     private FrontendService frontendService;

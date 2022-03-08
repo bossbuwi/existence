@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/conductor/")
+@RequestMapping("/drapes/")
 public class FrontendController {
 
     @Autowired

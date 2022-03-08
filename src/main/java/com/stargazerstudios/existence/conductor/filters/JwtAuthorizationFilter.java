@@ -1,8 +1,7 @@
 package com.stargazerstudios.existence.conductor.filters;
 
-import com.stargazerstudios.existence.conductor.constants.WebSecurityConstants;
+import com.stargazerstudios.existence.conductor.constants.EnumWebSecurity;
 import com.stargazerstudios.existence.conductor.constants.WebSecurityURI;
-import com.stargazerstudios.existence.conductor.erratum.universal.BadJsonWebTokenException;
 import com.stargazerstudios.existence.conductor.utils.JwtUtil;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +41,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
-
-        String authHeader = request.getHeader(WebSecurityConstants.HEADER_STRING);
+        String authHeader = request.getHeader(EnumWebSecurity.HEADER_STRING.getValue());
         String username = null;
         String authToken = null;
-        if (authHeader != null && authHeader.startsWith(WebSecurityConstants.TOKEN_PREFIX)) {
-            authToken = authHeader.replace(WebSecurityConstants.TOKEN_PREFIX,"");
+
+        if (authHeader != null && authHeader.startsWith(EnumWebSecurity.TOKEN_PREFIX.getValue())) {
+            authToken = authHeader.replace(EnumWebSecurity.TOKEN_PREFIX.getValue(),"");
             try {
                 username = jwtUtil.getUsernameFromToken(authToken);
             } catch (IllegalArgumentException e) {

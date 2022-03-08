@@ -1,6 +1,6 @@
 package com.stargazerstudios.existence.conductor.config;
 
-import com.stargazerstudios.existence.conductor.constants.WebFluxConstants;
+import com.stargazerstudios.existence.conductor.constants.WebConstant;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
@@ -26,16 +26,16 @@ public class WebFluxConfig implements WebFluxConfigurer {
     @Bean
     public WebClient getWebClient() {
         HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, WebFluxConstants.CONNECTION_TIMEOUT)
-                .responseTimeout(Duration.ofMillis(WebFluxConstants.RESPONSE_TIMEOUT))
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, WebConstant.CONNECTION_TIMEOUT)
+                .responseTimeout(Duration.ofMillis(WebConstant.RESPONSE_TIMEOUT))
                 .doOnConnected(connection -> {
-                    connection.addHandlerLast(new ReadTimeoutHandler(WebFluxConstants.READ_TIMEOUT, TimeUnit.MILLISECONDS))
-                            .addHandlerLast(new WriteTimeoutHandler(WebFluxConstants.WRITE_TIMEOUT, TimeUnit.MILLISECONDS));
+                    connection.addHandlerLast(new ReadTimeoutHandler(WebConstant.READ_TIMEOUT, TimeUnit.MILLISECONDS))
+                            .addHandlerLast(new WriteTimeoutHandler(WebConstant.WRITE_TIMEOUT, TimeUnit.MILLISECONDS));
                 });
 
         return WebClient.builder()
                 .baseUrl(ldapServer)
-                .clientConnector(new ReactorClientHttpConnector(httpClient.wiretap(WebFluxConstants.WIRETAP_CLIENT)))
+                .clientConnector(new ReactorClientHttpConnector(httpClient.wiretap(WebConstant.WIRETAP_CLIENT)))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }

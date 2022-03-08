@@ -21,19 +21,21 @@ public class UserDTO {
     @JsonIgnore
     private Timestamp dateAdded;
     @JsonInclude(Include.NON_EMPTY)
-    private List<RoleDTO> roles = new ArrayList<>();
+//    private List<RoleDTO> roles = new ArrayList<>();
+//    @JsonInclude(Include.NON_EMPTY)
+    private List<String> roles;
     @JsonInclude(Include.NON_EMPTY)
     private String token;
 
-    public UserDTO(User user) {
-        setId(user.getId());
-        setUsername(user.getUsername());
-        setToken(user.getToken());
-        for (Role role: user.getRoles()) {
-            RoleDTO roleDTO = new RoleDTO();
-            roleDTO.setId(role.getId());
-            roleDTO.setName(role.getName());
-            roles.add(roleDTO);
-        }
-    }
+//    public UserDTO(User user) {
+//        setId(user.getId());
+//        setUsername(user.getUsername());
+//        setToken(user.getToken());
+//        for (Role role: user.getRoles()) {
+//            RoleDTO roleDTO = new RoleDTO();
+//            roleDTO.setId(role.getId());
+//            roleDTO.setName(role.getName());
+//            roles.add(roleDTO);
+//        }
+//    }
 }

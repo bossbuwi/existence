@@ -1,7 +1,7 @@
 package com.stargazerstudios.existence.symphony.controller;
 
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
-import com.stargazerstudios.existence.symphony.service.UserServiceImpl;
+import com.stargazerstudios.existence.symphony.service.UserAccessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +15,10 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserAccessService userAccessService;
 
     @GetMapping("/index")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+        return new ResponseEntity<>(userAccessService.getAllUsers(), HttpStatus.OK);
     }
 }

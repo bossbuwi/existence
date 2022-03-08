@@ -9,6 +9,7 @@ import com.stargazerstudios.existence.symphony.entity.Role;
 import com.stargazerstudios.existence.symphony.entity.User;
 import com.stargazerstudios.existence.symphony.repository.RoleDAO;
 import com.stargazerstudios.existence.symphony.service.RoleServiceImpl;
+import com.stargazerstudios.existence.symphony.wrapper.RoleWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,9 @@ public class RoleController {
         return new ResponseEntity<>(roleService.getAllRoles(), HttpStatus.OK);
     }
 
-    @GetMapping("/users/{rolename}")
-    public ResponseEntity<RoleDTO> getAllUsersWithRole(@PathVariable("rolename") String roleName)
+    @GetMapping("/role")
+    public ResponseEntity<RoleDTO> getRole(@RequestBody RoleWrapper role)
             throws EntityNotFoundException {
-        return new ResponseEntity<>(roleService.getAllUsersWithRole(roleName), HttpStatus.OK);
+        return new ResponseEntity<>(roleService.getRole(role), HttpStatus.OK);
     }
 }

@@ -1,15 +1,17 @@
 package com.stargazerstudios.existence.symphony.service;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.BadGatewayException;
-import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.universal.GatewayTimeoutException;
-import com.stargazerstudios.existence.conductor.erratum.universal.UserNotFoundException;
+import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
+import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
+import com.stargazerstudios.existence.conductor.erratum.universal.*;
 import com.stargazerstudios.existence.conductor.utils.JwtUtil;
+import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.entity.Role;
 import com.stargazerstudios.existence.symphony.repository.RoleDAO;
 import com.stargazerstudios.existence.symphony.repository.UserDAO;
 import com.stargazerstudios.existence.symphony.entity.User;
+import com.stargazerstudios.existence.symphony.utils.RoleUtil;
+import com.stargazerstudios.existence.symphony.utils.UserUtil;
 import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +44,15 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     private JwtUtil jwtUtil;
 
     @Autowired
+    private StringUtil stringUtil;
+
+    @Autowired
+    private RoleUtil roleUtil;
+
+    @Autowired
+    private UserUtil userUtil;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -52,10 +63,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Override
     public UserDTO login(UserWrapper wUser)
-            throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException {
-        HashMap<String, String> parsedJSON = wUser.getUser();
-        String username = parsedJSON.get("username");
-        String password = parsedJSON.get("password");
+            throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException, InvalidInputException {
+        String username = stringUtil.checkInput(wUser.getUsername());
+        String password = stringUtil.checkInput(wUser.getPassword());
+        if (username.equals(EnumUtilOutput.EMPTY.toString()) || password.equals(EnumUtilOutput.EMPTY.toString()))
+            throw new InvalidInputException("username or password");
         Optional<User> userData = userDAO.findByUsername(username);
         // If user is found, check if raw password matches with hash
         if (userData.isPresent()) {
@@ -65,20 +77,28 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                 user.setPassword(password);
                 String token = generateToken(user);
                 user.setToken(token);
-
+                // This line doesn't do anything and only for debugging purposes
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-                return new UserDTO(user);
+                return userUtil.wrapUser(user);
             } else {
                 throw new UserNotFoundException();
             }
+        } else if (username.equals(EnumAuthorization.admin.toString())){
+            User user = initialAdminSetup();
+            user.setPassword(EnumAuthorization.admin.toString());
+            String token = generateToken(user);
+            user.setToken(token);
+            return userUtil.wrapUser(user);
         } else {
+            // TODO: This needs to be checked and reworked.
+            //  The process of authenticating through third party is messy.
             if (authViaLDAP(username, password)) {
                 User user = createUser(username, password);
                 user.setPassword(password);
                 String token = generateToken(user);
                 user.setToken(token);
-                return new UserDTO(user);
+                return userUtil.wrapUser(user);
             } else {
                 throw new UserNotFoundException();
             }
@@ -96,13 +116,14 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             User user = userData.get();
             user.setPassword(null);
             user.setToken(_token);
-            return new UserDTO(user);
+            return userUtil.wrapUser(user);
         } else {
             throw new UserNotFoundException();
         }
     }
 
     private String generateToken(User user) throws AuthenticationException {
+        // Password passed here must be the hashed password
         Authentication authentication = authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
                   user.getUsername(),
@@ -159,7 +180,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         User user = new User();
         user.setUsername(username);
         user.setPassword(hashPword);
-        Optional<Role> roleData = roleDAO.findByName("ROLE_USER");
+        Optional<Role> roleData = roleDAO.findByName(EnumAuthorization.ROLE_USER.toString());
         if (roleData.isPresent()) {
             Role role = roleData.get();
             Set<Role> roleSet = new HashSet<>();
@@ -170,5 +191,27 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         }
 
         return userDAO.save(user);
+    }
+
+    private User initialAdminSetup() throws EntityNotFoundException {
+        // This is only called once, during the admin's initial log in
+        User admin = new User();
+        admin.setUsername(EnumAuthorization.admin.toString());
+        String hashPword = passwordEncoder.encode(EnumAuthorization.admin.toString());
+        admin.setPassword(hashPword);
+
+        Set<String> roleNames = new HashSet<>(Arrays.asList(
+                EnumAuthorization.ROLE_OWNER.toString(),
+                EnumAuthorization.ROLE_SUPERUSER.toString(),
+                EnumAuthorization.ROLE_ADMIN.toString(),
+                EnumAuthorization.ROLE_USER.toString()
+        ));
+
+        List<Role> dbRoles = roleDAO.findRolesBySet(roleNames);
+        if (dbRoles.size() != roleNames.size()) throw new EntityNotFoundException("There is an error in the Roles database. Please contact system admin.");
+
+        Set<Role> roles = new HashSet<>(dbRoles);
+        admin.setRoles(roles);
+        return userDAO.save(admin);
     }
 }

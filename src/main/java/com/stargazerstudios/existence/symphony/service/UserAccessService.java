@@ -4,6 +4,6 @@ import com.stargazerstudios.existence.symphony.dto.UserDTO;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserAccessService {
     List<UserDTO> getAllUsers();
 }

@@ -1,6 +1,7 @@
 package com.stargazerstudios.existence.conductor.utils;
 
-import com.stargazerstudios.existence.conductor.constants.WebSecurityConstants;
+import com.stargazerstudios.existence.conductor.constants.EnumWebSecurity;
+import com.stargazerstudios.existence.conductor.constants.WebConstant;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +21,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtUtil implements Serializable {
+    // TODO: Put useful comments for easier code reading
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Value("${jwt.secret}")
@@ -43,14 +47,16 @@ public class JwtUtil implements Serializable {
         final String username = getUsernameFromToken(token);
         boolean isExpired = expiration.before(new Date());
         return (username.equals(userDetails.getUsername()) && !isExpired);
-    }public UsernamePasswordAuthenticationToken getAuthenticationToken(
-            final String token, final Authentication existingAuth, final UserDetails userDetails) {
+    }
 
+    public UsernamePasswordAuthenticationToken getAuthenticationToken(final String token,
+                                                                      final Authentication existingAuth,
+                                                                      final UserDetails userDetails) {
         final JwtParser jwtParser = Jwts.parser().setSigningKey(secret.getBytes());
         final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
         final Claims claims = claimsJws.getBody();
         final Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(WebSecurityConstants.AUTHORITY_CLAIMS).toString().split(","))
+                Arrays.stream(claims.get(EnumWebSecurity.AUTHORITY_CLAIMS.getValue()).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
@@ -65,9 +71,9 @@ public class JwtUtil implements Serializable {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim(WebSecurityConstants.AUTHORITY_CLAIMS, authorities)
+                .claim(EnumWebSecurity.AUTHORITY_CLAIMS.getValue(), authorities)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + WebSecurityConstants.JWT_VALIDITY*1000))
+                .setExpiration(new Date(System.currentTimeMillis() + WebConstant.JWT_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret.getBytes())
                 .compact();
     }

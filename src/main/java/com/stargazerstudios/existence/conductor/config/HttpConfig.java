@@ -1,5 +1,7 @@
 package com.stargazerstudios.existence.conductor.config;
 
+import com.stargazerstudios.existence.conductor.constants.EnumHttpHeader;
+import com.stargazerstudios.existence.conductor.constants.EnumHttpRequestMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -27,7 +29,14 @@ public class HttpConfig implements WebMvcConfigurer {
 //        allowedMethods.add("DELETE");
 //        allowedMethods.add("PATCH");
 
-        List<String> allowedMethods = List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH");
+        List<String> allowedMethods = List.of(
+                EnumHttpRequestMethod.HEAD.getValue(),
+                EnumHttpRequestMethod.GET.getValue(),
+                EnumHttpRequestMethod.POST.getValue(),
+                EnumHttpRequestMethod.PUT.getValue(),
+                EnumHttpRequestMethod.DELETE.getValue(),
+                EnumHttpRequestMethod.PATCH.getValue()
+        );
 
         // Deprecated due to the use of Java 17
 //        List<String> allowedHeaders = new ArrayList<>();
@@ -35,7 +44,11 @@ public class HttpConfig implements WebMvcConfigurer {
 //        allowedHeaders.add("Cache-Control");
 //        allowedHeaders.add("Content-Type");
 
-        List<String> allowedHeaders = List.of("Authorization", "Cache-Control", "Content-Type");
+        List<String> allowedHeaders = List.of(
+                EnumHttpHeader.AUTHORIZATION.getValue(),
+                EnumHttpHeader.CACHE_CONTROL.getValue(),
+                EnumHttpHeader.CONTENT_TYPE.getValue()
+        );
 
         final CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(allowedOrigins);
@@ -45,7 +58,7 @@ public class HttpConfig implements WebMvcConfigurer {
         // configuration.setAllowCredentials(true);
         // setAllowedHeaders is important! Without it, OPTIONS preflight request will fail with 403 Invalid CORS request
         configuration.setAllowedHeaders(allowedHeaders);
-        configuration.addExposedHeader("Content-Disposition");
+        configuration.addExposedHeader(EnumHttpHeader.CONTENT_DISPOSITION.getValue());
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
