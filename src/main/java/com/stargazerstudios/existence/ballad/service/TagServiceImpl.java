@@ -8,7 +8,7 @@ import com.stargazerstudios.existence.ballad.repository.TagDAO;
 import com.stargazerstudios.existence.ballad.utils.StoryUtil;
 import com.stargazerstudios.existence.ballad.utils.TagUtil;
 import com.stargazerstudios.existence.ballad.wrapper.TagWrapper;
-import com.stargazerstudios.existence.conductor.constants.EnumUtilOutputConstant;
+import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.universal.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
 import com.stargazerstudios.existence.conductor.erratum.universal.InvalidCollectionException;
@@ -54,7 +54,7 @@ public class TagServiceImpl implements TagService{
     @Override
     public TagDTO getTag(TagWrapper tag) throws EntityNotFoundException, InvalidInputException {
         String tagName = stringUtil.checkInputToUpper(tag.getName());
-        if (tagName.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
+        if (tagName.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
         Optional<Tag> tagData = tagDAO.findByName(tagName);
         if (tagData.isPresent()) {
             TagDTO tagDTO = tagUtil.wrapTag(tagData.get());
@@ -67,7 +67,7 @@ public class TagServiceImpl implements TagService{
     @Override
     public TagDTO createTag(TagWrapper wTag) throws DuplicateEntityException, InvalidInputException {
         String name = stringUtil.checkInputToUpper(wTag.getName());
-        if (name.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
+        if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
         Optional<Tag> tagData = tagDAO.findByName(name);
         if (tagData.isPresent()) throw new DuplicateEntityException("Tag with name: " + name + " already exists.");
         Tag tag = new Tag();
@@ -79,10 +79,10 @@ public class TagServiceImpl implements TagService{
     public TagDTO updateTag(TagWrapper wTag)
             throws EntityNotFoundException, DuplicateEntityException, InvalidInputException {
         String name = stringUtil.checkInputToUpper(wTag.getName());
-        if (name.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
+        if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
 
         String newName = stringUtil.checkInputToUpper(wTag.getNew_name());
-        if (newName.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("new_name");
+        if (newName.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("new_name");
 
         Optional<Tag> tagData = tagDAO.findByName(name);
         if (tagData.isEmpty()) throw new EntityNotFoundException("Tag with name: " + name + " not found.");
@@ -100,7 +100,7 @@ public class TagServiceImpl implements TagService{
     public TagDTO addStories(TagWrapper wTag)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
         String name = stringUtil.checkInputToUpper(wTag.getName());
-        if (name.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
+        if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
 
         String[] stories = wTag.getStories();
         if (stories == null || stories.length == 0) throw new InvalidInputException("stories");
@@ -108,7 +108,7 @@ public class TagServiceImpl implements TagService{
 
         for (String story : stories) {
             String item = stringUtil.checkInputToUpper(story);
-            if (item.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
+            if (item.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
             storyQuery.add(item);
         }
 
@@ -138,7 +138,7 @@ public class TagServiceImpl implements TagService{
     public TagDTO removeStories(TagWrapper wTag)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
         String name = stringUtil.checkInputToUpper(wTag.getName());
-        if (name.equals(EnumUtilOutputConstant.EMPTY.toString())) throw new InvalidInputException("name");
+        if (name.equals(EnumUtilOutput.EMPTY.toString())) throw new InvalidInputException("name");
 
         String[] stories = wTag.getStories();
         if (stories == null || stories.length == 0) throw new InvalidInputException("stories");
