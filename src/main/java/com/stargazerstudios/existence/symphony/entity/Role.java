@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
-@Table(name = "uni_roles")
+@Table(name = "symphony_roles")
 @Getter @Setter @NoArgsConstructor
 public class Role {
 
@@ -29,7 +29,7 @@ public class Role {
     @Column(name = "creation_date")
     private Timestamp dateAdded;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "users_roles",
             joinColumns = {

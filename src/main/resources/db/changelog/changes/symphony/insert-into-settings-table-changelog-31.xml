@@ -8,7 +8,7 @@
 
     <property name="now" value="now()" dbms="postgresql"/>
     <changeSet author="bossbuwi" id="20211120-003">
-        <insert tableName="uni_settings">
+        <insert tableName="symphony_settings">
             <column name="key" value="loglevel"/>
             <column name="value" value="V"/>
             <column name="length" value="1"/>
@@ -20,7 +20,7 @@
             <column name="changed_by" value="admin"/>
             <column name="last_changed_date" valueDate="${now}"/>
         </insert>
-        <insert tableName="uni_settings">
+        <insert tableName="symphony_settings">
             <column name="key" value="tabdesign"/>
             <column name="value" value="M"/>
             <column name="length" value="1"/>
@@ -32,13 +32,13 @@
             <column name="changed_by" value="admin"/>
             <column name="last_changed_date" valueDate="${now}"/>
         </insert>
-        <insert tableName="uni_settings">
+        <insert tableName="symphony_settings">
             <column name="key" value="encryptionKey"/>
-            <column name="value" value="th3w0rld1sw4it1ngfoRy0u"/>
+            <column name="value" value="Th3w0rld1sW4it1nG"/>
             <column name="length" value="25"/>
             <column name="type" value="B"/>
             <column name="description" value="Encrypts the JSON web token used for authorization. Changing this will log off all users upon next app reload."/>
-            <column name="default_value" value="th3w0rld1sw4it1ngfoRy0u"/>
+            <column name="default_value" value="Th3w0rld1sW4it1nG"/>
             <column name="valid_values" value="alphanumeric"/>
             <column name="added_by" value="0.1-alpha"/>
             <column name="changed_by" value="admin"/>

@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "uni_settings")
+@Table(name = "symphony_settings")
 @Getter @Setter @NoArgsConstructor
 public class Setting {
 

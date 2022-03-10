@@ -7,7 +7,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet author="bossbuwi" id="20211123-001">
-        <createTable tableName="uni_users">
+        <createTable tableName="symphony_users">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true"/>
             </column>
@@ -15,23 +15,17 @@
                 <constraints nullable="false"/>
             </column>
             <column name="password" type="VARCHAR(255)"/>
-<!--            <column name="role_id" type="BIGINT">-->
-<!--                <constraints nullable="false" foreignKeyName="fk_role_user" referencedTableName="uni_roles" referencedColumnNames="id"/>-->
-<!--            </column>-->
-<!--            <column name="rank" type="VARCHAR(1)">-->
-<!--                <constraints nullable="false"/>-->
-<!--            </column>-->
             <column name="creation_date" type="timestamptz">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-<!--        <addUniqueConstraint-->
-<!--                columnNames="username, role_id"-->
-<!--                constraintName="ct_unique_role_per_user"-->
-<!--                tableName="uni_users"-->
-<!--        />-->
+        <addUniqueConstraint
+                columnNames="username"
+                constraintName="ct_unique_username"
+                tableName="symphony_users"
+        />
         <rollback>
-            <dropTable tableName="uni_users"/>
+            <dropTable tableName="symphony_users"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

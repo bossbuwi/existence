@@ -10,7 +10,7 @@
             http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.3.xsd">
 
     <changeSet author="bossbuwi" id="20211123-001">
-        <createTable tableName="uni_roles">
+        <createTable tableName="symphony_roles">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true"/>
             </column>
@@ -25,8 +25,18 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint
+                columnNames="rank"
+                constraintName="ct_unique_rank"
+                tableName="symphony_roles"
+        />
+        <addUniqueConstraint
+                columnNames="name"
+                constraintName="ct_unique_name"
+                tableName="symphony_roles"
+        />
         <rollback>
-            <dropTable tableName="uni_roles"/>
+            <dropTable tableName="symphony_roles"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

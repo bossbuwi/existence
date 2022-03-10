@@ -6,4 +6,5 @@ import lombok.*;
 public class UserWrapper {
     private String username;
     private String password;
+    private String[] roles;
 }

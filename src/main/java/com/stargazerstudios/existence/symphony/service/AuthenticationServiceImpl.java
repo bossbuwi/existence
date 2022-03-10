@@ -22,6 +22,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -29,6 +30,7 @@ import java.time.Duration;
 import java.util.*;
 
 @Service
+//@Transactional
 public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Value("${jwt.secret}")
@@ -62,16 +64,31 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     private PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public UserDTO login(UserWrapper wUser)
             throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException, InvalidInputException {
+        // This is a super messy method
+        // TODO: Needs a rework for efficiency and scalability
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
-        if (username.equals(EnumUtilOutput.EMPTY.toString()) || password.equals(EnumUtilOutput.EMPTY.toString()))
+        if (username.equals(EnumUtilOutput.EMPTY.getValue()) || password.equals(EnumUtilOutput.EMPTY.getValue()))
             throw new InvalidInputException("username or password");
         Optional<User> userData = userDAO.findByUsername(username);
         // If user is found, check if raw password matches with hash
         if (userData.isPresent()) {
-            User user = userData.get();
+            User dbUser = userData.get();
+
+            // These codes prevent the method from directly referencing or modifying the Optional<User> object
+            // This prevent other Optional<User> calls on the same transaction from being affected
+            // TODO: Find a more elegant way to do this.
+            //  These codes are messy and could easily become the source of unforeseen bugs.
+            //  Also, these codes need to be repeated on other methods called during login that utilizes the Optional<User> call.
+            User user = new User();
+            user.setId(dbUser.getId());
+            user.setUsername(dbUser.getUsername());
+            user.setPassword(dbUser.getPassword());
+            user.setRoles(dbUser.getRoles());
+
             //if password matches build a token
             if (passwordEncoder.matches(password, user.getPassword())) {
                 user.setPassword(password);
@@ -84,9 +101,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             } else {
                 throw new UserNotFoundException();
             }
-        } else if (username.equals(EnumAuthorization.admin.toString())){
+        } else if (username.equals(EnumAuthorization.DEFAULT_USER.getValue())){
             User user = initialAdminSetup();
-            user.setPassword(EnumAuthorization.admin.toString());
+            user.setPassword(EnumAuthorization.DEFAULT_USER.getValue());
             String token = generateToken(user);
             user.setToken(token);
             return userUtil.wrapUser(user);
@@ -123,7 +140,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
     private String generateToken(User user) throws AuthenticationException {
-        // Password passed here must be the hashed password
+        // Password passed here must be the plain password
         Authentication authentication = authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
                   user.getUsername(),
@@ -180,14 +197,14 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         User user = new User();
         user.setUsername(username);
         user.setPassword(hashPword);
-        Optional<Role> roleData = roleDAO.findByName(EnumAuthorization.ROLE_USER.toString());
+        Optional<Role> roleData = roleDAO.findByName(EnumAuthorization.USER.getValue());
         if (roleData.isPresent()) {
             Role role = roleData.get();
             Set<Role> roleSet = new HashSet<>();
             roleSet.add(role);
             user.setRoles(roleSet);
         } else {
-            throw new EntityNotFoundException("There is an error in the roles database. Please contact system admin.");
+            throw new EntityNotFoundException("There is an error in the Roles database. Please contact system admin.");
         }
 
         return userDAO.save(user);
@@ -196,15 +213,15 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     private User initialAdminSetup() throws EntityNotFoundException {
         // This is only called once, during the admin's initial log in
         User admin = new User();
-        admin.setUsername(EnumAuthorization.admin.toString());
-        String hashPword = passwordEncoder.encode(EnumAuthorization.admin.toString());
+        admin.setUsername(EnumAuthorization.DEFAULT_USER.getValue());
+        String hashPword = passwordEncoder.encode(EnumAuthorization.DEFAULT_USER.getValue());
         admin.setPassword(hashPword);
 
         Set<String> roleNames = new HashSet<>(Arrays.asList(
-                EnumAuthorization.ROLE_OWNER.toString(),
-                EnumAuthorization.ROLE_SUPERUSER.toString(),
-                EnumAuthorization.ROLE_ADMIN.toString(),
-                EnumAuthorization.ROLE_USER.toString()
+                EnumAuthorization.OWNER.getValue(),
+                EnumAuthorization.SUPERUSER.getValue(),
+                EnumAuthorization.ADMIN.getValue(),
+                EnumAuthorization.USER.getValue()
         ));
 
         List<Role> dbRoles = roleDAO.findRolesBySet(roleNames);

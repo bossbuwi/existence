@@ -12,10 +12,10 @@
                 <constraints primaryKey="true"/>
             </column>
             <column name="user_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_user_role" referencedTableName="uni_users" referencedColumnNames="id"/>
+                <constraints nullable="false" foreignKeyName="fk_user_role" referencedTableName="symphony_users" referencedColumnNames="id"/>
             </column>
             <column name="role_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_role_user" referencedTableName="uni_roles" referencedColumnNames="id"/>
+                <constraints nullable="false" foreignKeyName="fk_role_user" referencedTableName="symphony_roles" referencedColumnNames="id"/>
             </column>
         </createTable>
         <rollback>

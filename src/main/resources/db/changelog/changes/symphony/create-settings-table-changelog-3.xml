@@ -7,7 +7,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet author="bossbuwi" id="20211120-002">
-        <createTable tableName="uni_settings">
+        <createTable tableName="symphony_settings">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true"/>
             </column>
@@ -43,7 +43,7 @@
             </column>
         </createTable>
         <rollback>
-            <dropTable tableName="uni_settings"/>
+            <dropTable tableName="symphony_settings"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

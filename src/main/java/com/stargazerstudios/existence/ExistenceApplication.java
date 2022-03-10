@@ -14,4 +14,6 @@ public class ExistenceApplication {
 	// TODO Add useful comments on the sources for easier reading
 	// TODO There is a lot of code cleaning to be done
 	// TODO Create utils for the entities on symphony project
+	// TODO Check the codes where Optional are used and assert if it would be better to use try catch block
+	// 	especially when doing database operations. Also determine if there are any database changes needed.
 }

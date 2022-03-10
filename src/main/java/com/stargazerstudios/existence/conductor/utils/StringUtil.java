@@ -10,17 +10,27 @@ public class StringUtil {
         if (in != null && !in.isBlank()) {
             return in;
         } else {
-            return EnumUtilOutput.EMPTY.toString();
+            return EnumUtilOutput.EMPTY.getValue();
+        }
+    }
+
+    public String checkInputTrim(String in) {
+        if (in != null && !in.isBlank()) {
+            String out = in.trim();
+            if (out.length() == 0) return EnumUtilOutput.EMPTY.getValue();
+            return out;
+        } else {
+            return EnumUtilOutput.EMPTY.getValue();
         }
     }
 
     public String checkInputTrimToUpper(String in) {
         if (in != null && !in.isBlank()) {
             String out = in.trim();
-            if (out.length() == 0) return EnumUtilOutput.EMPTY.toString();
+            if (out.length() == 0) return EnumUtilOutput.EMPTY.getValue();
             return out.toUpperCase();
         } else {
-            return EnumUtilOutput.EMPTY.toString();
+            return EnumUtilOutput.EMPTY.getValue();
         }
     }
 }

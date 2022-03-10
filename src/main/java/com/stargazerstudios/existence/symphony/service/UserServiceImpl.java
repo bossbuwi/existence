@@ -9,10 +9,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service(value = "UserServiceImpl")
+@Transactional
 public class UserServiceImpl implements UserDetailsService {
 
     @Autowired
@@ -28,9 +30,10 @@ public class UserServiceImpl implements UserDetailsService {
         Optional<User> _userData = userDAO.findByUsername(username);
         if (_userData.isPresent()) {
             User _user = _userData.get();
-            return new org.springframework.security.core.userdetails.User(
+            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                     _user.getUsername(), _user.getPassword(), getAuthority(_user)
             );
+            return userDetails;
         } else {
             throw new UsernameNotFoundException("User with username: " + username + " not found.");
         }

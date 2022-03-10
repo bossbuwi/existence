@@ -86,6 +86,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(errorResponse);
     }
 
+    @ExceptionHandler(DatabaseErrorException.class)
+    protected ResponseEntity<Object> handleDatabaseError(
+            DatabaseErrorException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
+    @ExceptionHandler(UserUnauthorizedException.class)
+    protected ResponseEntity<Object> handleUserUnauthorizedError(
+            UserUnauthorizedException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
     private ResponseEntity<Object> buildResponseEntity(ErrorResponse errorResponse) {
         return new ResponseEntity<>(errorResponse, errorResponse.getHttpStatus());
     }
