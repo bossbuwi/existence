@@ -20,15 +20,6 @@ public class HttpConfig implements WebMvcConfigurer {
         List<String> allowedOrigins = new ArrayList<>();
         allowedOrigins.add("*");
 
-        // Deprecated due to the use of Java 17
-//        List<String> allowedMethods = new ArrayList<>();
-//        allowedMethods.add("HEAD");
-//        allowedMethods.add("GET");
-//        allowedMethods.add("POST");
-//        allowedMethods.add("PUT");
-//        allowedMethods.add("DELETE");
-//        allowedMethods.add("PATCH");
-
         List<String> allowedMethods = List.of(
                 EnumHttpRequestMethod.HEAD.getValue(),
                 EnumHttpRequestMethod.GET.getValue(),
@@ -37,12 +28,6 @@ public class HttpConfig implements WebMvcConfigurer {
                 EnumHttpRequestMethod.DELETE.getValue(),
                 EnumHttpRequestMethod.PATCH.getValue()
         );
-
-        // Deprecated due to the use of Java 17
-//        List<String> allowedHeaders = new ArrayList<>();
-//        allowedHeaders.add("Authorization");
-//        allowedHeaders.add("Cache-Control");
-//        allowedHeaders.add("Content-Type");
 
         List<String> allowedHeaders = List.of(
                 EnumHttpHeader.AUTHORIZATION.getValue(),

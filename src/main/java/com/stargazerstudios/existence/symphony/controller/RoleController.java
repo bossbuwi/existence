@@ -1,13 +1,7 @@
 package com.stargazerstudios.existence.symphony.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.BadJsonWebTokenException;
 import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
 import com.stargazerstudios.existence.symphony.dto.RoleDTO;
-import com.stargazerstudios.existence.symphony.dto.SettingDTO;
-import com.stargazerstudios.existence.symphony.dto.UserDTO;
-import com.stargazerstudios.existence.symphony.entity.Role;
-import com.stargazerstudios.existence.symphony.entity.User;
-import com.stargazerstudios.existence.symphony.repository.RoleDAO;
 import com.stargazerstudios.existence.symphony.service.RoleServiceImpl;
 import com.stargazerstudios.existence.symphony.wrapper.RoleWrapper;
 import org.springframework.beans.factory.annotation.Autowired;

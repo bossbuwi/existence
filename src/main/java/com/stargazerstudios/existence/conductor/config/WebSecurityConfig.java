@@ -45,7 +45,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers(WebSecurityURI.Unguarded.URI_TEST).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_LOGIN).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_CONCERTO).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_FRONTEND_ROOT).permitAll()

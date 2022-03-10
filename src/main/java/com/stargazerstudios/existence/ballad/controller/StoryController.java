@@ -18,8 +18,6 @@ import java.util.List;
 @RequestMapping("/ballad/stories")
 public class StoryController {
 
-    // TODO: Story controller needs a rework. Request params should not be used because they may be hashtags in there.
-
     @Autowired
     private StoryServiceImpl storyService;
 
@@ -60,9 +58,7 @@ public class StoryController {
     }
 
     @DeleteMapping("/story/{name}")
-    public ResponseEntity<StoryDTO> deleteStory(@PathVariable String name)
-            throws EntityNotFoundException {
-        // TODO: Ongoing
-        return new ResponseEntity<>(storyService.deleteStory(name), HttpStatus.OK);
+    public ResponseEntity<StoryDTO> deleteStory(@RequestBody StoryWrapper story) {
+        return null;
     }
 }

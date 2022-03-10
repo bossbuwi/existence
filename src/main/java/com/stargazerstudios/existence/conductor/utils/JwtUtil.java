@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtUtil implements Serializable {
-    // TODO: Put useful comments for easier code reading
 
     @Serial
     private static final long serialVersionUID = 1L;

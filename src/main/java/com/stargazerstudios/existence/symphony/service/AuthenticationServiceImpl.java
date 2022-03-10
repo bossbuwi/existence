@@ -30,7 +30,7 @@ import java.time.Duration;
 import java.util.*;
 
 @Service
-//@Transactional
+@Transactional
 public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Value("${jwt.secret}")
@@ -64,9 +64,8 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     private PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional
     public UserDTO login(UserWrapper wUser)
-            throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException, InvalidInputException {
+            throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException, InvalidInputException, AppUninitializedErrorException {
         // This is a super messy method
         // TODO: Needs a rework for efficiency and scalability
         String username = stringUtil.checkInput(wUser.getUsername());
@@ -102,11 +101,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                 throw new UserNotFoundException();
             }
         } else if (username.equals(EnumAuthorization.DEFAULT_USER.getValue())){
-            User user = initialAdminSetup();
-            user.setPassword(EnumAuthorization.DEFAULT_USER.getValue());
-            String token = generateToken(user);
-            user.setToken(token);
-            return userUtil.wrapUser(user);
+            throw new AppUninitializedErrorException();
         } else {
             // TODO: This needs to be checked and reworked.
             //  The process of authenticating through third party is messy.
@@ -208,27 +203,5 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         }
 
         return userDAO.save(user);
-    }
-
-    private User initialAdminSetup() throws EntityNotFoundException {
-        // This is only called once, during the admin's initial log in
-        User admin = new User();
-        admin.setUsername(EnumAuthorization.DEFAULT_USER.getValue());
-        String hashPword = passwordEncoder.encode(EnumAuthorization.DEFAULT_USER.getValue());
-        admin.setPassword(hashPword);
-
-        Set<String> roleNames = new HashSet<>(Arrays.asList(
-                EnumAuthorization.OWNER.getValue(),
-                EnumAuthorization.SUPERUSER.getValue(),
-                EnumAuthorization.ADMIN.getValue(),
-                EnumAuthorization.USER.getValue()
-        ));
-
-        List<Role> dbRoles = roleDAO.findRolesBySet(roleNames);
-        if (dbRoles.size() != roleNames.size()) throw new EntityNotFoundException("There is an error in the Roles database. Please contact system admin.");
-
-        Set<Role> roles = new HashSet<>(dbRoles);
-        admin.setRoles(roles);
-        return userDAO.save(admin);
     }
 }

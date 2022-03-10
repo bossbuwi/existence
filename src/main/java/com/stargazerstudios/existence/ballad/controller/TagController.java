@@ -57,8 +57,7 @@ public class TagController {
     }
 
     @DeleteMapping("/tag")
-    public ResponseEntity<TagDTO> deleteTag(@RequestParam String tag)
-            throws EntityNotFoundException {
-        return new ResponseEntity<>(tagService.deleteTag(tag), HttpStatus.OK);
+    public ResponseEntity<TagDTO> deleteTag(@RequestBody TagWrapper tag) {
+        return null;
     }
 }
