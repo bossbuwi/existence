@@ -57,7 +57,8 @@ public class TagController {
     }
 
     @DeleteMapping("/tag")
-    public ResponseEntity<TagDTO> deleteTag(@RequestBody TagWrapper tag) {
-        return null;
+    public ResponseEntity<TagDTO> deleteTag(@RequestBody TagWrapper tag)
+            throws InvalidInputException, EntityNotFoundException {
+        return new ResponseEntity<>(tagService.deleteTag(tag), HttpStatus.OK);
     }
 }

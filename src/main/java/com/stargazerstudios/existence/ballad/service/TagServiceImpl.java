@@ -169,7 +169,19 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public TagDTO deleteTag(String name) throws EntityNotFoundException {
-        return null;
+    public TagDTO deleteTag(TagWrapper wTag)
+            throws EntityNotFoundException, InvalidInputException {
+        String tagName = stringUtil.checkInputTrimToUpper(wTag.getName());
+        if (tagName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
+
+        Optional<Tag> tagData = tagDAO.findByName(tagName);
+        if (tagData.isPresent()) {
+            Tag tag = tagData.get();
+            tagDAO.delete(tag);
+            TagDTO tagDTO = tagUtil.wrapTag(tag);
+            return tagDTO;
+        } else {
+            throw new EntityNotFoundException("Tag with name: " + tagName + " not found.");
+        }
     }
 }

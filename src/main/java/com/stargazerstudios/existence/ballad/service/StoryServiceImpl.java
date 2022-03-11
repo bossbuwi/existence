@@ -169,7 +169,18 @@ public class StoryServiceImpl implements StoryService{
     }
 
     @Override
-    public StoryDTO deleteStory(String name) throws EntityNotFoundException {
-        return null;
+    public StoryDTO deleteStory(StoryWrapper wStory)
+            throws EntityNotFoundException, InvalidInputException {
+        String storyName = stringUtil.checkInputTrimToUpper(wStory.getName());
+        if (storyName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
+        Optional<Story> storyData = storyDAO.findByName(storyName);
+        if (storyData.isPresent()) {
+            Story story = storyData.get();
+            storyDAO.delete(story);
+            StoryDTO storyDTO = storyUtil.wrapStory(story);
+            return storyDTO;
+        } else {
+            throw new EntityNotFoundException("Story with name: " + storyName + " not found.");
+        }
     }
 }

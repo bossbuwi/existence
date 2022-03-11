@@ -18,5 +18,5 @@ public interface StoryService {
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException;
     StoryDTO removeTags(StoryWrapper story)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException;
-    StoryDTO deleteStory(String name) throws EntityNotFoundException;
+    StoryDTO deleteStory(StoryWrapper story) throws EntityNotFoundException, InvalidInputException;
 }

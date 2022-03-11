@@ -18,5 +18,6 @@ public interface TagService {
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException;
     TagDTO removeStories(TagWrapper tag)
             throws DuplicateEntityException, EntityNotFoundException, InvalidInputException;
-    TagDTO deleteTag(String name) throws EntityNotFoundException;
+    TagDTO deleteTag(TagWrapper tag)
+            throws EntityNotFoundException, InvalidInputException;
 }

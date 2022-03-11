@@ -47,7 +47,6 @@ public class StoryController {
     @PutMapping("/story/add-tags")
     public ResponseEntity<StoryDTO> addTags(@RequestBody StoryWrapper story)
             throws InvalidInputException, DuplicateEntityException, EntityNotFoundException {
-        // TODO: Ongoing
         return new ResponseEntity<>(storyService.addTags(story), HttpStatus.OK);
     }
 
@@ -57,8 +56,9 @@ public class StoryController {
         return new ResponseEntity<>(storyService.removeTags(story), HttpStatus.OK);
     }
 
-    @DeleteMapping("/story/{name}")
-    public ResponseEntity<StoryDTO> deleteStory(@RequestBody StoryWrapper story) {
-        return null;
+    @DeleteMapping("/story")
+    public ResponseEntity<StoryDTO> deleteStory(@RequestBody StoryWrapper story)
+            throws InvalidInputException, EntityNotFoundException {
+        return new ResponseEntity<>(storyService.deleteStory(story), HttpStatus.OK);
     }
 }

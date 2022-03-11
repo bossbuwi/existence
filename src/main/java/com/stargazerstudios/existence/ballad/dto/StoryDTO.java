@@ -17,5 +17,4 @@ public class StoryDTO {
     private Timestamp creation_date;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Timestamp last_changed_date;
-
 }
