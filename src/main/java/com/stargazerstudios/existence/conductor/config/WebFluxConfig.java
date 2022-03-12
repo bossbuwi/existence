@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebFluxConfig implements WebFluxConfigurer {
 
-    @Value("${ldap.server.uri}")
+    @Value("${ldap.server}")
     private String ldapServer;
 
     @Bean

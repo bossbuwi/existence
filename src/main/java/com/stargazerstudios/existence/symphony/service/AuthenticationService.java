@@ -6,6 +6,6 @@ import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
 
 public interface AuthenticationService {
     UserDTO login(UserWrapper user)
-            throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException, InvalidInputException, AppUninitializedErrorException;
+            throws UserNotFoundException, BadGatewayException, EntityNotFoundException, InvalidInputException, FatalErrorException, InvalidPropertyErrorException;
     UserDTO autologin(String token) throws UserNotFoundException;
 }

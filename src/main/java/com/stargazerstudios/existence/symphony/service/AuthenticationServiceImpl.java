@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.UnsupportedMediaTypeException;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -35,6 +36,12 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Value("${jwt.secret}")
     private String secret;
+
+    @Value("${ldap.server}")
+    private String ldapServer;
+
+    @Value("${ldap.uri}")
+    private String ldapUri;
 
     @Autowired
     private UserDAO userDAO;
@@ -65,7 +72,8 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Override
     public UserDTO login(UserWrapper wUser)
-            throws UserNotFoundException, BadGatewayException, GatewayTimeoutException, EntityNotFoundException, InvalidInputException, AppUninitializedErrorException {
+            throws UserNotFoundException, BadGatewayException, EntityNotFoundException,
+                InvalidInputException, FatalErrorException, InvalidPropertyErrorException {
         // This is a super messy method
         // TODO: Needs a rework for efficiency and scalability
         String username = stringUtil.checkInput(wUser.getUsername());
@@ -101,19 +109,41 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                 throw new UserNotFoundException();
             }
         } else if (username.equals(EnumAuthorization.DEFAULT_USER.getValue())){
-            throw new AppUninitializedErrorException();
+            throw new FatalErrorException();
         } else {
-            // TODO: This needs to be checked and reworked.
-            //  The process of authenticating through third party is messy.
-            if (authViaLDAP(username, password)) {
-                User user = createUser(username, password);
-                user.setPassword(password);
-                String token = generateToken(user);
-                user.setToken(token);
-                return userUtil.wrapUser(user);
-            } else {
-                throw new UserNotFoundException();
-            }
+            boolean isAuth = isAuthViaLDAP(username,password);
+            if (!isAuth) throw new UserNotFoundException();
+
+            User newUser = createUser(username, password);
+            // This returns a user without a token, meaning the user is not yet logged in
+            // User needs to log in again after logging in for the first time.
+            return userUtil.wrapUser(newUser);
+        }
+    }
+
+    private boolean isAuthViaLDAP(String username, String password)
+            throws UserNotFoundException, BadGatewayException, InvalidPropertyErrorException {
+        User loginDetails = new User();
+        loginDetails.setUsername(username);
+        loginDetails.setPassword(password);
+
+        if (stringUtil.checkInput(ldapServer).equals(EnumUtilOutput.EMPTY.getValue()))
+            throw new InvalidPropertyErrorException("ldap.server");
+
+        Mono<User> userMono = webClient.post()
+                .uri(ldapUri)
+                .body(Mono.just(loginDetails), User.class)
+                .retrieve()
+                .bodyToMono(User.class);
+
+        try {
+            User userLDAP = userMono.block(Duration.ofMillis(20000));
+            return userLDAP.getUsername() != null && !userLDAP.getUsername().isEmpty();
+        } catch (UnsupportedMediaTypeException e) {
+            throw new UserNotFoundException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BadGatewayException();
         }
     }
 
@@ -151,43 +181,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         return jwtUtil.generateToken(authentication);
     }
 
-    private boolean authViaLDAP(String username, String password) throws UserNotFoundException, GatewayTimeoutException {
-        Mono<User> userMono = webClient.post()
-                .uri(uriBuilder -> uriBuilder.path("/login")
-                        .queryParam("username", username)
-                        .queryParam("password", password)
-                        .build())
-                .retrieve()
-                .bodyToMono(User.class)
-                .timeout(Duration.ofMillis(20000))
-                .onErrorReturn(new User());
-
-        try {
-            User user = userMono.block(Duration.ofMillis(20000));
-            if (user != null) {
-                if (user.getUsername().equals(username)) {
-                    return true;
-                } else {
-                    throw new UserNotFoundException();
-                }
-            } else {
-                throw new BadGatewayException();
-            }
-        } catch (RuntimeException | BadGatewayException e) {
-            throw new GatewayTimeoutException();
-        }
-    }
-
     private User createUser(String username, String password) throws EntityNotFoundException {
-        Optional<User> userData = userDAO.findByUsername(username);
-
-        if (userData.isPresent()) {
-            User user = userData.get();
-            String hashPword = passwordEncoder.encode(password);
-            user.setPassword(hashPword);
-            return userDAO.save(user);
-        }
-
         String hashPword = passwordEncoder.encode(password);
         User user = new User();
         user.setUsername(username);
@@ -202,6 +196,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             throw new EntityNotFoundException("There is an error in the Roles database. Please contact system admin.");
         }
 
-        return userDAO.save(user);
+        try {
+            userDAO.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
     }
 }
