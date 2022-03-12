@@ -54,14 +54,22 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO getUser(UserWrapper user)
+    public UserDTO getUser(UserWrapper wUser)
             throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException {
-        return null;
+        String username = stringUtil.checkInputTrim(wUser.getUsername());
+        if (username.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("username");
+
+        Optional<User> userData = userDAO.findByUsername(username);
+        if (userData.isEmpty()) throw new InvalidInputException("username");
+
+        User user = userData.get();
+        return userUtil.wrapUser(user);
     }
 
     @Override
     public UserDTO createUser(UserWrapper wUser)
-            throws DuplicateEntityException, InvalidInputException, UserUnauthorizedException, DatabaseErrorException, EntityNotFoundException {
+            throws DuplicateEntityException, InvalidInputException, UserUnauthorizedException,
+                DatabaseErrorException, EntityNotFoundException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -114,7 +122,15 @@ public class UserAccessServiceImpl implements UserAccessService{
         User user = userData.get();
         String hashPword = passwordEncoder.encode(password);
         user.setPassword(hashPword);
-        return userUtil.wrapUser(userDAO.save(user));
+
+        try {
+            userDAO.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DatabaseErrorException("The is a problem saving the changes. Please contact admin.");
+        }
+
+        return userUtil.wrapUser(user);
     }
 
     @Override

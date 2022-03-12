@@ -1,18 +1,24 @@
 package com.stargazerstudios.existence.conductor.service;
 
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
+import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.universal.FatalErrorException;
+import com.stargazerstudios.existence.conductor.erratum.universal.InvalidPropertyErrorException;
+import com.stargazerstudios.existence.conductor.erratum.universal.UserUnauthorizedException;
 import com.stargazerstudios.existence.conductor.model.ExistenceIdentity;
-import com.stargazerstudios.existence.symphony.entity.Role;
+import com.stargazerstudios.existence.conductor.utils.StringUtil;
+import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.entity.User;
-import com.stargazerstudios.existence.symphony.repository.RoleDAO;
 import com.stargazerstudios.existence.symphony.repository.UserDAO;
+import com.stargazerstudios.existence.symphony.utils.UserUtil;
+import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,41 +28,49 @@ public class ExistenceService {
     private UserDAO userDAO;
 
     @Autowired
-    private RoleDAO roleDAO;
+    private UserUtil userUtil;
+
+    @Autowired
+    private StringUtil stringUtil;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public ExistenceIdentity realizeDreams() throws FatalErrorException {
-        Optional<User> userData = userDAO.findByUsername(EnumAuthorization.DEFAULT_USER.getValue());
-        if (userData.isEmpty()) {
-            boolean isDone = hasAdmin();
-            if (isDone) return new ExistenceIdentity();
-            else throw new FatalErrorException();
-        } else {
-            return new ExistenceIdentity();
-        }
+    @Value("${master.password}")
+    private String masterPassword;
+
+    public ExistenceIdentity realizeDreams() {
+        return new ExistenceIdentity();
     }
 
-    private boolean hasAdmin() throws FatalErrorException {
-        User admin = new User();
-        admin.setUsername(EnumAuthorization.DEFAULT_USER.getValue());
-        String hashPword = passwordEncoder.encode(EnumAuthorization.DEFAULT_USER.getValue());
-        admin.setPassword(hashPword);
+    public UserDTO startOver(UserWrapper wUser)
+            throws UserUnauthorizedException, FatalErrorException, InvalidPropertyErrorException {
+        String username = stringUtil.checkInput(wUser.getUsername());
+        String password = stringUtil.checkInput(wUser.getPassword());
 
-        Set<String> roleNames = new HashSet<>(Arrays.asList(
-                EnumAuthorization.OWNER.getValue(),
-                EnumAuthorization.SUPERUSER.getValue(),
-                EnumAuthorization.ADMIN.getValue(),
-                EnumAuthorization.USER.getValue()
-        ));
+        if (!username.equals(EnumAuthorization.DEFAULT_USER.getValue())) throw new UserUnauthorizedException();
+        if (username.equals(EnumUtilOutput.EMPTY.getValue())) throw new UserUnauthorizedException();
+        if (password.equals(EnumUtilOutput.EMPTY.getValue())) throw new UserUnauthorizedException();
 
-        List<Role> dbRoles = roleDAO.findRolesBySet(roleNames);
-        if (dbRoles.size() != roleNames.size()) throw new FatalErrorException();
+        if (stringUtil.checkInput(masterPassword).equals(EnumUtilOutput.EMPTY.getValue()))
+            throw new InvalidPropertyErrorException("master.password");
 
-        Set<Role> roles = new HashSet<>(dbRoles);
-        admin.setRoles(roles);
-        userDAO.save(admin);
-        return true;
+        if (!password.equals(masterPassword)) throw new UserUnauthorizedException();
+
+        Optional<User> adminData = userDAO.findByUsername(username);
+        if (adminData.isEmpty()) throw new FatalErrorException();
+
+        User admin = adminData.get();
+        String hashPassword = passwordEncoder.encode(EnumAuthorization.DEFAULT_USER.getValue());
+        admin.setPassword(hashPassword);
+
+        try {
+            userDAO.save(admin);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new FatalErrorException();
+        }
+
+        return userUtil.wrapUser(admin);
     }
 }

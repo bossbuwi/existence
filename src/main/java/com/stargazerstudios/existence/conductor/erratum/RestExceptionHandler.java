@@ -29,9 +29,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(errorResponse);
     }
 
-    @ExceptionHandler(AppUninitializedErrorException.class)
-    protected ResponseEntity<Object> handleAppUninitializedError(
-            AppUninitializedErrorException ex) {
+    @ExceptionHandler(InvalidPropertyErrorException.class)
+    protected ResponseEntity<Object> handleInvalidPropertyError(
+            InvalidPropertyErrorException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
         return buildResponseEntity(errorResponse);

@@ -2,11 +2,10 @@ package com.stargazerstudios.existence.conductor.erratum.universal;
 
 import org.springframework.http.HttpStatus;
 
-public class AppUninitializedErrorException extends Exception{
+public class InvalidPropertyErrorException extends Exception {
 
-    @Override
-    public String getMessage() {
-        return "The application has not been initialized. Please contact the admin.";
+    public InvalidPropertyErrorException(String key) {
+        super("Invalid application property key: " + key + ". Please contact admin.");
     }
 
     public HttpStatus getHttpStatus() {
