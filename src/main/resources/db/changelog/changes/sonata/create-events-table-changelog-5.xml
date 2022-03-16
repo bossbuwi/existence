@@ -6,7 +6,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet author="bossbuwi" id="20211121-001">
+    <changeSet author="v0.1-alpha" id="20211123-005">
+        <comment>Create table for the Event entity.</comment>
         <createTable tableName="sonata_events">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true"/>
