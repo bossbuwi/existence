@@ -9,7 +9,8 @@
             http://www.liquibase.org/xml/ns/pro
             http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.3.xsd">
 
-    <changeSet author="bossbuwi" id="20211123-001">
+    <changeSet author="v0.1-alpha" id="20211121-001">
+        <comment>Create table for the Role entity.</comment>
         <createTable tableName="symphony_roles">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true"/>

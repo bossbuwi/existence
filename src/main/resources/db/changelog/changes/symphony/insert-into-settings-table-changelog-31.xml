@@ -7,7 +7,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <property name="now" value="now()" dbms="postgresql"/>
-    <changeSet author="bossbuwi" id="20211120-003">
+    <changeSet author="v0.1-alpha" id="20211121-031">
+        <comment>Insert settings available since v0.1-alpha.</comment>
         <insert tableName="symphony_settings">
             <column name="key" value="loglevel"/>
             <column name="value" value="V"/>

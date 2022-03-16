@@ -8,9 +8,9 @@
 
     <!-- Symphony -->
     <include file="db/changelog/changes/symphony/create-roles-table-changelog-1.xml"/>
+    <include file="db/changelog/changes/symphony/insert-into-roles-table-changelog-11.xml"/>
     <include file="db/changelog/changes/symphony/create-users-table-changelog-2.xml"/>
     <include file="db/changelog/changes/symphony/create-settings-table-changelog-3.xml"/>
-    <include file="db/changelog/changes/symphony/insert-into-roles-table-changelog-11.xml"/>
     <include file="db/changelog/changes/symphony/insert-into-settings-table-changelog-31.xml"/>
     <include file="db/changelog/changes/symphony/create-users-roles-table-changelog-4.xml"/>
 

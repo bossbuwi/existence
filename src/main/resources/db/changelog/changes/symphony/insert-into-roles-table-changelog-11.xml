@@ -7,7 +7,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <property name="now" value="now()" dbms="postgresql"/>
-    <changeSet author="bossbuwi" id="20211120-003">
+    <changeSet author="v0.1-alpha" id="20211121-011">
+        <comment>Insert default roles.</comment>
         <insert tableName="symphony_roles">
             <column name="name" value="ROLE_OWNER"/>
             <column name="description" value="This is the existence's creator. Has access to everything and can do anything."/>

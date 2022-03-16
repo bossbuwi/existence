@@ -7,7 +7,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <property name="now" value="now()" dbms="postgresql"/>
-    <changeSet author="bossbuwi" id="20211121-001">
+    <changeSet author="v0.1-alpha" id="20211123-041">
+        <comment>Insert default event types.</comment>
         <insert tableName="sonata_event_types">
             <column name="code" value="IC"/>
             <column name="name" value="Input Cycle"/>
