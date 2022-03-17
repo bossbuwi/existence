@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/concerto/")
@@ -20,7 +23,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@RequestBody UserWrapper user)
             throws UserNotFoundException, BadGatewayException, EntityNotFoundException,
-                InvalidInputException, FatalErrorException, InvalidPropertyErrorException {
+            InvalidInputException, FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException {
         return new ResponseEntity<>(authenticationService.login(user), HttpStatus.OK);
     }
 
@@ -30,7 +33,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Boolean> logout() {
-        return new ResponseEntity<>(true, HttpStatus.OK);
+    public ResponseEntity<Boolean> logout(HttpServletRequest request, HttpServletResponse response) {
+        return new ResponseEntity<>(authenticationService.logout(request, response), HttpStatus.OK);
     }
 }

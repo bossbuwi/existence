@@ -9,6 +9,6 @@ public class DatabaseErrorException extends Exception{
     }
 
     public HttpStatus getHttpStatus() {
-        return HttpStatus.CONFLICT;
+        return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 }
