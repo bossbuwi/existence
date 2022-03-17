@@ -9,12 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service(value = "UserServiceImpl")
-@Transactional
 public class UserServiceImpl implements UserDetailsService {
 
     @Autowired
@@ -25,8 +23,6 @@ public class UserServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // TODO: Investigate why the findByUsername method returns a plain password if both this
-        //  and the AuthenticationServiceImpl class are annotated with @Transactional
         Optional<User> _userData = userDAO.findByUsername(username);
         if (_userData.isPresent()) {
             User _user = _userData.get();

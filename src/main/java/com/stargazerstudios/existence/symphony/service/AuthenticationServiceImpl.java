@@ -3,6 +3,7 @@ package com.stargazerstudios.existence.symphony.service;
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.universal.*;
+import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.JwtUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
@@ -21,17 +22,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.UnsupportedMediaTypeException;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.*;
 
 @Service
-@Transactional
 public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Value("${jwt.secret}")
@@ -51,6 +55,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthorityUtil authorityUtil;
 
     @Autowired
     private StringUtil stringUtil;
@@ -73,9 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     @Override
     public UserDTO login(UserWrapper wUser)
             throws UserNotFoundException, BadGatewayException, EntityNotFoundException,
-                InvalidInputException, FatalErrorException, InvalidPropertyErrorException {
-        // This is a super messy method
-        // TODO: Needs a rework for efficiency and scalability
+            InvalidInputException, FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
         if (username.equals(EnumUtilOutput.EMPTY.getValue()) || password.equals(EnumUtilOutput.EMPTY.getValue()))
@@ -83,19 +88,10 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         Optional<User> userData = userDAO.findByUsername(username);
         // If user is found, check if raw password matches with hash
         if (userData.isPresent()) {
-            User dbUser = userData.get();
-
-            // These codes prevent the method from directly referencing or modifying the Optional<User> object
-            // This prevent other Optional<User> calls on the same transaction from being affected
-            // TODO: Find a more elegant way to do this.
-            //  These codes are messy and could easily become the source of unforeseen bugs.
-            //  Also, these codes need to be repeated on other methods called during login that utilizes the Optional<User> call.
-            User user = new User();
-            user.setId(dbUser.getId());
-            user.setUsername(dbUser.getUsername());
-            user.setPassword(dbUser.getPassword());
-            user.setRoles(dbUser.getRoles());
-
+            User user = userData.get();
+            // check if username is banned
+            boolean isBanned = authorityUtil.isBanned(user.getRoles());
+            if (isBanned) throw new UserUnauthorizedException();
             //if password matches build a token
             if (passwordEncoder.matches(password, user.getPassword())) {
                 user.setPassword(password);
@@ -106,19 +102,85 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
                 return userUtil.wrapUser(user);
             } else {
-                throw new UserNotFoundException();
+                boolean isAuth = isAuthViaLDAP(username, password);
+                if (isAuth) {
+                    updateThirdPartyPassword(username, password);
+                    user.setPassword(password);
+                    String token = generateToken(user);
+                    user.setToken(token);
+                    return userUtil.wrapUser(user);
+                } else {
+                    throw new UserNotFoundException();
+                }
             }
         } else if (username.equals(EnumAuthorization.DEFAULT_USER.getValue())){
             throw new FatalErrorException();
         } else {
             boolean isAuth = isAuthViaLDAP(username,password);
             if (!isAuth) throw new UserNotFoundException();
+            createUser(username, password);
 
-            User newUser = createUser(username, password);
-            // This returns a user without a token, meaning the user is not yet logged in
-            // User needs to log in again after logging in for the first time.
+            Optional<User> newUserData = userDAO.findByUsername(username);
+            if (newUserData.isEmpty()) throw new FatalErrorException();
+
+            User newUser = newUserData.get();
+            newUser.setPassword(password);
+            String token = generateToken(newUser);
+            newUser.setToken(token);
+
             return userUtil.wrapUser(newUser);
         }
+    }
+
+    @Override
+    public UserDTO autologin(String token) throws UserNotFoundException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String _token = generateTokenFromAuth(auth);
+
+        Optional<User> userData = userDAO.findByUsername(auth.getName());
+        if (userData.isPresent()) {
+            User user = userData.get();
+            user.setPassword(null);
+            user.setToken(_token);
+            return userUtil.wrapUser(user);
+        } else {
+            throw new UserNotFoundException();
+        }
+    }
+
+    @Override
+    public boolean logout(HttpServletRequest request, HttpServletResponse response) {
+        // TODO: Funnily enough this technically doesn't really do anything.
+        //  It does log out the user from the app, security context, cookies and all
+        //  but the JSON web token associated with the user's session is not invalidated.
+        //  As such, if the user tries to access any unguarded endpoint with the JSON web token on its
+        //  HTTP headers, the user will automatically get logged in, making logging out useless.
+        //  A process to invalidate JSON web tokens must be developed in order to log the user out permanently.
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CookieClearingLogoutHandler cookieClearingLogoutHandler =
+                new CookieClearingLogoutHandler(AbstractRememberMeServices.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY);
+        SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
+        cookieClearingLogoutHandler.logout(request, response, auth);
+        securityContextLogoutHandler.logout(request, response, auth);
+        return true;
+    }
+
+    private String generateToken(User user) throws AuthenticationException {
+        // Password passed here must be the plain password
+        Authentication authentication = authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(
+                  user.getUsername(),
+                  user.getPassword()
+          )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return jwtUtil.generateToken(authentication);
+    }
+
+    private String generateTokenFromAuth(Authentication authentication) {
+        return jwtUtil.generateToken(authentication);
     }
 
     private boolean isAuthViaLDAP(String username, String password)
@@ -147,40 +209,6 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         }
     }
 
-    @Override
-    public UserDTO autologin(String token) throws UserNotFoundException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        String _token = generateTokenFromAuth(auth);
-
-        Optional<User> userData = userDAO.findByUsername(auth.getName());
-        if (userData.isPresent()) {
-            User user = userData.get();
-            user.setPassword(null);
-            user.setToken(_token);
-            return userUtil.wrapUser(user);
-        } else {
-            throw new UserNotFoundException();
-        }
-    }
-
-    private String generateToken(User user) throws AuthenticationException {
-        // Password passed here must be the plain password
-        Authentication authentication = authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(
-                  user.getUsername(),
-                  user.getPassword()
-          )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtUtil.generateToken(authentication);
-    }
-
-    private String generateTokenFromAuth(Authentication authentication) {
-        return jwtUtil.generateToken(authentication);
-    }
-
     private User createUser(String username, String password) throws EntityNotFoundException {
         String hashPword = passwordEncoder.encode(password);
         User user = new User();
@@ -195,6 +223,22 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         } else {
             throw new EntityNotFoundException("There is an error in the Roles database. Please contact system admin.");
         }
+
+        try {
+            userDAO.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    private User updateThirdPartyPassword(String username, String password) throws UserNotFoundException {
+        Optional<User> userData = userDAO.findByUsername(username);
+        if (userData.isEmpty()) throw new UserNotFoundException();
+
+        User user = userData.get();
+        String hashPassword = passwordEncoder.encode(password);
+        user.setPassword(hashPassword);
 
         try {
             userDAO.save(user);

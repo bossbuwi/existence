@@ -2,11 +2,13 @@ package com.stargazerstudios.existence.conductor.filters;
 
 import com.stargazerstudios.existence.conductor.constants.EnumWebSecurity;
 import com.stargazerstudios.existence.conductor.constants.WebSecurityURI;
+import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.JwtUtil;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,12 +26,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthorityUtil authorityUtil;
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
@@ -53,26 +59,31 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 logger.warn("An error occurred while fetching username from token", e);
                 SecurityContextHolder.clearContext();
             } catch (ExpiredJwtException e) {
-                logger.warn("The token has expired", e);
+                logger.warn("The token has expired.", e);
                 SecurityContextHolder.clearContext();
             } catch(SignatureException e){
-                logger.warn("Authentication Failed. Username or Password not valid.");
+                logger.warn("Authentication Failed. Username or password not valid.");
                 SecurityContextHolder.clearContext();
             }
         } else {
             SecurityContextHolder.clearContext();
-            logger.warn("Couldn't find bearer string, header will be ignored");
+            logger.warn("Couldn't find bearer string, header will be ignored.");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            List<GrantedAuthority> authorities = new ArrayList<>(userDetails.getAuthorities());
+            boolean isBanned = authorityUtil.isBanned(authorities);
 
-            if (jwtUtil.isTokenValid(authToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication = jwtUtil.getAuthenticationToken(
-                        authToken, SecurityContextHolder.getContext().getAuthentication(), userDetails);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                logger.info("authenticated user: " + username + ", setting security context");
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (!isBanned) {
+                if (jwtUtil.isTokenValid(authToken, userDetails)) {
+                    UsernamePasswordAuthenticationToken authentication = jwtUtil.getAuthenticationToken(
+                            authToken, SecurityContextHolder.getContext().getAuthentication(), userDetails);
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    logger.info("Authenticated user: " + username + ". Setting security context.");
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                }
             }
         }
 

@@ -29,7 +29,7 @@ public class Role {
     @Column(name = "creation_date")
     private Timestamp dateAdded;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = {

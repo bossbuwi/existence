@@ -9,14 +9,12 @@ import com.stargazerstudios.existence.symphony.utils.RoleUtil;
 import com.stargazerstudios.existence.symphony.wrapper.RoleWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class RoleServiceImpl implements RoleService{
 
     @Autowired

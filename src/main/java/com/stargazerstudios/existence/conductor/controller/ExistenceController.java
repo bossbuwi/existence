@@ -22,12 +22,18 @@ public class ExistenceController {
 
     @GetMapping("/dreams")
     public ResponseEntity<ExistenceIdentity> announceExistence() throws FatalErrorException {
-        return new ResponseEntity<>(existenceService.realizeDreams(), HttpStatus.OK);
+        return new ResponseEntity<>(existenceService.instigate(), HttpStatus.OK);
     }
 
-    @PostMapping("/restart")
+    @PostMapping("/reset-password")
     public ResponseEntity<UserDTO> resetAdminPassword(@RequestBody UserWrapper user)
             throws FatalErrorException, UserUnauthorizedException, InvalidPropertyErrorException {
-        return new ResponseEntity<>(existenceService.startOver(user), HttpStatus.OK);
+        return new ResponseEntity<>(existenceService.resetAdminPassword(user), HttpStatus.OK);
+    }
+
+    @PostMapping("/reset-roles")
+    public ResponseEntity<UserDTO> resetAdminRoles(@RequestBody UserWrapper user)
+            throws FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException {
+        return new ResponseEntity<>(existenceService.resetAdminRoles(user), HttpStatus.OK);
     }
 }

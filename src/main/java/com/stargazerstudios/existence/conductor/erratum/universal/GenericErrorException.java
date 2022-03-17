@@ -9,6 +9,6 @@ public class GenericErrorException extends Exception{
     }
 
     public HttpStatus getHttpStatus() {
-        return HttpStatus.PAYMENT_REQUIRED;
+        return HttpStatus.BAD_REQUEST;
     }
 }
