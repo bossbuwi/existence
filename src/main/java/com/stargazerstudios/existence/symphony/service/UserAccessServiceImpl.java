@@ -86,7 +86,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         user.setPassword(hashPword);
 
         Optional<Role> userRole = roleDAO.findByName(EnumAuthorization.USER.getValue());
-        if (userRole.isEmpty()) throw new EntityNotFoundException("There is an error in the Roles database. Please contact system admin.");
+        if (userRole.isEmpty()) throw new EntityNotFoundException("role", "name", EnumAuthorization.USER.getValue());
         Role role = userRole.get();
         Set<Role> roles = Collections.singleton(role);
         user.setRoles(roles);
@@ -126,7 +126,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         if (!authUsername.equals(username) && !isAuthorized) throw new UserUnauthorizedException();
 
         Optional<User> userData = userDAO.findByUsername(username);
-        if (userData.isEmpty()) throw new EntityNotFoundException("User with username: " + username + " not found.");
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
         User user = userData.get();
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) throw new InvalidInputException("old_password");
         if (oldPassword.equals(newPassword)) throw new InvalidInputException("new_password");
@@ -156,7 +156,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         if (username.equals(authUsername)) throw new UserUnauthorizedException();
 
         Optional<User> userData = userDAO.findByUsername(username);
-        if (userData.isEmpty()) throw new EntityNotFoundException("User with username: " + username + " not found.");
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
 
         User user = userData.get();
         long userRank = authorityUtil.getHighestRank(user);
@@ -188,7 +188,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         if (rolesIn == null || rolesIn.length == 0) throw new InvalidInputException("roles");
 
         Optional<User> userData = userDAO.findByUsername(username);
-        if (userData.isEmpty()) throw new EntityNotFoundException("User with username: " + username + " not found.");
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
         User user = userData.get();
 
         if (authorityUtil.isBanned(user.getRoles())) throw new InvalidInputException("username");
@@ -235,7 +235,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         if (rolesIn == null || rolesIn.length == 0) throw new InvalidInputException("roles");
 
         Optional<User> userData = userDAO.findByUsername(username);
-        if (userData.isEmpty()) throw new EntityNotFoundException("User with username: " + username + " not found.");
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
         User user = userData.get();
 
         if (authorityUtil.isBanned(user.getRoles())) throw new InvalidInputException("username");
@@ -294,7 +294,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         if (username.equals(authUsername)) throw new UserUnauthorizedException();
 
         Optional<User> userData = userDAO.findByUsername(username);
-        if (userData.isEmpty()) throw new EntityNotFoundException("User with username: " + username + " not found.");
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
         User user = userData.get();
 
         boolean isBanned = authorityUtil.isBanned(user.getRoles());
@@ -327,7 +327,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         if (username.equals(authUsername)) throw new UserUnauthorizedException();
 
         Optional<User> userData = userDAO.findByUsername(username);
-        if (userData.isEmpty()) throw new EntityNotFoundException("User with username: " + username + " not found.");
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
         User user = userData.get();
 
         boolean isBanned = authorityUtil.isBanned(user.getRoles());

@@ -52,7 +52,7 @@ public class SystemServiceImpl implements SystemService {
         Optional<System> systemData = systemDAO.findByGlobalPrefix(systemWrapper.getGlobal_prefix());
         Optional<Machine> machineData = machineDAO.findByName(systemWrapper.getMachine());
 
-        if (!systemData.isPresent()) {
+        if (systemData.isEmpty()) {
             if (machineData.isPresent()) {
                 System system = new System();
                 system.setGlobalPrefix(systemWrapper.getGlobal_prefix());
@@ -62,7 +62,7 @@ public class SystemServiceImpl implements SystemService {
                 system.setMachine(machineData.get());
                 return systemUtil.wrapSystem(systemDAO.save(system));
             } else {
-                throw new EntityNotFoundException("Machine with name: " + systemWrapper.getMachine() + " not found.");
+                throw new EntityNotFoundException("machine", "name", systemWrapper.getMachine());
             }
         } else {
             throw new DuplicateEntityException("System with global prefix: " + systemWrapper.getGlobal_prefix() + " already exists.");

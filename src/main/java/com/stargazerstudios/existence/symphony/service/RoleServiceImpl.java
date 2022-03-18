@@ -47,7 +47,7 @@ public class RoleServiceImpl implements RoleService{
             Role role = roleData.get();
             return roleUtil.wrapRole(role);
         } else {
-            throw new EntityNotFoundException("Role with name: " + name + " not found.");
+            throw new EntityNotFoundException("role", "name", name);
         }
     }
 }

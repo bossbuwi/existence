@@ -60,7 +60,7 @@ public class TagServiceImpl implements TagService{
             TagDTO tagDTO = tagUtil.wrapTag(tagData.get());
             return tagDTO;
         } else {
-            throw new EntityNotFoundException("Tag with name: " + tagName + " not found.");
+            throw new EntityNotFoundException("tag", "name", tagName);
         }
     }
 
@@ -85,10 +85,10 @@ public class TagServiceImpl implements TagService{
         if (newName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("new_name");
 
         Optional<Tag> tagData = tagDAO.findByName(name);
-        if (tagData.isEmpty()) throw new EntityNotFoundException("Tag with name: " + name + " not found.");
+        if (tagData.isEmpty()) throw new EntityNotFoundException("tag", "name", name);
 
         Optional<Tag> tagDataNew = tagDAO.findByName(newName);
-        if (tagDataNew.isPresent()) throw new EntityNotFoundException("Tag with name: " + newName + " already exists.");
+        if (tagDataNew.isPresent()) throw new DuplicateEntityException("Tag with name: " + newName + " already exists.");
 
         Tag tag = tagData.get();
         tag.setName(newName);
@@ -122,7 +122,7 @@ public class TagServiceImpl implements TagService{
         }
 
         Optional<Tag> tagData = tagDAO.findByName(name);
-        if (tagData.isEmpty()) throw new EntityNotFoundException("Tag with name: " + name + " not found.");
+        if (tagData.isEmpty()) throw new EntityNotFoundException("tag", "name", name);
 
         Tag tag = tagData.get();
         Set<Story> dbStories = new HashSet<>(tag.getStories());
@@ -144,7 +144,7 @@ public class TagServiceImpl implements TagService{
         if (stories == null || stories.length == 0) throw new InvalidInputException("stories");
 
         Optional<Tag> tagData = tagDAO.findByName(name);
-        if (tagData.isEmpty()) throw new EntityNotFoundException("Tag with name: " + name + " not found.");
+        if (tagData.isEmpty()) throw new EntityNotFoundException("tag", "name", name);
 
         Tag tag = tagData.get();
         Set<Story> dbStories = new HashSet<>(tag.getStories());
@@ -181,7 +181,7 @@ public class TagServiceImpl implements TagService{
             TagDTO tagDTO = tagUtil.wrapTag(tag);
             return tagDTO;
         } else {
-            throw new EntityNotFoundException("Tag with name: " + tagName + " not found.");
+            throw new EntityNotFoundException("tag", "name", tagName);
         }
     }
 }

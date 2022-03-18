@@ -63,7 +63,7 @@ public class ZoneServiceImpl implements ZoneService{
                 zone.setSystem(systemData.get());
                 return zoneUtil.wrapZone(zoneDAO.save(zone));
             } else {
-                throw new EntityNotFoundException("System with global prefix: " + zoneWrapper.getSystem() + " not found.");
+                throw new EntityNotFoundException("system", "global prefix", zoneWrapper.getSystem());
             }
         } else {
             throw new DuplicateEntityException("Zone with prefix: " + zoneWrapper.getZonal_prefix() +
