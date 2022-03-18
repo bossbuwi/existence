@@ -111,7 +111,7 @@ public class EventServiceImpl implements EventService {
             if (systemData.isPresent()) {
                 system = systemData.get();
             } else {
-                throw new EntityNotFoundException("System with global prefix: " + wGlobalPrefix + " not found.");
+                throw new EntityNotFoundException("system", "global prefix", wGlobalPrefix);
             }
         } else {
             throw new InvalidInputException("system");
@@ -132,8 +132,7 @@ public class EventServiceImpl implements EventService {
             if (dbZonePrefixes.contains(wZonePrefixes.get(i))) {
                 zones.add(dbZones.get(i));
             } else {
-                throw new EntityNotFoundException("System with global prefix "
-                        + wGlobalPrefix + " does not have a zone with prefix: " + wZonePrefixes.get(i));
+                throw new EntityNotFoundException("zone", "zonal prefix", wZonePrefixes.get(i));
             }
         }
 
@@ -152,8 +151,7 @@ public class EventServiceImpl implements EventService {
             if (dbEventTypeCodes.contains(wEventTypes.get(i))) {
                 eventTypes.add(dbEventTypes.get(i));
             } else {
-                throw new EntityNotFoundException("Event type with code: "
-                        + wEventTypes.get(i) + " not found.");
+                throw new EntityNotFoundException("event type", "code", wEventTypes.get(i));
             }
         }
 
@@ -203,7 +201,7 @@ public class EventServiceImpl implements EventService {
         wEvent = eventWrapper;
 
         Optional<Event> eventData = eventDAO.findById(wEvent.getId());
-        if (!eventData.isPresent()) throw new EntityNotFoundException("Event with id: " + wEvent.getId() + " not found.");
+        if (eventData.isEmpty()) throw new EntityNotFoundException("event", "id", Long.toString(wEvent.getId()));
         Event event = eventData.get();
 
         // Create fields to be used for the new event
@@ -221,7 +219,7 @@ public class EventServiceImpl implements EventService {
             if (systemData.isPresent()) {
                 system = systemData.get();
             } else {
-                throw new EntityNotFoundException("System with global prefix: " + wGlobalPrefix + " not found.");
+                throw new EntityNotFoundException("system", "global prefix", wGlobalPrefix);
             }
         } else {
             throw new InvalidInputException("system");
@@ -242,8 +240,7 @@ public class EventServiceImpl implements EventService {
             if (dbZonePrefixes.contains(wZonePrefixes.get(i))) {
                 zones.add(dbZones.get(i));
             } else {
-                throw new EntityNotFoundException("System with global prefix "
-                        + wGlobalPrefix + " does not have a zone with prefix: " + wZonePrefixes.get(i));
+                throw new EntityNotFoundException("zone", "zonal prefix", wZonePrefixes.get(i));
             }
         }
 
@@ -263,8 +260,7 @@ public class EventServiceImpl implements EventService {
             if (dbEventTypeCodes.contains(wEventTypes.get(i))) {
                 eventTypes.add(dbEventTypes.get(i));
             } else {
-                throw new EntityNotFoundException("Event type with code: "
-                        + wEventTypes.get(i) + " not found.");
+                throw new EntityNotFoundException("event type", "code", wEventTypes.get(i));
             }
         }
 

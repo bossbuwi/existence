@@ -221,7 +221,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             roleSet.add(role);
             user.setRoles(roleSet);
         } else {
-            throw new EntityNotFoundException("There is an error in the Roles database. Please contact system admin.");
+            throw new EntityNotFoundException("role", "name", EnumAuthorization.USER.getValue());
         }
 
         try {

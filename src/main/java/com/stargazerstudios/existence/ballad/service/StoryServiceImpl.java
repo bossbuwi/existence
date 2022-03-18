@@ -60,7 +60,7 @@ public class StoryServiceImpl implements StoryService{
             StoryDTO storyDTO = storyUtil.wrapStory(storyData.get());
             return storyDTO;
         } else {
-            throw new EntityNotFoundException("Story with name: " + storyName + " not found.");
+            throw new EntityNotFoundException("story", "name", storyName);
         }
     }
 
@@ -85,7 +85,7 @@ public class StoryServiceImpl implements StoryService{
         if (newName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("new_name");
 
         Optional<Story> storyData = storyDAO.findByName(name);
-        if (storyData.isEmpty()) throw new EntityNotFoundException("Story with name: " + name + " not found.");
+        if (storyData.isEmpty()) throw new EntityNotFoundException("story", "name", name);
 
         Optional<Story> storyDataNew = storyDAO.findByName(newName);
         if (storyDataNew.isPresent()) throw new DuplicateEntityException("Story with name: " + newName + " already exists.");
@@ -122,7 +122,7 @@ public class StoryServiceImpl implements StoryService{
         }
 
         Optional<Story> storyData = storyDAO.findByName(name);
-        if (storyData.isEmpty()) throw new EntityNotFoundException("Story with name: " + name + " not found.");
+        if (storyData.isEmpty()) throw new EntityNotFoundException("story", "name", name);
 
         Story story = storyData.get();
         Set<Tag> dbTags = new HashSet<>(story.getTags());
@@ -144,7 +144,7 @@ public class StoryServiceImpl implements StoryService{
         if (tags == null || tags.length == 0) throw new InvalidInputException("tags");
 
         Optional<Story> storyData = storyDAO.findByName(name);
-        if (storyData.isEmpty()) throw new EntityNotFoundException("Story with name: " + name + " not found.");
+        if (storyData.isEmpty()) throw new EntityNotFoundException("story", "name", name);
 
         Story story = storyData.get();
         Set<Tag> dbTags = new HashSet<>(story.getTags());
@@ -180,7 +180,7 @@ public class StoryServiceImpl implements StoryService{
             StoryDTO storyDTO = storyUtil.wrapStory(story);
             return storyDTO;
         } else {
-            throw new EntityNotFoundException("Story with name: " + storyName + " not found.");
+            throw new EntityNotFoundException("story", "name", storyName);
         }
     }
 }

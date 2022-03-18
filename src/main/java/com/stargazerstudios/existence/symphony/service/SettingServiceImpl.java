@@ -38,7 +38,7 @@ public class SettingServiceImpl implements SettingService{
         if (settingData.isPresent()) {
             return new SettingDTO(settingData.get());
         } else {
-            throw new EntityNotFoundException("Setting with id: " + id + " not found.");
+            throw new EntityNotFoundException("setting", "id", Long.toString(id));
         }
     }
 
@@ -50,7 +50,7 @@ public class SettingServiceImpl implements SettingService{
             Setting setting = settingData.get();
             return new SettingDTO(setting);
         } else {
-            throw new EntityNotFoundException("Setting with key: " + key + " not found.");
+            throw new EntityNotFoundException("setting", "key", key);
         }
     }
 
@@ -64,7 +64,7 @@ public class SettingServiceImpl implements SettingService{
                 settingDtoList.add(settingDTO);
             }
         } else {
-            throw new EntityNotFoundException("Settings of type: " + type + " not found.");
+            throw new EntityNotFoundException("setting", "type", type);
         }
         return settingDtoList;
     }
@@ -80,7 +80,7 @@ public class SettingServiceImpl implements SettingService{
             setting.setChangedBy(parsedJSON.get("last_changed_by"));
             return new SettingDTO(settingDAO.save(setting));
         } else {
-            throw new EntityNotFoundException("Setting with key: " + key + " not found.");
+            throw new EntityNotFoundException("setting", "key", key);
         }
     }
 }

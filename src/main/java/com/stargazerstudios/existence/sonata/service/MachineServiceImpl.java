@@ -80,7 +80,7 @@ public class MachineServiceImpl implements MachineService {
                 return machineUtil.wrapMachine(machineDAO.save(machine), true);
             }
         } else {
-            throw new EntityNotFoundException("Machine with id: " + machineWrapper.getId() + " not found.");
+            throw new EntityNotFoundException("machine", "id", Long.toString(machineWrapper.getId()));
         }
     }
 
