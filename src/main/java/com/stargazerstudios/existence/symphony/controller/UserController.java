@@ -39,13 +39,13 @@ public class UserController {
 
     @PutMapping("/user/change-password")
     public ResponseEntity<UserDTO> updateUserPassword(@RequestBody UserWrapper user)
-            throws InvalidInputException, EntityNotFoundException, UserUnauthorizedException, DatabaseErrorException {
+            throws UnexpectedInputException, EntityNotFoundException, UserUnauthorizedException, DatabaseErrorException {
         return new ResponseEntity<>(userAccessService.updateUserPassword(user), HttpStatus.OK);
     }
 
     @PutMapping("/user/add-roles")
     public ResponseEntity<UserDTO> addRoles(@RequestBody UserWrapper user)
-            throws InvalidInputException, EntityNotFoundException, UserUnauthorizedException {
+            throws InvalidInputException, EntityNotFoundException, UserUnauthorizedException, EntitySaveErrorException {
         return new ResponseEntity<>(userAccessService.addRoles(user), HttpStatus.OK);
     }
 
@@ -58,19 +58,22 @@ public class UserController {
 
     @PutMapping("/user/ban-user")
     public ResponseEntity<UserDTO> banUser(@RequestBody UserWrapper user)
-            throws InvalidInputException, EntityNotFoundException, FatalErrorException, UserUnauthorizedException {
+            throws UnexpectedInputException, EntityNotFoundException,
+                UserUnauthorizedException, EntitySaveErrorException {
         return new ResponseEntity<>(userAccessService.banUser(user), HttpStatus.OK);
     }
 
     @PutMapping("/user/unban-user")
     public ResponseEntity<UserDTO> unbanUser(@RequestBody UserWrapper user)
-            throws InvalidInputException, EntityNotFoundException, UserUnauthorizedException, FatalErrorException {
+            throws UnexpectedInputException, EntityNotFoundException,
+                UserUnauthorizedException, EntitySaveErrorException {
         return new ResponseEntity<>(userAccessService.unbanUser(user), HttpStatus.OK);
     }
 
     @DeleteMapping("/user")
     public ResponseEntity<UserDTO> deleteUser(@RequestBody UserWrapper user)
-            throws InvalidInputException, EntityNotFoundException, FatalErrorException, UserUnauthorizedException {
+            throws InvalidInputException, EntityNotFoundException,
+                UserUnauthorizedException, EntityDeletionErrorException {
         return new ResponseEntity<>(userAccessService.deleteUser(user), HttpStatus.OK);
     }
 }

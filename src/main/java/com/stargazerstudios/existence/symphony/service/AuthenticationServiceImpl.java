@@ -80,7 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     @Override
     public UserDTO login(UserWrapper wUser)
             throws UserNotFoundException, BadGatewayException, EntityNotFoundException,
-            InvalidInputException, FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException {
+            InvalidInputException, FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException, EntitySaveErrorException {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
         if (username.equals(EnumUtilOutput.EMPTY.getValue()) || password.equals(EnumUtilOutput.EMPTY.getValue()))
@@ -134,6 +134,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Override
     public UserDTO autologin(String token) throws UserNotFoundException {
+        // TODO: Check if this method even works
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         SecurityContextHolder.getContext().setAuthentication(auth);
         String _token = generateTokenFromAuth(auth);
@@ -209,11 +210,12 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         }
     }
 
-    private User createUser(String username, String password) throws EntityNotFoundException {
-        String hashPword = passwordEncoder.encode(password);
+    private User createUser(String username, String password)
+            throws EntityNotFoundException, EntitySaveErrorException {
+        String hashPassword = passwordEncoder.encode(password);
         User user = new User();
         user.setUsername(username);
-        user.setPassword(hashPword);
+        user.setPassword(hashPassword);
         Optional<Role> roleData = roleDAO.findByName(EnumAuthorization.USER.getValue());
         if (roleData.isPresent()) {
             Role role = roleData.get();
@@ -228,11 +230,13 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             userDAO.save(user);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new EntitySaveErrorException("user");
         }
         return user;
     }
 
-    private User updateThirdPartyPassword(String username, String password) throws UserNotFoundException {
+    private User updateThirdPartyPassword(String username, String password)
+            throws UserNotFoundException, EntitySaveErrorException {
         Optional<User> userData = userDAO.findByUsername(username);
         if (userData.isEmpty()) throw new UserNotFoundException();
 
@@ -244,6 +248,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             userDAO.save(user);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new EntitySaveErrorException("user");
         }
         return user;
     }

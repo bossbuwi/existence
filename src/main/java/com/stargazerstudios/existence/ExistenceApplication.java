@@ -12,9 +12,7 @@ public class ExistenceApplication {
 
 	// TODO Create a class that will hold the backup properties of the ones defined in the application properties
 	// TODO Add useful comments on the sources for easier reading
-	// TODO There is a lot of code cleaning to be done
 	// TODO Check the codes where Optional are used and assert if it would be better to use try catch block
 	// 	especially when doing database operations. Also determine if there are any database changes needed.
-	// TODO Add comments on the Liquibase changelog files.
 	// TODO Frontend is now officially broken. Please rework and move on from the past if possible.
 }
