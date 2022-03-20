@@ -23,7 +23,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@RequestBody UserWrapper user)
             throws UserNotFoundException, BadGatewayException, EntityNotFoundException,
-            InvalidInputException, FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException {
+                InvalidInputException, FatalErrorException, InvalidPropertyErrorException,
+                UserUnauthorizedException, EntitySaveErrorException {
         return new ResponseEntity<>(authenticationService.login(user), HttpStatus.OK);
     }
 

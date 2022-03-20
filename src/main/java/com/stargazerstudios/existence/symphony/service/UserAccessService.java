@@ -14,16 +14,16 @@ public interface UserAccessService {
             throws DuplicateEntityException, InvalidInputException, UserUnauthorizedException,
                 DatabaseErrorException, EntityNotFoundException;
     UserDTO updateUserPassword(UserWrapper user)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, DatabaseErrorException;
+            throws EntityNotFoundException, UnexpectedInputException, UserUnauthorizedException, DatabaseErrorException;
     UserDTO deleteUser(UserWrapper user)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, FatalErrorException;
+            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, EntityDeletionErrorException;
     UserDTO addRoles(UserWrapper user)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException;
+            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, EntitySaveErrorException;
     UserDTO removeRoles(UserWrapper user)
             throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException,
                 DatabaseErrorException, GenericErrorException;
     UserDTO banUser(UserWrapper user)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, FatalErrorException;
+            throws EntityNotFoundException, UnexpectedInputException, UserUnauthorizedException, EntitySaveErrorException;
     UserDTO unbanUser(UserWrapper user)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, FatalErrorException;
+            throws EntityNotFoundException, UnexpectedInputException, UserUnauthorizedException, EntitySaveErrorException;
 }

@@ -71,8 +71,7 @@ public class UserAccessServiceImpl implements UserAccessService{
     public UserDTO createUser(UserWrapper wUser)
             throws DuplicateEntityException, InvalidInputException, UserUnauthorizedException,
                 DatabaseErrorException, EntityNotFoundException {
-        long authRank = authorityUtil.getHighestRank();
-        if (authRank > EnumRank.ROLE_SUPERUSER.getValue()) throw new UserUnauthorizedException();
+        if (!authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue())) throw new UserUnauthorizedException();
 
         String username = stringUtil.checkInputTrim(wUser.getUsername());
         if (username.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("username");
@@ -82,8 +81,8 @@ public class UserAccessServiceImpl implements UserAccessService{
 
         User user = new User();
         user.setUsername(username);
-        String hashPword = passwordEncoder.encode(password);
-        user.setPassword(hashPword);
+        String hashPassword = passwordEncoder.encode(password);
+        user.setPassword(hashPassword);
 
         Optional<Role> userRole = roleDAO.findByName(EnumAuthorization.USER.getValue());
         if (userRole.isEmpty()) throw new EntityNotFoundException("role", "name", EnumAuthorization.USER.getValue());
@@ -106,7 +105,7 @@ public class UserAccessServiceImpl implements UserAccessService{
 
     @Override
     public UserDTO updateUserPassword(UserWrapper wUser)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, DatabaseErrorException {
+            throws EntityNotFoundException, UnexpectedInputException, UserUnauthorizedException, DatabaseErrorException {
         String username = stringUtil.checkInputTrim(wUser.getUsername());
         if (username.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("username");
 
@@ -118,7 +117,8 @@ public class UserAccessServiceImpl implements UserAccessService{
 
         String confirmPassword = stringUtil.checkInputTrim(wUser.getConfirm_password());
         if (confirmPassword.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("confirm_password");
-        if (!newPassword.equals(confirmPassword)) throw new InvalidInputException("confirm_password");
+        if (!newPassword.equals(confirmPassword))
+            throw new UnexpectedInputException("Password confirmation does not match the new password.");
 
         String authUsername = authorityUtil.getAuthUsername();
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
@@ -128,8 +128,12 @@ public class UserAccessServiceImpl implements UserAccessService{
         Optional<User> userData = userDAO.findByUsername(username);
         if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
         User user = userData.get();
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) throw new InvalidInputException("old_password");
-        if (oldPassword.equals(newPassword)) throw new InvalidInputException("new_password");
+        // TODO: This is one ambiguous error. Inform user that old password does not match stored password in database
+        if (!passwordEncoder.matches(oldPassword, user.getPassword()))
+            throw new UnexpectedInputException("Password provided does not match the current password.");
+        // TODO: This is one ambiguous error. Inform user that the new password is the same as the old password
+        if (oldPassword.equals(newPassword))
+            throw new UnexpectedInputException("New password is the same as the old password.");
         String hashPassword = passwordEncoder.encode(newPassword);
         user.setPassword(hashPassword);
 
@@ -137,7 +141,7 @@ public class UserAccessServiceImpl implements UserAccessService{
             userDAO.save(user);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new DatabaseErrorException("The is a problem saving the changes. Please contact an admin.");
+            throw new EntitySaveErrorException("user");
         }
 
         return userUtil.wrapUser(user);
@@ -145,7 +149,7 @@ public class UserAccessServiceImpl implements UserAccessService{
 
     @Override
     public UserDTO deleteUser(UserWrapper wUser)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, FatalErrorException {
+            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, EntityDeletionErrorException {
         boolean isSuperUserOrHigher = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
         if (!isSuperUserOrHigher) throw new UserUnauthorizedException();
 
@@ -167,14 +171,14 @@ public class UserAccessServiceImpl implements UserAccessService{
             userDAO.delete(user);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new FatalErrorException();
+            throw new EntityDeletionErrorException("user");
         }
         return userUtil.wrapUser(user);
     }
 
     @Override
     public UserDTO addRoles(UserWrapper wUser)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException {
+            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, EntitySaveErrorException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -215,7 +219,14 @@ public class UserAccessServiceImpl implements UserAccessService{
         userRoles.addAll(addRoles);
 
         user.setRoles(userRoles);
-        return userUtil.wrapUser(userDAO.save(user));
+
+        try {
+            userDAO.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EntitySaveErrorException("user");
+        }
+        return userUtil.wrapUser(user);
     }
 
     @Override
@@ -286,7 +297,8 @@ public class UserAccessServiceImpl implements UserAccessService{
 
     @Override
     public UserDTO banUser(UserWrapper wUser)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, FatalErrorException {
+            throws EntityNotFoundException, UnexpectedInputException,
+                UserUnauthorizedException, EntitySaveErrorException {
         String username = stringUtil.checkInputTrim(wUser.getUsername());
         if (username.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("username");
 
@@ -298,10 +310,10 @@ public class UserAccessServiceImpl implements UserAccessService{
         User user = userData.get();
 
         boolean isBanned = authorityUtil.isBanned(user.getRoles());
-        if (isBanned) throw new InvalidInputException("username"); // TODO: This must be more specific.
+        if (isBanned) throw new UnexpectedInputException("User with username: " + user.getUsername() + " is already banned.");
 
         Optional<Role> banData = roleDAO.findByName(EnumAuthorization.BANNED.getValue());
-        if (banData.isEmpty()) throw new FatalErrorException();
+        if (banData.isEmpty()) throw new EntityNotFoundException("role", "name", EnumAuthorization.BANNED.getValue());
 
         Set<Role> roles = new HashSet<>();
         Role ban = banData.get();
@@ -312,14 +324,15 @@ public class UserAccessServiceImpl implements UserAccessService{
             userDAO.save(user);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new FatalErrorException();
+            throw new EntitySaveErrorException("user");
         }
         return userUtil.wrapUser(user);
     }
 
     @Override
     public UserDTO unbanUser(UserWrapper wUser)
-            throws EntityNotFoundException, InvalidInputException, UserUnauthorizedException, FatalErrorException {
+            throws EntityNotFoundException, UnexpectedInputException,
+            UserUnauthorizedException, EntitySaveErrorException {
         String username = stringUtil.checkInputTrim(wUser.getUsername());
         if (username.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("username");
 
@@ -331,10 +344,10 @@ public class UserAccessServiceImpl implements UserAccessService{
         User user = userData.get();
 
         boolean isBanned = authorityUtil.isBanned(user.getRoles());
-        if (!isBanned) throw new InvalidInputException("username"); // TODO: This must be more specific.
+        if (!isBanned) throw new UnexpectedInputException("User with username: " + user.getUsername() + " is not banned.");
 
         Optional<Role> unbanData = roleDAO.findByName(EnumAuthorization.USER.getValue());
-        if (unbanData.isEmpty()) throw new FatalErrorException();
+        if (unbanData.isEmpty()) throw new EntityNotFoundException("role", "name", EnumAuthorization.BANNED.getValue());
 
         Set<Role> roles = new HashSet<>();
         Role unban = unbanData.get();
@@ -345,7 +358,7 @@ public class UserAccessServiceImpl implements UserAccessService{
             userDAO.save(user);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new FatalErrorException();
+            throw new EntitySaveErrorException("user");
         }
         return userUtil.wrapUser(user);
     }

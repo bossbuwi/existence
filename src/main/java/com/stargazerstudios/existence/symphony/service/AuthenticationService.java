@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface AuthenticationService {
     UserDTO login(UserWrapper user)
-            throws UserNotFoundException, BadGatewayException, EntityNotFoundException, InvalidInputException, FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException;
+            throws UserNotFoundException, BadGatewayException, EntityNotFoundException, InvalidInputException, FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException, EntitySaveErrorException;
     UserDTO autologin(String token) throws UserNotFoundException;
     boolean logout(HttpServletRequest request, HttpServletResponse response);
 }

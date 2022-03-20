@@ -94,6 +94,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(errorResponse);
     }
 
+    @ExceptionHandler(UnexpectedInputException.class)
+    protected ResponseEntity<Object> handleUnexpectedInputError(
+            UnexpectedInputException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
     @ExceptionHandler(InvalidInputException.class)
     protected ResponseEntity<Object> handleInvalidInputError(
             InvalidInputException ex) {
