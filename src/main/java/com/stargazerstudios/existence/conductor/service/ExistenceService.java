@@ -2,9 +2,10 @@ package com.stargazerstudios.existence.conductor.service;
 
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
-import com.stargazerstudios.existence.conductor.erratum.universal.FatalErrorException;
-import com.stargazerstudios.existence.conductor.erratum.universal.InvalidPropertyErrorException;
-import com.stargazerstudios.existence.conductor.erratum.universal.UserUnauthorizedException;
+import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
+import com.stargazerstudios.existence.conductor.erratum.root.SystemErrorException;
+import com.stargazerstudios.existence.conductor.erratum.system.FatalErrorException;
+import com.stargazerstudios.existence.conductor.erratum.system.InvalidPropertyErrorException;
 import com.stargazerstudios.existence.conductor.model.ExistenceIdentity;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
@@ -49,7 +50,7 @@ public class ExistenceService {
     }
 
     public UserDTO resetAdminPassword(UserWrapper wUser)
-            throws UserUnauthorizedException, FatalErrorException, InvalidPropertyErrorException {
+            throws UserUnauthorizedException, SystemErrorException {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
 
@@ -80,7 +81,7 @@ public class ExistenceService {
     }
 
     public UserDTO resetAdminRoles(UserWrapper wUser)
-            throws UserUnauthorizedException, FatalErrorException, InvalidPropertyErrorException {
+            throws UserUnauthorizedException, SystemErrorException {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
 

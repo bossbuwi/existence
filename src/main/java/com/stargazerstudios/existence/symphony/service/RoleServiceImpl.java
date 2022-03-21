@@ -1,6 +1,6 @@
 package com.stargazerstudios.existence.symphony.service;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.symphony.dto.RoleDTO;
 import com.stargazerstudios.existence.symphony.entity.Role;

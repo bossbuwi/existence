@@ -1,6 +1,6 @@
 package com.stargazerstudios.existence.symphony.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
 import com.stargazerstudios.existence.symphony.dto.RoleDTO;
 import com.stargazerstudios.existence.symphony.service.RoleServiceImpl;
 import com.stargazerstudios.existence.symphony.wrapper.RoleWrapper;
@@ -25,8 +25,7 @@ public class RoleController {
     }
 
     @GetMapping("/role")
-    public ResponseEntity<RoleDTO> getRole(@RequestBody RoleWrapper role)
-            throws EntityNotFoundException {
+    public ResponseEntity<RoleDTO> getRole(@RequestBody RoleWrapper role) throws EntityNotFoundException {
         return new ResponseEntity<>(roleService.getRole(role), HttpStatus.OK);
     }
 }

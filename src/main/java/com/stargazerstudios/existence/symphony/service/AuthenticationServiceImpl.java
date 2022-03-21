@@ -2,7 +2,14 @@ package com.stargazerstudios.existence.symphony.service;
 
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
-import com.stargazerstudios.existence.conductor.erratum.universal.*;
+import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
+import com.stargazerstudios.existence.conductor.erratum.root.*;
+import com.stargazerstudios.existence.conductor.erratum.system.FatalErrorException;
+import com.stargazerstudios.existence.conductor.erratum.system.InvalidPropertyErrorException;
+import com.stargazerstudios.existence.conductor.erratum.thirdparty.GatewayErrorException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.JwtUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
@@ -79,8 +86,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Override
     public UserDTO login(UserWrapper wUser)
-            throws UserNotFoundException, BadGatewayException, EntityNotFoundException,
-            InvalidInputException, FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException, EntitySaveErrorException {
+            throws UnknownInputException, AuthorizationErrorException,
+                SystemErrorException, ThirdPartyErrorException,
+                DatabaseErrorException, EntityErrorException {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
         if (username.equals(EnumUtilOutput.EMPTY.getValue()) || password.equals(EnumUtilOutput.EMPTY.getValue()))
@@ -110,14 +118,14 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                     user.setToken(token);
                     return userUtil.wrapUser(user);
                 } else {
-                    throw new UserNotFoundException();
+                    throw new UserUnauthorizedException();
                 }
             }
         } else if (username.equals(EnumAuthorization.DEFAULT_USER.getValue())){
             throw new FatalErrorException();
         } else {
             boolean isAuth = isAuthViaLDAP(username,password);
-            if (!isAuth) throw new UserNotFoundException();
+            if (!isAuth) throw new UserUnauthorizedException();
             createUser(username, password);
 
             Optional<User> newUserData = userDAO.findByUsername(username);
@@ -133,7 +141,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
     @Override
-    public UserDTO autologin(String token) throws UserNotFoundException {
+    public UserDTO autologin(String token) throws AuthorizationErrorException {
         // TODO: Check if this method even works
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         SecurityContextHolder.getContext().setAuthentication(auth);
@@ -146,7 +154,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             user.setToken(_token);
             return userUtil.wrapUser(user);
         } else {
-            throw new UserNotFoundException();
+            throw new UserUnauthorizedException();
         }
     }
 
@@ -185,7 +193,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
     private boolean isAuthViaLDAP(String username, String password)
-            throws UserNotFoundException, BadGatewayException, InvalidPropertyErrorException {
+            throws SystemErrorException, AuthorizationErrorException, ThirdPartyErrorException {
         User loginDetails = new User();
         loginDetails.setUsername(username);
         loginDetails.setPassword(password);
@@ -203,15 +211,15 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             User userLDAP = userMono.block(Duration.ofMillis(20000));
             return userLDAP.getUsername() != null && !userLDAP.getUsername().isEmpty();
         } catch (UnsupportedMediaTypeException e) {
-            throw new UserNotFoundException();
+            throw new UserUnauthorizedException();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new BadGatewayException();
+            throw new GatewayErrorException();
         }
     }
 
     private User createUser(String username, String password)
-            throws EntityNotFoundException, EntitySaveErrorException {
+            throws EntityErrorException, DatabaseErrorException {
         String hashPassword = passwordEncoder.encode(password);
         User user = new User();
         user.setUsername(username);
@@ -236,9 +244,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
     private User updateThirdPartyPassword(String username, String password)
-            throws UserNotFoundException, EntitySaveErrorException {
+            throws DatabaseErrorException, AuthorizationErrorException{
         Optional<User> userData = userDAO.findByUsername(username);
-        if (userData.isEmpty()) throw new UserNotFoundException();
+        if (userData.isEmpty()) throw new UserUnauthorizedException();
 
         User user = userData.get();
         String hashPassword = passwordEncoder.encode(password);

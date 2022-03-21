@@ -1,6 +1,6 @@
 package com.stargazerstudios.existence.symphony.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.*;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.symphony.dto.SettingDTO;
 import com.stargazerstudios.existence.symphony.service.SettingServiceImpl;
 import com.stargazerstudios.existence.symphony.wrapper.SettingWrapper;
@@ -25,20 +25,17 @@ public class SettingController {
     }
 
     @GetMapping("/setting/{type}")
-    public ResponseEntity<List<SettingDTO>> getSettingsByType(@PathVariable("type") String type)
-            throws EntityNotFoundException {
+    public ResponseEntity<List<SettingDTO>> getSettingsByType(@PathVariable("type") String type) throws EntityErrorException {
         return new ResponseEntity<>(settingService.getSettingsByType(type), HttpStatus.OK);
     }
 
     @GetMapping("/setting/{id}")
-    public ResponseEntity<SettingDTO> getSettingById(@PathVariable("id") long id)
-            throws BadJsonWebTokenException, EntityNotFoundException {
+    public ResponseEntity<SettingDTO> getSettingById(@PathVariable("id") long id) throws EntityErrorException {
         return new ResponseEntity<>(settingService.getSettingById(id), HttpStatus.OK);
     }
 
     @PutMapping("/setting")
-    public ResponseEntity<SettingDTO> modifySetting(@RequestBody SettingWrapper settingWrapper)
-            throws EntityNotFoundException {
+    public ResponseEntity<SettingDTO> modifySetting(@RequestBody SettingWrapper settingWrapper) throws EntityErrorException {
         return new ResponseEntity<>(settingService.modifySetting(settingWrapper), HttpStatus.OK);
     }
 }

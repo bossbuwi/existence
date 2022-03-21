@@ -1,6 +1,7 @@
 package com.stargazerstudios.existence.symphony.service;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.*;
+import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.symphony.dto.SettingDTO;
 import com.stargazerstudios.existence.symphony.repository.SettingDAO;
 import com.stargazerstudios.existence.symphony.entity.Setting;
@@ -33,7 +34,7 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
-    public SettingDTO getSettingById(long id) throws EntityNotFoundException {
+    public SettingDTO getSettingById(long id) throws EntityErrorException {
         Optional<Setting> settingData = settingDAO.findById(id);
         if (settingData.isPresent()) {
             return new SettingDTO(settingData.get());
@@ -43,8 +44,7 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
-    public SettingDTO getSettingByKey(String key)
-            throws EntityNotFoundException {
+    public SettingDTO getSettingByKey(String key) throws EntityErrorException {
         Optional<Setting> settingData = settingDAO.findSettingByKey(key);
         if (settingData.isPresent()) {
             Setting setting = settingData.get();
@@ -55,7 +55,7 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
-    public List<SettingDTO> getSettingsByType(String type) throws EntityNotFoundException {
+    public List<SettingDTO> getSettingsByType(String type)  throws EntityErrorException{
         List<SettingDTO> settingDtoList = new ArrayList<>();
         List<Setting> settingList = settingDAO.findSettingByType(type);
         if (!settingList.isEmpty()) {
@@ -70,7 +70,7 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
-    public SettingDTO modifySetting(SettingWrapper wSetting) throws EntityNotFoundException  {
+    public SettingDTO modifySetting(SettingWrapper wSetting) throws EntityErrorException{
         HashMap<String, String> parsedJSON = wSetting.getSetting();
         String key = parsedJSON.get("key");
         Optional<Setting> settingData = settingDAO.findSettingByKey(key);
