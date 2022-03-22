@@ -1,8 +1,9 @@
 package com.stargazerstudios.existence.conductor.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.FatalErrorException;
-import com.stargazerstudios.existence.conductor.erratum.universal.InvalidPropertyErrorException;
-import com.stargazerstudios.existence.conductor.erratum.universal.UserUnauthorizedException;
+import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
+import com.stargazerstudios.existence.conductor.erratum.root.SystemErrorException;
+import com.stargazerstudios.existence.conductor.erratum.system.FatalErrorException;
+import com.stargazerstudios.existence.conductor.erratum.system.InvalidPropertyErrorException;
 import com.stargazerstudios.existence.conductor.model.ExistenceIdentity;
 import com.stargazerstudios.existence.conductor.service.ExistenceService;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
@@ -21,19 +22,19 @@ public class ExistenceController {
     private ExistenceService existenceService;
 
     @GetMapping("/dreams")
-    public ResponseEntity<ExistenceIdentity> announceExistence() throws FatalErrorException {
+    public ResponseEntity<ExistenceIdentity> announceExistence() {
         return new ResponseEntity<>(existenceService.instigate(), HttpStatus.OK);
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<UserDTO> resetAdminPassword(@RequestBody UserWrapper user)
-            throws FatalErrorException, UserUnauthorizedException, InvalidPropertyErrorException {
+            throws SystemErrorException, UserUnauthorizedException {
         return new ResponseEntity<>(existenceService.resetAdminPassword(user), HttpStatus.OK);
     }
 
     @PostMapping("/reset-roles")
     public ResponseEntity<UserDTO> resetAdminRoles(@RequestBody UserWrapper user)
-            throws FatalErrorException, InvalidPropertyErrorException, UserUnauthorizedException {
+            throws SystemErrorException, UserUnauthorizedException {
         return new ResponseEntity<>(existenceService.resetAdminRoles(user), HttpStatus.OK);
     }
 }

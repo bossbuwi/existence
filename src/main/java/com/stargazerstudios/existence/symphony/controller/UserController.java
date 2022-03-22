@@ -1,5 +1,9 @@
 package com.stargazerstudios.existence.symphony.controller;
 
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.erratum.universal.*;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.service.UserAccessService;
@@ -26,54 +30,56 @@ public class UserController {
 
     @GetMapping("/user")
     public ResponseEntity<UserDTO> getUser(@RequestBody UserWrapper user)
-            throws InvalidInputException, EntityNotFoundException, UserUnauthorizedException {
+            throws UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.getUser(user), HttpStatus.OK);
     }
 
     @PostMapping("/user")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserWrapper user)
-            throws InvalidInputException, DuplicateEntityException, UserUnauthorizedException,
-            DatabaseErrorException, EntityNotFoundException {
+            throws AuthorizationErrorException, DatabaseErrorException,
+                UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.createUser(user), HttpStatus.OK);
     }
 
     @PutMapping("/user/change-password")
     public ResponseEntity<UserDTO> updateUserPassword(@RequestBody UserWrapper user)
-            throws UnexpectedInputException, EntityNotFoundException, UserUnauthorizedException, DatabaseErrorException {
+            throws AuthorizationErrorException, DatabaseErrorException,
+                UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.updateUserPassword(user), HttpStatus.OK);
     }
 
     @PutMapping("/user/add-roles")
     public ResponseEntity<UserDTO> addRoles(@RequestBody UserWrapper user)
-            throws InvalidInputException, EntityNotFoundException, UserUnauthorizedException, EntitySaveErrorException {
+            throws AuthorizationErrorException, DatabaseErrorException,
+                UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.addRoles(user), HttpStatus.OK);
     }
 
     @PutMapping("/user/remove-roles")
     public ResponseEntity<UserDTO> removeRoles(@RequestBody UserWrapper user)
-            throws InvalidInputException, EntityNotFoundException, UserUnauthorizedException,
-                DatabaseErrorException, GenericErrorException {
+            throws AuthorizationErrorException, DatabaseErrorException,
+                UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.removeRoles(user), HttpStatus.OK);
     }
 
     @PutMapping("/user/ban-user")
     public ResponseEntity<UserDTO> banUser(@RequestBody UserWrapper user)
-            throws UnexpectedInputException, EntityNotFoundException,
-                UserUnauthorizedException, EntitySaveErrorException {
+            throws AuthorizationErrorException, DatabaseErrorException,
+                UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.banUser(user), HttpStatus.OK);
     }
 
     @PutMapping("/user/unban-user")
     public ResponseEntity<UserDTO> unbanUser(@RequestBody UserWrapper user)
-            throws UnexpectedInputException, EntityNotFoundException,
-                UserUnauthorizedException, EntitySaveErrorException {
+            throws AuthorizationErrorException, DatabaseErrorException,
+                UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.unbanUser(user), HttpStatus.OK);
     }
 
     @DeleteMapping("/user")
     public ResponseEntity<UserDTO> deleteUser(@RequestBody UserWrapper user)
-            throws InvalidInputException, EntityNotFoundException,
-                UserUnauthorizedException, EntityDeletionErrorException {
+            throws AuthorizationErrorException, DatabaseErrorException,
+                UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.deleteUser(user), HttpStatus.OK);
     }
 }
