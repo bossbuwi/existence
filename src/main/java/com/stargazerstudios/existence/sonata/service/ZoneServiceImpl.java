@@ -1,8 +1,15 @@
 package com.stargazerstudios.existence.sonata.service;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.DuplicateEntityException;
-import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.universal.InvalidInputException;
+import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.entity.DuplicateEntityException;
+import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
+import com.stargazerstudios.existence.conductor.utils.StringUtil;
+import com.stargazerstudios.existence.sonata.constants.ConsSonataConstraint;
 import com.stargazerstudios.existence.sonata.dto.ZoneDTO;
 import com.stargazerstudios.existence.sonata.entity.System;
 import com.stargazerstudios.existence.sonata.entity.Zone;
@@ -11,7 +18,9 @@ import com.stargazerstudios.existence.sonata.repository.ZoneDAO;
 import com.stargazerstudios.existence.sonata.utils.SystemUtil;
 import com.stargazerstudios.existence.sonata.utils.ZoneUtil;
 import com.stargazerstudios.existence.sonata.wrapper.ZoneWrapper;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,6 +42,9 @@ public class ZoneServiceImpl implements ZoneService{
     @Autowired
     private SystemUtil systemUtil;
 
+    @Autowired
+    private StringUtil stringUtil;
+
     @Override
     public List<ZoneDTO> getAllZones() {
         List<ZoneDTO> zoneList = new ArrayList<>();
@@ -49,31 +61,46 @@ public class ZoneServiceImpl implements ZoneService{
 
     @Override
     public ZoneDTO createZone(ZoneWrapper wZone)
-            throws EntityNotFoundException, DuplicateEntityException, InvalidInputException {
+            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+        String zonalPrefix = stringUtil.checkInputTrimToUpper(wZone.getZonal_prefix());
+        if (zonalPrefix.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("zonal_prefix");
 
-        ZoneWrapper zoneWrapper = zoneUtil.populateFields(wZone);
-        Optional<Zone> zoneData = zoneDAO.findByZonalPrefix(zoneWrapper.getZonal_prefix());
-        Optional<System> systemData = systemDAO.findByGlobalPrefix(zoneWrapper.getSystem());
+        String zoneName = stringUtil.checkInputTrimToUpper(wZone.getZone_name());
+        if (zoneName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("zone_name");
 
-        if (!zoneData.isPresent()) {
-            if (systemData.isPresent()) {
-                Zone zone = new Zone();
-                zone.setZonalPrefix(zoneWrapper.getZonal_prefix());
-                zone.setZoneName(zoneWrapper.getZone_name());
-                zone.setSystem(systemData.get());
-                return zoneUtil.wrapZone(zoneDAO.save(zone));
-            } else {
-                throw new EntityNotFoundException("system", "global prefix", zoneWrapper.getSystem());
-            }
-        } else {
-            throw new DuplicateEntityException("Zone with prefix: " + zoneWrapper.getZonal_prefix() +
-                    " already exists on system with global prefix: " + zoneWrapper.getSystem() + ".");
+        String systemName = stringUtil.checkInputTrimToUpper(wZone.getSystem());
+        if (systemName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("system");
+
+        String machineName = stringUtil.checkInputTrimToUpper(wZone.getMachine());
+        if (machineName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("machine");
+
+        Optional<System> systemData = systemDAO.findSystemOnMachine(systemName, machineName);
+        if (systemData.isEmpty()) throw new EntityNotFoundException("system", "global_prefix", systemName);
+
+        Zone zone = new Zone();
+        zone.setZoneName(wZone.getZone_name());
+        zone.setZonalPrefix(wZone.getZonal_prefix());
+        zone.setSystem(systemData.get());
+
+        try {
+            zoneDAO.save(zone);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
+            String constraint = ex.getConstraintName();
+            if (constraint.equals(ConsSonataConstraint.UNIQUE_ZONE_PER_SYSTEM))
+                throw new DuplicateEntityException("system", "machine", machineName);
+            throw new EntitySaveErrorException("system");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EntitySaveErrorException("system");
         }
+
+        return zoneUtil.wrapZone(zone);
     }
 
     @Override
-    public ZoneDTO updateZone(ZoneWrapper wZone)
-            throws EntityNotFoundException, DuplicateEntityException, InvalidInputException {
+    public ZoneDTO updateZone(ZoneWrapper wZone) {
         return null;
     }
 }

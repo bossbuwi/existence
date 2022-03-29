@@ -1,7 +1,19 @@
 package com.stargazerstudios.existence.sonata.service;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.universal.InvalidInputException;
+import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
+import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
+import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.entity.EntityRelationErrorException;
+import com.stargazerstudios.existence.conductor.erratum.input.EmptyInputException;
+import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
+import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
+import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.entity.Event;
 import com.stargazerstudios.existence.sonata.entity.EventType;
@@ -49,6 +61,12 @@ public class EventServiceImpl implements EventService {
     private EventExporterUtil exporterUtil;
 
     @Autowired
+    private AuthorityUtil authorityUtil;
+
+    @Autowired
+    private StringUtil stringUtil;
+
+    @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
@@ -68,14 +86,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDTO> getEventsByDate(String date) throws InvalidInputException {
+    public List<EventDTO> getEventsByDate(String date) throws UnknownInputException {
         LocalDate localDate;
         try {
             localDate = LocalDate.parse(date);
         } catch (DateTimeParseException e) {
             throw new InvalidInputException("date");
         }
-
 
         List<EventDTO> eventsList = new ArrayList<>();
         List<Event> events = eventDAO.findEventsByDate(localDate);
@@ -89,216 +106,275 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDTO createEvent(EventWrapper eventWrapper)
-            throws EntityNotFoundException, InvalidInputException {
-        // TODO: Handle the case where there is a missing key on the wrapper
-        EventWrapper wEvent;
-        wEvent = eventWrapper;
+    public EventDTO createEvent(EventWrapper wEvent)
+            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+        // Check required fields
+        String startDateIn = stringUtil.checkInputTrimToUpper(wEvent.getStart_date());
+        if (startDateIn.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("start_date");
+        String endDateIn = stringUtil.checkInputTrimToUpper(wEvent.getEnd_date());
+        if (endDateIn.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("end_date");
+        String globalPrefix = stringUtil.checkInputTrimToUpper(wEvent.getGlobal_prefix());
+        if (globalPrefix.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("global_prefix");
+        String machine = stringUtil.checkInputTrimToUpper(wEvent.getMachine());
+        if (machine.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("machine");
 
-        // Create fields to be used for the new event
-        System system;
-        Set<Zone> zones = new HashSet<>();
-        Set<EventType> eventTypes = new HashSet<>();
+        // Check arrays
+        String[] eventTypesArr = wEvent.getEvent_types();
+        if (eventTypesArr == null || eventTypesArr.length == 0) throw new InvalidInputException("event_types");
+        String[] zonesArr = wEvent.getZones();
+        if (zonesArr == null || zonesArr.length == 0) throw new InvalidInputException("zones");
+
+        // Validate dates
         LocalDate startDate;
-        LocalDate endDate;
-        String createdBy;
-        String lastChangedBy;
-
-        // For the system
-        String wGlobalPrefix = wEvent.getSystem();
-        if (wGlobalPrefix != null && !wGlobalPrefix.isEmpty()) {
-            Optional<System> systemData = systemDAO.findByGlobalPrefix(wGlobalPrefix);
-            if (systemData.isPresent()) {
-                system = systemData.get();
-            } else {
-                throw new EntityNotFoundException("system", "global prefix", wGlobalPrefix);
-            }
-        } else {
-            throw new InvalidInputException("system");
-        }
-
-        // For zones
-        if (wEvent.getZones().length <= 0) throw new InvalidInputException("zones");//check if zones are empty
-        ArrayList<String> wZonePrefixes = new ArrayList<>(Arrays.asList(wEvent.getZones())); //array from request
-        if (hasDuplicates(wZonePrefixes)) throw new InvalidInputException("zones"); //check if array has duplicates
-        ArrayList<Zone> dbZones = new ArrayList<>(system.getZones()); //array of zones from database
-        ArrayList<String> dbZonePrefixes = new ArrayList<>();
-
-        for (Zone zone : dbZones) {
-            dbZonePrefixes.add(zone.getZonalPrefix());
-        }
-
-        for (int i = 0; i < wZonePrefixes.size(); i++) {
-            if (dbZonePrefixes.contains(wZonePrefixes.get(i))) {
-                zones.add(dbZones.get(i));
-            } else {
-                throw new EntityNotFoundException("zone", "zonal prefix", wZonePrefixes.get(i));
-            }
-        }
-
-        // For event types
-        if (wEvent.getEvent_types().length <= 0) throw new InvalidInputException("event_types"); //check if event types are empty
-        ArrayList<String> wEventTypes = new ArrayList<>(Arrays.asList(wEvent.getEvent_types())); //array from request
-        if (hasDuplicates(wEventTypes)) throw new InvalidInputException("event_types"); //check if array has duplicates
-        ArrayList<EventType> dbEventTypes = new ArrayList<>(eventTypeDAO.findAll()); //array of event types from database
-        ArrayList<String> dbEventTypeCodes = new ArrayList<>();
-
-        for (EventType eventType : dbEventTypes) {
-            dbEventTypeCodes.add(eventType.getCode());
-        }
-
-        for (int i = 0; i < wEventTypes.size(); i++) {
-            if (dbEventTypeCodes.contains(wEventTypes.get(i))) {
-                eventTypes.add(dbEventTypes.get(i));
-            } else {
-                throw new EntityNotFoundException("event type", "code", wEventTypes.get(i));
-            }
-        }
-
-        // For the start date
         try {
-            startDate = LocalDate.parse(wEvent.getStart_date());
+            startDate = LocalDate.parse(startDateIn);
         } catch (DateTimeParseException e) {
             throw new InvalidInputException("start_date");
         }
 
-        // For the end date
+        LocalDate endDate;
         try {
-            endDate = LocalDate.parse(wEvent.getEnd_date());
+            endDate = LocalDate.parse(endDateIn);
         } catch (DateTimeParseException e) {
             throw new InvalidInputException("end_date");
         }
 
-        // Compare start and end dates, start date must not be later than end date
-        if (startDate.isAfter(endDate)) throw new InvalidInputException("start_date");
+        if (endDate.isBefore(startDate)) throw new InvalidInputException("end_date");
 
-        // For the users
+        Set<String> eventTypeQuery = new HashSet<>();
+        for (String item: eventTypesArr) {
+            String out = stringUtil.checkInputTrimToUpper(item);
+            if (out.equals(EnumUtilOutput.EMPTY.getValue()))
+                throw new EmptyInputException("event_types");
+            eventTypeQuery.add(out);
+        }
+
+        Set<String> zoneQuery = new HashSet<>();
+        for (String item: zonesArr) {
+            String out = stringUtil.checkInputTrimToUpper(item);
+            if (out.equals(EnumUtilOutput.EMPTY.getValue()))
+                throw new EmptyInputException("zones");
+            zoneQuery.add(out);
+        }
+
+        Optional<System> systemData = systemDAO.findSystemOnMachine(globalPrefix, machine);
+        if (systemData.isEmpty())
+            throw new EntityNotFoundException("system", "global_prefix", globalPrefix, "machine", "name", machine);
+        System system = systemData.get();
+        if (system.getZones().size() == 0)
+            throw new EntityRelationErrorException("System: " + globalPrefix + " on machine: " + machine +
+                    " does not have zones.");
+        List<Zone> zoneDb = new ArrayList<>(system.getZones());
+        Set<Zone> zones = new HashSet<>();
+        for (String item : zoneQuery) {
+            Zone zone = zoneDb.stream()
+                    .filter(listItem -> item.equals(listItem.getZonalPrefix()))
+                    .findAny()
+                    .orElse(null);
+            if (zone != null) {
+                zones.add(zone);
+            } else {
+                throw new EntityNotFoundException("zone", "zonal_prefix", item, "system", "global_prefix", globalPrefix);
+            }
+        }
+
+        List<EventType> eventTypeDb = eventTypeDAO.findByCodeSet(eventTypeQuery);
+        List<EventType> exclusives = eventTypeDb.stream()
+                .filter(EventType::isExclusive)
+                .toList();
+        if (exclusives.size() > 1) throw new EntityErrorException("Only one exclusive event type may be used.");
+        Set<EventType> eventTypes = new HashSet<>(eventTypeDb);
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        createdBy = auth.getName();
-        lastChangedBy = auth.getName();
+        String username = auth.getName();
 
-        // Finally, create an event to be saved and returned to the client
         Event event = new Event();
+        event.setCreatedBy(username);
+        event.setLastChangedBy(username);
+        event.setStartDate(startDate);
+        event.setEndDate(endDate);
         event.setSystem(system);
         event.setZones(zones);
         event.setEventTypes(eventTypes);
-        event.setStartDate(startDate);
-        event.setEndDate(endDate);
+
         event.setJiraCase(wEvent.getJira_case());
         event.setFeaturesOn(wEvent.getFeatures_on());
         event.setFeaturesOff(wEvent.getFeatures_off());
         event.setCompiledSources(wEvent.getCompiled_sources());
         event.setApiUsed(wEvent.getApi_used());
-        event.setApiUsed(wEvent.getApi_used());
-        event.setCreatedBy(createdBy);
-        event.setLastChangedBy(lastChangedBy);
-        return eventUtil.wrapEvent(eventDAO.save(event));
+
+        try {
+            eventDAO.save(event);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EntitySaveErrorException("event");
+        }
+
+        return eventUtil.wrapEvent(event);
     }
 
     @Override
-    public EventDTO updateEvent(EventWrapper eventWrapper) throws EntityNotFoundException, InvalidInputException {
-        EventWrapper wEvent;
-        wEvent = eventWrapper;
+    public EventDTO updateEvent(EventWrapper wEvent)
+            throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+        long id = wEvent.getId();
+        if (id <= 0) throw new InvalidInputException("id");
 
-        Optional<Event> eventData = eventDAO.findById(wEvent.getId());
-        if (eventData.isEmpty()) throw new EntityNotFoundException("event", "id", Long.toString(wEvent.getId()));
+        String globalPrefixIn = null;
+        String machineIn = null;
+        String startDateIn = null;
+        String endDateIn = null;
+        String[] zonesIn = null;
+        String[] eventTypeIn = null;
+
+        // Check non-nullable inputs
+        if (wEvent.getGlobal_prefix() != null) {
+            globalPrefixIn = stringUtil.checkInputTrimToUpper(wEvent.getGlobal_prefix());
+            if (globalPrefixIn.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("global_prefix");
+        }
+
+        if (wEvent.getMachine() != null) {
+            machineIn = stringUtil.checkInputTrimToUpper(wEvent.getMachine());
+            if (machineIn.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("machine");
+        }
+
+        if (wEvent.getStart_date() != null) {
+            startDateIn = stringUtil.checkInputTrimToUpper(wEvent.getStart_date());
+            if (startDateIn.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("start_date");
+        }
+
+        if (wEvent.getEnd_date() != null) {
+            endDateIn = stringUtil.checkInputTrimToUpper(wEvent.getStart_date());
+            if (endDateIn.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("end_date");
+        }
+
+        // Check non-nullable arrays
+        if (wEvent.getZones() != null) {
+            if (wEvent.getZones().length == 0) throw new InvalidInputException("zones");
+            zonesIn = wEvent.getZones();
+        }
+
+        if (wEvent.getEvent_types() != null) {
+            if (wEvent.getEvent_types().length == 0) throw new InvalidInputException("event_types");
+            eventTypeIn = wEvent.getEvent_types();
+        }
+
+        Optional<Event> eventData = eventDAO.findById(id);
+        if (eventData.isEmpty()) throw new EntityNotFoundException("event", "id", Long.toString(id));
+
         Event event = eventData.get();
 
-        // Create fields to be used for the new event
-        System system;
-        Set<Zone> zones = new HashSet<>();
-        Set<EventType> eventTypes = new HashSet<>();
-        LocalDate startDate;
-        LocalDate endDate;
-        String lastChangedBy;
-
-        // For the system
-        String wGlobalPrefix = wEvent.getSystem();
-        if (wGlobalPrefix != null && !wGlobalPrefix.isEmpty()) {
-            Optional<System> systemData = systemDAO.findByGlobalPrefix(wGlobalPrefix);
-            if (systemData.isPresent()) {
-                system = systemData.get();
-            } else {
-                throw new EntityNotFoundException("system", "global prefix", wGlobalPrefix);
-            }
-        } else {
-            throw new InvalidInputException("system");
-        }
-
-        // For zones
-        if (wEvent.getZones().length <= 0) throw new InvalidInputException("zones");//check if zones are empty
-        ArrayList<String> wZonePrefixes = new ArrayList<>(Arrays.asList(wEvent.getZones())); //array from request
-        if (hasDuplicates(wZonePrefixes)) throw new InvalidInputException("zones"); //check if array has duplicates
-        ArrayList<Zone> dbZones = new ArrayList<>(system.getZones()); //array of zones from database
-        ArrayList<String> dbZonePrefixes = new ArrayList<>();
-
-        for (Zone zone : dbZones) {
-            dbZonePrefixes.add(zone.getZonalPrefix());
-        }
-
-        for (int i = 0; i < wZonePrefixes.size(); i++) {
-            if (dbZonePrefixes.contains(wZonePrefixes.get(i))) {
-                zones.add(dbZones.get(i));
-            } else {
-                throw new EntityNotFoundException("zone", "zonal prefix", wZonePrefixes.get(i));
-            }
-        }
-
-
-        // For event types
-        if (wEvent.getEvent_types().length <= 0) throw new InvalidInputException("event_types");//check if event types are empty
-        ArrayList<String> wEventTypes = new ArrayList<>(Arrays.asList(wEvent.getEvent_types())); //array from request
-        if (hasDuplicates(wEventTypes)) throw new InvalidInputException("event_types"); //check if array has duplicates
-        ArrayList<EventType> dbEventTypes = new ArrayList<>(eventTypeDAO.findAll()); //array of event types from database
-        ArrayList<String> dbEventTypeCodes = new ArrayList<>();
-
-        for (EventType eventType : dbEventTypes) {
-            dbEventTypeCodes.add(eventType.getCode());
-        }
-
-        for (int i = 0; i < wEventTypes.size(); i++) {
-            if (dbEventTypeCodes.contains(wEventTypes.get(i))) {
-                eventTypes.add(dbEventTypes.get(i));
-            } else {
-                throw new EntityNotFoundException("event type", "code", wEventTypes.get(i));
-            }
-        }
-
-        // For the start date
-        try {
-            startDate = LocalDate.parse(wEvent.getStart_date());
-        } catch (DateTimeParseException e) {
-            throw new InvalidInputException("start_date");
-        }
-
-        // For the end date
-        try {
-            endDate = LocalDate.parse(wEvent.getEnd_date());
-        } catch (DateTimeParseException e) {
-            throw new InvalidInputException("end_date");
-        }
-
-        // Compare start and end dates, start date must not be later than end date
-        if (startDate.isAfter(endDate)) throw new InvalidInputException("start_date");
-
-        // For the users
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        lastChangedBy = auth.getName();
+        String username = auth.getName();
 
-        // Finally, update the event to be saved and returned to the client
-        event.setSystem(system);
-        event.setZones(zones);
-        event.setEventTypes(eventTypes);
-        event.setStartDate(startDate);
-        event.setEndDate(endDate);
-        event.setJiraCase(wEvent.getJira_case());
-        event.setFeaturesOn(wEvent.getFeatures_on());
-        event.setFeaturesOff(wEvent.getFeatures_off());
-        event.setCompiledSources(wEvent.getCompiled_sources());
-        event.setApiUsed(wEvent.getApi_used());
-        event.setApiUsed(wEvent.getApi_used());
-        event.setLastChangedBy(lastChangedBy);
-        return eventUtil.wrapEvent(eventDAO.saveAndFlush(event));
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
+
+        if (!username.equals(event.getCreatedBy()) || !isAuthorized) throw new UserUnauthorizedException();
+
+        if (startDateIn != null && endDateIn != null) {
+            LocalDate startDate;
+            try {
+                startDate = LocalDate.parse(startDateIn);
+            } catch (DateTimeParseException e) {
+                throw new InvalidInputException("start_date");
+            }
+
+            LocalDate endDate;
+            try {
+                endDate = LocalDate.parse(endDateIn);
+            } catch (DateTimeParseException e) {
+                throw new InvalidInputException("end_date");
+            }
+
+            if (endDate.isBefore(startDate)) throw new InvalidInputException("end_date");
+
+            event.setStartDate(startDate);
+            event.setEndDate(endDate);
+        }
+
+        System system = null;
+        if (globalPrefixIn != null && machineIn != null) {
+            Optional<System> systemData = systemDAO.findSystemOnMachine(globalPrefixIn, machineIn);
+            if (systemData.isEmpty()) throw new EntityNotFoundException("system", "global_prefix", globalPrefixIn, "machine", "name", machineIn);
+            system = systemData.get();
+            event.setSystem(system);
+        }
+
+        if (zonesIn != null) {
+            if (system == null) {
+                system = event.getSystem();
+
+                Set<String> zoneQuery = new HashSet<>();
+                for (String item: zonesIn) {
+                    String out = stringUtil.checkInputTrimToUpper(item);
+                    if (out.equals(EnumUtilOutput.EMPTY.getValue()))
+                        throw new EmptyInputException("zones");
+                    zoneQuery.add(out);
+                }
+
+                List<Zone> zoneDb = new ArrayList<>(system.getZones());
+                Set<Zone> zones = new HashSet<>();
+                for (String item : zoneQuery) {
+                    Zone zone = zoneDb.stream()
+                            .filter(listItem -> item.equals(listItem.getZonalPrefix()))
+                            .findAny()
+                            .orElse(null);
+                    if (zone != null) {
+                        zones.add(zone);
+                    } else {
+                        throw new EntityNotFoundException("zone", "zonal_prefix", item, "system", "global_prefix", system.getGlobalPrefix());
+                    }
+                }
+                event.setZones(zones);
+            } else {
+                List<Zone> zoneDb = new ArrayList<>(system.getZones());
+                Set<Zone> zones = new HashSet<>();
+                for (String item : zonesIn) {
+                    Zone zone = zoneDb.stream()
+                            .filter(listItem -> item.equals(listItem.getZonalPrefix()))
+                            .findAny()
+                            .orElse(null);
+                    if (zone != null) {
+                        zones.add(zone);
+                    } else {
+                        throw new EntityNotFoundException("zone", "zonal_prefix", item, "system", "global_prefix", globalPrefixIn);
+                    }
+                }
+                event.setZones(zones);
+            }
+        }
+
+        if (eventTypeIn != null) {
+            Set<String> eventTypeQuery = new HashSet<>();
+            for (String item: eventTypeIn) {
+                String out = stringUtil.checkInputTrimToUpper(item);
+                if (out.equals(EnumUtilOutput.EMPTY.getValue()))
+                    throw new EmptyInputException("event_types");
+                eventTypeQuery.add(out);
+            }
+
+            List<EventType> eventTypeDb = eventTypeDAO.findByCodeSet(eventTypeQuery);
+            List<EventType> exclusives = eventTypeDb.stream()
+                    .filter(EventType::isExclusive)
+                    .toList();
+            if (exclusives.size() > 1) throw new EntityErrorException("Only one exclusive event type may be used.");
+            Set<EventType> eventTypes = new HashSet<>(eventTypeDb);
+            event.setEventTypes(eventTypes);
+        }
+
+        if (wEvent.getJira_case() != null) event.setJiraCase(wEvent.getJira_case());
+        if (wEvent.getFeatures_on() != null) event.setJiraCase(wEvent.getFeatures_on());
+        if (wEvent.getFeatures_off() != null) event.setJiraCase(wEvent.getFeatures_off());
+        if (wEvent.getCompiled_sources() != null) event.setJiraCase(wEvent.getCompiled_sources());
+        if (wEvent.getApi_used() != null) event.setJiraCase(wEvent.getApi_used());
+
+        try {
+            eventDAO.save(event);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EntitySaveErrorException("event");
+        }
+
+        return eventUtil.wrapEvent(event);
     }
 
     @Override

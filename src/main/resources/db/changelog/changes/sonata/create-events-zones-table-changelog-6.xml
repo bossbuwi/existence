@@ -19,6 +19,11 @@
                 <constraints nullable="false" foreignKeyName="fk_zone_event" referencedTableName="sonata_zones" referencedColumnNames="id"/>
             </column>
         </createTable>
+        <addUniqueConstraint
+                columnNames="event_id, zone_id"
+                constraintName="ct_unique_event_per_zone"
+                tableName="events_zones"
+        />
         <rollback>
             <dropTable tableName="events_zones"/>
         </rollback>

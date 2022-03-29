@@ -18,15 +18,9 @@
             <column name="global_prefix" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="url" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="owners" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="description" type="VARCHAR(255)" />
+            <column name="url" type="VARCHAR(255)" />
+            <column name="owners" type="VARCHAR(255)" />
             <column name="creation_date" type="timestamptz">
                 <constraints nullable="false"/>
             </column>
@@ -42,8 +36,8 @@
                 referencedColumnNames="id"/>
         <addUniqueConstraint
                 tableName="sonata_systems"
-                columnNames="id, machine_id"
-                constraintName="ct_unique_machine_per_system"/>
+                columnNames="global_prefix, machine_id"
+                constraintName="ct_unique_system_per_machine"/>
         <rollback>
             <dropTable tableName="sonata_systems"/>
         </rollback>

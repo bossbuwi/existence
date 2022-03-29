@@ -12,13 +12,11 @@ public class MachineDTO {
 
     private long id;
     private String name;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Timestamp creation_date;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Timestamp last_changed_date;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<SystemDTO> systems;
+    private List<String> systems;
 
 }

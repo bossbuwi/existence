@@ -15,7 +15,6 @@ public class SystemDTO {
     private String description;
     private String url;
     private String owners;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String machine;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private ArrayList<String> zones;

@@ -2,13 +2,13 @@ package com.stargazerstudios.existence.sonata.wrapper;
 
 import lombok.*;
 
-import java.util.HashMap;
-
 @Getter @Setter @NoArgsConstructor
 public class ZoneWrapper {
-    private HashMap<String, String> zone;
     private long id;
     private String zonal_prefix;
     private String zone_name;
+    private String new_zonal_prefix;
     private String system;
+    private String new_system;
+    private String machine;
 }

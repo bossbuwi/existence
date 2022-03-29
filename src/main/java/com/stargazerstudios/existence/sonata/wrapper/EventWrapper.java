@@ -2,13 +2,11 @@ package com.stargazerstudios.existence.sonata.wrapper;
 
 import lombok.*;
 
-import java.util.HashMap;
-
 @Getter @Setter @NoArgsConstructor
 public class EventWrapper {
-    private HashMap<String, String> event;
     private long id;
-    private String system;
+    private String global_prefix;
+    private String machine;
     private String[] zones;
     private String[] event_types;
     private String start_date;

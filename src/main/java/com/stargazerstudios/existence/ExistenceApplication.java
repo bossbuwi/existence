@@ -15,4 +15,5 @@ public class ExistenceApplication {
 	// TODO Check the codes where Optional are used and assert if it would be better to use try catch block
 	// 	especially when doing database operations. Also determine if there are any database changes needed.
 	// TODO Frontend is now officially broken. Please rework and move on from the past if possible.
+	// TODO: Create unique constraints for the Tag and Story names on ballad
 }

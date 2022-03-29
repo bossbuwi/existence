@@ -22,6 +22,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint
+                columnNames="name"
+                constraintName="ct_unique_machine_name"
+                tableName="sonata_machines"
+        />
         <rollback>
             <dropTable tableName="sonata_machines"/>
         </rollback>
