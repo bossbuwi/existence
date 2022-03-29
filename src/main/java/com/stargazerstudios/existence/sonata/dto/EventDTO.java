@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
 public class EventDTO {
     private long id;
     private String system;
-    private ArrayList<String> zones;
-    private ArrayList<String> event_types;
+    private List<String> zones;
+    private List<String> event_types;
     private String start_date;
     private String end_date;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

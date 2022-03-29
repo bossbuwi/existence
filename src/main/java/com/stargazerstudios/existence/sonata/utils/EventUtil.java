@@ -1,17 +1,14 @@
 package com.stargazerstudios.existence.sonata.utils;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.InvalidInputException;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.entity.Event;
 import com.stargazerstudios.existence.sonata.entity.EventType;
 import com.stargazerstudios.existence.sonata.entity.System;
 import com.stargazerstudios.existence.sonata.entity.Zone;
-import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
 
 @Service
@@ -54,22 +51,5 @@ public class EventUtil {
         eventDTO.setEvent_types(eventTypes);
 
         return eventDTO;
-    }
-
-    public EventWrapper populateFields(EventWrapper wEvent) throws InvalidInputException {
-        EventWrapper eventWrapper;
-        eventWrapper = wEvent;
-        HashMap<String, String> eventMap = eventWrapper.getEvent();
-
-        if (eventMap.containsKey("id")) {
-            try {
-                long id = Long.parseLong(eventMap.get("id"));
-                wEvent.setId(id);
-            } catch (NumberFormatException e) {
-                throw new InvalidInputException("id");
-            }
-        }
-
-        return eventWrapper;
     }
 }

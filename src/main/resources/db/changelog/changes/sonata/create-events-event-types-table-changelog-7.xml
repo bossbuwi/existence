@@ -19,6 +19,11 @@
                 <constraints nullable="false" foreignKeyName="fk_event_type_event" referencedTableName="sonata_event_types" referencedColumnNames="id"/>
             </column>
         </createTable>
+        <addUniqueConstraint
+                columnNames="event_id, event_type_id"
+                constraintName="ct_unique_event_type_per_event"
+                tableName="events_event_types"
+        />
         <rollback>
             <dropTable tableName="events_event_types"/>
         </rollback>

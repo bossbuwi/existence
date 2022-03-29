@@ -1,8 +1,8 @@
 package com.stargazerstudios.existence.sonata.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.DuplicateEntityException;
-import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.universal.InvalidInputException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.sonata.dto.ZoneDTO;
 import com.stargazerstudios.existence.sonata.service.ZoneServiceImpl;
 import com.stargazerstudios.existence.sonata.wrapper.ZoneWrapper;
@@ -28,7 +28,7 @@ public class ZoneController {
 
     @PostMapping("/zone")
     public ResponseEntity<ZoneDTO> createZone(@RequestBody ZoneWrapper wZone)
-            throws InvalidInputException, DuplicateEntityException, EntityNotFoundException {
+            throws DatabaseErrorException, UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(zoneService.createZone(wZone), HttpStatus.OK);
     }
 }

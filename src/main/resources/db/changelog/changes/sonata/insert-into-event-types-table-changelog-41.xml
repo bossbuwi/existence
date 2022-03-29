@@ -21,7 +21,7 @@
             <column name="code" value="COB"/>
             <column name="name" value="Close of Business"/>
             <column name="description" value="System can be used only by the reserved user."/>
-            <column name="exclusive" value="false"/>
+            <column name="exclusive" value="true"/>
             <column name="creation_date" valueDate="${now}"/>
             <column name="last_changed_date" valueDate="${now}"/>
         </insert>

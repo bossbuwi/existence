@@ -1,8 +1,15 @@
 package com.stargazerstudios.existence.sonata.service;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.DuplicateEntityException;
-import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.universal.InvalidInputException;
+import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.entity.DuplicateEntityException;
+import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
+import com.stargazerstudios.existence.conductor.utils.StringUtil;
+import com.stargazerstudios.existence.sonata.constants.ConsSonataConstraint;
 import com.stargazerstudios.existence.sonata.dto.SystemDTO;
 import com.stargazerstudios.existence.sonata.entity.Machine;
 import com.stargazerstudios.existence.sonata.entity.System;
@@ -10,7 +17,9 @@ import com.stargazerstudios.existence.sonata.repository.MachineDAO;
 import com.stargazerstudios.existence.sonata.repository.SystemDAO;
 import com.stargazerstudios.existence.sonata.utils.SystemUtil;
 import com.stargazerstudios.existence.sonata.wrapper.SystemWrapper;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +40,9 @@ public class SystemServiceImpl implements SystemService {
     @Autowired
     private SystemUtil systemUtil;
 
+    @Autowired
+    private StringUtil stringUtil;
+
     @Override
     public List<SystemDTO> getAllSystems() {
         List<System> systems = systemDAO.findAll();
@@ -47,25 +59,39 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public SystemDTO createSystem(SystemWrapper wSystem)
-            throws DuplicateEntityException, EntityNotFoundException, InvalidInputException {
-        SystemWrapper systemWrapper = systemUtil.populateFields(wSystem);
-        Optional<System> systemData = systemDAO.findByGlobalPrefix(systemWrapper.getGlobal_prefix());
-        Optional<Machine> machineData = machineDAO.findByName(systemWrapper.getMachine());
+            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+        String globalPrefix = stringUtil.checkInputTrimToUpper(wSystem.getGlobal_prefix());
+        if (globalPrefix.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("global_prefix");
 
-        if (systemData.isEmpty()) {
-            if (machineData.isPresent()) {
-                System system = new System();
-                system.setGlobalPrefix(systemWrapper.getGlobal_prefix());
-                system.setDescription(systemWrapper.getDescription());
-                system.setUrl(systemWrapper.getUrl());
-                system.setOwners(systemWrapper.getOwners());
-                system.setMachine(machineData.get());
-                return systemUtil.wrapSystem(systemDAO.save(system));
-            } else {
-                throw new EntityNotFoundException("machine", "name", systemWrapper.getMachine());
-            }
-        } else {
-            throw new DuplicateEntityException("System with global prefix: " + systemWrapper.getGlobal_prefix() + " already exists.");
+        String machineName = stringUtil.checkInputTrimToUpper(wSystem.getMachine());
+        if (machineName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("machine");
+
+        Optional<Machine> machineData = machineDAO.findByName(machineName);
+        if (machineData.isEmpty()) throw new EntityNotFoundException("machine", "name", machineName);
+
+        System system = new System();
+        system.setGlobalPrefix(globalPrefix);
+        system.setOwners(wSystem.getOwners());
+        system.setDescription(wSystem.getDescription());
+        system.setUrl(wSystem.getUrl());
+
+        Machine machine = machineData.get();
+        system.setMachine(machine);
+
+        try {
+            systemDAO.save(system);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
+            String constraint = ex.getConstraintName();
+            if (constraint.equals(ConsSonataConstraint.UNIQUE_SYSTEM_PER_MACHINE))
+                throw new DuplicateEntityException("system", "machine", machineName);
+            throw new EntitySaveErrorException("system");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EntitySaveErrorException("system");
         }
+
+        return systemUtil.wrapSystem(system);
     }
 }

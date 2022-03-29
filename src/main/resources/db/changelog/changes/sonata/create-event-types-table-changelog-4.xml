@@ -29,6 +29,16 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint
+                columnNames="code"
+                constraintName="ct_unique_event_code"
+                tableName="sonata_event_types"
+        />
+        <addUniqueConstraint
+                columnNames="name"
+                constraintName="ct_unique_event_name"
+                tableName="sonata_event_types"
+        />
         <rollback>
             <dropTable tableName="sonata_event_types"/>
         </rollback>

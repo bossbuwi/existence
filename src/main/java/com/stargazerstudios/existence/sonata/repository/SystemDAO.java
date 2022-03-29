@@ -2,11 +2,14 @@ package com.stargazerstudios.existence.sonata.repository;
 
 import com.stargazerstudios.existence.sonata.entity.System;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
 public interface SystemDAO extends JpaRepository<System, Long> {
-    Optional<System> findByGlobalPrefix(String globalPrefix);
+    @Query("SELECT s FROM System s WHERE s.globalPrefix = :globalPrefix and s.machine.name = :name")
+    Optional<System> findSystemOnMachine(@Param("globalPrefix") String globalPrefix, @Param("name") String machine);
 }
