@@ -2,7 +2,7 @@ package com.stargazerstudios.existence.sonata.service;
 
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
-import com.stargazerstudios.existence.conductor.erratum.entity.DuplicateEntityException;
+import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
 import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;

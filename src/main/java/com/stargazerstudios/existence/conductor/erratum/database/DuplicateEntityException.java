@@ -1,4 +1,4 @@
-package com.stargazerstudios.existence.conductor.erratum.entity;
+package com.stargazerstudios.existence.conductor.erratum.database;
 
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 
