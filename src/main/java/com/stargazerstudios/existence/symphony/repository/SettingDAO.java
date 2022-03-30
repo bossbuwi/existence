@@ -1,6 +1,5 @@
 package com.stargazerstudios.existence.symphony.repository;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.EntityNotFoundException;
 import com.stargazerstudios.existence.symphony.entity.Setting;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface ZoneDAO extends JpaRepository<Zone, Long> {
-    @Query("SELECT z FROM Zone s WHERE z.zonalPrefix = :zonalPrefix and z.system.globalPrefix = :globalPrefix")
+    @Query("SELECT z FROM Zone z WHERE z.zonalPrefix = :zonalPrefix and z.system.globalPrefix = :globalPrefix")
     Optional<Zone> findZoneOnSystem(@Param("zonalPrefix") String zonalPrefix, @Param("globalPrefix") String globalPrefix);
 }

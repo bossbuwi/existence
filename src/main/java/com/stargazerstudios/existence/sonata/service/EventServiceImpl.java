@@ -269,6 +269,7 @@ public class EventServiceImpl implements EventService {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
 
         if (!username.equals(event.getCreatedBy()) || !isAuthorized) throw new UserUnauthorizedException();
+        event.setLastChangedBy(username);
 
         if (startDateIn != null && endDateIn != null) {
             LocalDate startDate;
