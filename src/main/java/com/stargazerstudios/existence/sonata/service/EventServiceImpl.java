@@ -42,7 +42,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class EventServiceImpl implements EventService {
 
     @Autowired

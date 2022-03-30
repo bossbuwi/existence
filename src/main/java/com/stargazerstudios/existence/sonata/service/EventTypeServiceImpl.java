@@ -6,11 +6,13 @@ import com.stargazerstudios.existence.sonata.repository.EventTypeDAO;
 import com.stargazerstudios.existence.sonata.utils.EventTypeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class EventTypeServiceImpl implements EventTypeService {
 
     @Autowired
