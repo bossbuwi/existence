@@ -1,6 +1,7 @@
 package com.stargazerstudios.existence.conductor.erratum;
 
-import com.stargazerstudios.existence.conductor.erratum.universal.*;
+import com.stargazerstudios.existence.conductor.erratum.authorization.UserNotLoggedInException;
+import com.stargazerstudios.existence.conductor.erratum.root.*;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
@@ -13,98 +14,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(GenericErrorException.class)
-    protected ResponseEntity<Object> handleGenericError(
-            GenericErrorException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(FatalErrorException.class)
-    protected ResponseEntity<Object> handleFatalError(
-            FatalErrorException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(InvalidPropertyErrorException.class)
-    protected ResponseEntity<Object> handleInvalidPropertyError(
-            InvalidPropertyErrorException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<Object> handleUserNotFoundError(
-            UserNotFoundException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<Object> handleEntityNotFoundError(
-            EntityNotFoundException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(BadGatewayException.class)
-    protected ResponseEntity<Object> handleGatewayError(
-            BadGatewayException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(GatewayTimeoutException.class)
-    protected ResponseEntity<Object> handleGatewayTimeoutError(
-            GatewayTimeoutException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(BadJsonWebTokenException.class)
-    protected ResponseEntity<Object> handleJwtError(
-            BadJsonWebTokenException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    protected ResponseEntity<Object> handleUnauthorizedErrors(
-            AuthenticationException ex) {
-        UserNotLoggedInException _ex = new UserNotLoggedInException();
-        ErrorResponse errorResponse = new ErrorResponse(_ex.getHttpStatus());
-        errorResponse.setMessage(_ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(DuplicateEntityException.class)
-    protected ResponseEntity<Object> handleDuplicateEntityError(
-            DuplicateEntityException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(UnexpectedInputException.class)
-    protected ResponseEntity<Object> handleUnexpectedInputError(
-            UnexpectedInputException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
-        errorResponse.setMessage(ex.getMessage());
-        return buildResponseEntity(errorResponse);
-    }
-
-    @ExceptionHandler(InvalidInputException.class)
-    protected ResponseEntity<Object> handleInvalidInputError(
-            InvalidInputException ex) {
+    @ExceptionHandler(AuthorizationErrorException.class)
+    protected ResponseEntity<Object> handleAuthenticationError(
+            AuthorizationErrorException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
         return buildResponseEntity(errorResponse);
@@ -118,11 +30,44 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(errorResponse);
     }
 
-    @ExceptionHandler(UserUnauthorizedException.class)
-    protected ResponseEntity<Object> handleUserUnauthorizedError(
-            UserUnauthorizedException ex) {
+    @ExceptionHandler(EntityErrorException.class)
+    protected ResponseEntity<Object> handleEntityError(
+            EntityErrorException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
+    @ExceptionHandler(SystemErrorException.class)
+    protected ResponseEntity<Object> handleSystemError(
+            SystemErrorException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
+    @ExceptionHandler(ThirdPartyErrorException.class)
+    protected ResponseEntity<Object> handleThirdPartyError(
+            ThirdPartyErrorException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
+    @ExceptionHandler(UnknownInputException.class)
+    protected ResponseEntity<Object> handleUnknownInputError(
+            UnknownInputException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<Object> handleCoreAuthenticationError(
+            AuthenticationException ex) {
+        UserNotLoggedInException _ex = new UserNotLoggedInException();
+        ErrorResponse errorResponse = new ErrorResponse(_ex.getHttpStatus());
+        errorResponse.setMessage(_ex.getMessage());
         return buildResponseEntity(errorResponse);
     }
 

@@ -89,11 +89,11 @@ public class ZoneServiceImpl implements ZoneService{
             ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
             String constraint = ex.getConstraintName();
             if (constraint.equals(ConsSonataConstraint.UNIQUE_ZONE_PER_SYSTEM))
-                throw new DuplicateEntityException("system", "machine", machineName);
-            throw new EntitySaveErrorException("system");
+                throw new DuplicateEntityException("zone", "zonal_prefix", zonalPrefix);
+            throw new EntitySaveErrorException("zone");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("system");
+            throw new EntitySaveErrorException("zone");
         }
 
         return zoneUtil.wrapZone(zone);
