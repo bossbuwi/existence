@@ -22,6 +22,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint
+                columnNames="name"
+                constraintName="ct_unique_story_name"
+                tableName="ballad_stories"
+        />
         <rollback>
             <dropTable tableName="ballad_stories"/>
         </rollback>

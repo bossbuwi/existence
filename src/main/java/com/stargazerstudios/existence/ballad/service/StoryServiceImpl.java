@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.ballad.service;
 
+import com.stargazerstudios.existence.ballad.constants.ConsBalladConstraint;
 import com.stargazerstudios.existence.ballad.dto.StoryDTO;
 import com.stargazerstudios.existence.ballad.entity.Story;
 import com.stargazerstudios.existence.ballad.entity.Tag;
@@ -9,6 +10,7 @@ import com.stargazerstudios.existence.ballad.utils.StoryUtil;
 import com.stargazerstudios.existence.ballad.utils.TagUtil;
 import com.stargazerstudios.existence.ballad.wrapper.StoryWrapper;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
+import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
@@ -17,18 +19,18 @@ import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorExcept
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class StoryServiceImpl implements StoryService{
 
-    // TODO: Test the CRUD methods because the saving was changed. Check if the system allows saving duplicates.
-    //  It should not. If it does, modify the table of the respective entities and add a unique constraint.
     @Autowired
     private StoryDAO storyDAO;
 
@@ -78,6 +80,12 @@ public class StoryServiceImpl implements StoryService{
 
         try {
             storyDAO.save(story);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
+            String constraint = ex.getConstraintName();
+            if (constraint.equals(ConsBalladConstraint.UNIQUE_STORY_NAME))
+                throw new DuplicateEntityException("story", "name", name);
         } catch (Exception e) {
             e.printStackTrace();
             throw new EntitySaveErrorException("story");
@@ -103,6 +111,12 @@ public class StoryServiceImpl implements StoryService{
 
         try {
             storyDAO.save(story);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
+            String constraint = ex.getConstraintName();
+            if (constraint.equals(ConsBalladConstraint.UNIQUE_STORY_NAME))
+                throw new DuplicateEntityException("story", "name", name);
         } catch (Exception e) {
             e.printStackTrace();
             throw new EntitySaveErrorException("story");
