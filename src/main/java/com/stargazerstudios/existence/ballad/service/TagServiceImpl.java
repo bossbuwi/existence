@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.ballad.service;
 
+import com.stargazerstudios.existence.ballad.constants.ConsBalladConstraint;
 import com.stargazerstudios.existence.ballad.dto.TagDTO;
 import com.stargazerstudios.existence.ballad.entity.Story;
 import com.stargazerstudios.existence.ballad.entity.Tag;
@@ -9,6 +10,7 @@ import com.stargazerstudios.existence.ballad.utils.StoryUtil;
 import com.stargazerstudios.existence.ballad.utils.TagUtil;
 import com.stargazerstudios.existence.ballad.wrapper.TagWrapper;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
+import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
@@ -17,14 +19,16 @@ import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorExcept
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class TagServiceImpl implements TagService{
 
     @Autowired
@@ -77,6 +81,12 @@ public class TagServiceImpl implements TagService{
 
         try {
             tagDAO.save(tag);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
+            String constraint = ex.getConstraintName();
+            if (constraint.equals(ConsBalladConstraint.UNIQUE_TAG_NAME))
+                throw new DuplicateEntityException("tag", "name", name);
         } catch (Exception e) {
             e.printStackTrace();
             throw new EntitySaveErrorException("tag");
@@ -102,6 +112,12 @@ public class TagServiceImpl implements TagService{
 
         try {
             tagDAO.save(tag);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
+            String constraint = ex.getConstraintName();
+            if (constraint.equals(ConsBalladConstraint.UNIQUE_TAG_NAME))
+                throw new DuplicateEntityException("tag", "name", name);
         } catch (Exception e) {
             e.printStackTrace();
             throw new EntitySaveErrorException("tag");
