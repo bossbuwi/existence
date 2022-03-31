@@ -26,10 +26,9 @@ public class UserServiceImpl implements UserDetailsService {
         Optional<User> _userData = userDAO.findByUsername(username);
         if (_userData.isPresent()) {
             User _user = _userData.get();
-            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+            return new org.springframework.security.core.userdetails.User(
                     _user.getUsername(), _user.getPassword(), getAuthority(_user)
             );
-            return userDetails;
         } else {
             throw new UsernameNotFoundException("User with username: " + username + " not found.");
         }

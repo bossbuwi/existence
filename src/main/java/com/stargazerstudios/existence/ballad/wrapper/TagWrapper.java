@@ -9,11 +9,10 @@ import javax.validation.constraints.NotEmpty;
 @Getter @Setter @NoArgsConstructor
 public class TagWrapper {
     private long id;
-    @NotBlank(groups = PostValidation.class)
-    @NotBlank(groups = GetValidation.class)
-    @NotBlank(groups = PutValidation.class)
-    @NotBlank(groups = PutRelationValidation.class)
-    @NotBlank(groups = DeleteValidation.class)
+    @NotBlank(groups = {
+            PostValidation.class, GetValidation.class, PutValidation.class,
+            PutRelationValidation.class, DeleteValidation.class
+    })
     private String name;
     @NotBlank(groups = PutValidation.class)
     private String new_name;
