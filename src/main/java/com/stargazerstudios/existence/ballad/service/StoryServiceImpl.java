@@ -59,22 +59,21 @@ public class StoryServiceImpl implements StoryService{
     }
 
     @Override
-    public StoryDTO getStory(StoryWrapper story) throws UnknownInputException, EntityErrorException {
-        String storyName = stringUtil.checkInputTrimToUpper(story.getName());
-        if (storyName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
+    public StoryDTO getStory(StoryWrapper story)
+            throws UnknownInputException, EntityErrorException {
+        String storyName = story.getName();
         Optional<Story> storyData = storyDAO.findByName(storyName);
         if (storyData.isPresent()) {
-            StoryDTO storyDTO = storyUtil.wrapStory(storyData.get());
-            return storyDTO;
+            return storyUtil.wrapStory(storyData.get());
         } else {
             throw new EntityNotFoundException("story", "name", storyName);
         }
     }
 
     @Override
-    public StoryDTO createStory(StoryWrapper wStory) throws UnknownInputException, DatabaseErrorException {
-        String name = stringUtil.checkInputTrimToUpper(wStory.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
+    public StoryDTO createStory(StoryWrapper wStory)
+            throws UnknownInputException, DatabaseErrorException {
+        String name = stringUtil.trimToUpper(wStory.getName());
         Story story = new Story();
         story.setName(name);
 
@@ -97,11 +96,8 @@ public class StoryServiceImpl implements StoryService{
     @Override
     public StoryDTO updateStory(StoryWrapper wStory)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException{
-        String name = stringUtil.checkInputTrimToUpper(wStory.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
-
-        String newName = stringUtil.checkInputTrimToUpper(wStory.getNew_name());
-        if (newName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("new_name");
+        String name = stringUtil.trimToUpper(wStory.getName());
+        String newName = stringUtil.trimToUpper(wStory.getNew_name());
 
         Optional<Story> storyData = storyDAO.findByName(name);
         if (storyData.isEmpty()) throw new EntityNotFoundException("story", "name", name);
@@ -128,16 +124,13 @@ public class StoryServiceImpl implements StoryService{
     @Override
     public StoryDTO addTags(StoryWrapper wStory)
             throws UnknownInputException, DatabaseErrorException, EntityErrorException {
-        String name = stringUtil.checkInputTrimToUpper(wStory.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
-
+        String name = stringUtil.trimToUpper(wStory.getName());
         String[] tags = wStory.getTags();
-        if (tags == null || tags.length == 0) throw new InvalidInputException("tags");
         Set<String> tagQuery = new HashSet<>();
 
         for (String tag : tags) {
-            String item = stringUtil.checkInputTrimToUpper(tag);
-            if (item.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
+            String item = stringUtil.trimToUpper(tag);
+            if (item.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("tags");
             tagQuery.add(item);
         }
 
@@ -147,7 +140,6 @@ public class StoryServiceImpl implements StoryService{
         if (!tagQuery.equals(tagResultSet)) {
           tagQuery.removeAll(tagResultSet);
           throw new InvalidInputException("tags");
-          // TODO: This needs to quantify the invalid tags.
         }
 
         Optional<Story> storyData = storyDAO.findByName(name);
@@ -172,11 +164,8 @@ public class StoryServiceImpl implements StoryService{
     @Override
     public StoryDTO removeTags(StoryWrapper wStory)
             throws UnknownInputException, DatabaseErrorException, EntityErrorException {
-        String name = stringUtil.checkInputTrimToUpper(wStory.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
-
+        String name = stringUtil.trimToUpper(wStory.getName());
         String[] tags = wStory.getTags();
-        if (tags == null || tags.length == 0) throw new InvalidInputException("tags");
 
         Optional<Story> storyData = storyDAO.findByName(name);
         if (storyData.isEmpty()) throw new EntityNotFoundException("story", "name", name);
@@ -187,7 +176,7 @@ public class StoryServiceImpl implements StoryService{
 
         Set<String> inputTagNames = new HashSet<>();
         for (String tag: tags) {
-            inputTagNames.add(stringUtil.checkInputTrimToUpper(tag));
+            inputTagNames.add(stringUtil.trimToUpper(tag));
         }
         if (!dbTagNames.containsAll(inputTagNames)) throw new InvalidInputException("tags");
 
@@ -213,22 +202,19 @@ public class StoryServiceImpl implements StoryService{
     @Override
     public StoryDTO deleteStory(StoryWrapper wStory)
             throws UnknownInputException, DatabaseErrorException, EntityErrorException{
-        String storyName = stringUtil.checkInputTrimToUpper(wStory.getName());
-        if (storyName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
+        String storyName = stringUtil.trimToUpper(wStory.getName());
         Optional<Story> storyData = storyDAO.findByName(storyName);
-        if (storyData.isPresent()) {
-            Story story = storyData.get();
+        if (storyData.isEmpty()) throw new EntityNotFoundException("story", "name", storyName);
+        
+        Story story = storyData.get();
 
-            try {
-                storyDAO.delete(story);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new EntityDeletionErrorException("story");
-            }
-
-            return storyUtil.wrapStory(story);
-        } else {
-            throw new EntityNotFoundException("story", "name", storyName);
+        try {
+            storyDAO.delete(story);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EntityDeletionErrorException("story");
         }
+        
+        return storyUtil.wrapStory(story);
     }
 }

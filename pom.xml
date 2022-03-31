@@ -43,6 +43,12 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 			<version>2.6.4</version>
 		</dependency>
+		<!-- Spring Boot Validation -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>2.6.4</version>
+		</dependency>
 		<!-- Liquibase -->
 		<dependency>
 			<groupId>org.liquibase</groupId>
@@ -87,8 +93,7 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.1.0</version>
 		</dependency>
-
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<resources>

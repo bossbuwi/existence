@@ -4,7 +4,6 @@ import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorE
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
-import com.stargazerstudios.existence.conductor.erratum.universal.*;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.service.UserAccessService;
 import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
