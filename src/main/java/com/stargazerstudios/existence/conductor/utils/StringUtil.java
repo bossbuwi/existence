@@ -6,6 +6,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class StringUtil {
 
+    /**
+     * Trims and transforms a string to uppercase.
+     * Be careful because it does
+     * not have any null or empty checks.
+     * @param in The string to transform.
+     * @return String object that has been trimmed and transformed to uppercase.
+     * @since v0.2-beta
+     */
+    public String trimToUpper(String in) {
+        return in.trim().toUpperCase();
+    }
+
     public String checkInput(String in) {
         if (in != null && !in.isBlank()) {
             return in;

@@ -2,12 +2,14 @@ package com.stargazerstudios.existence.symphony.controller;
 
 import com.stargazerstudios.existence.conductor.erratum.root.*;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.service.AuthenticationServiceImpl;
 import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +24,10 @@ public class AuthenticationController {
     private AuthenticationServiceImpl authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@RequestBody UserWrapper user)
-            throws AuthorizationErrorException, SystemErrorException,
-                DatabaseErrorException, UnknownInputException,
-                ThirdPartyErrorException, EntityErrorException {
+    public ResponseEntity<UserDTO> login(@Validated(PostValidation.class)
+                                             @RequestBody UserWrapper user)
+            throws AuthorizationErrorException, SystemErrorException, DatabaseErrorException,
+                UnknownInputException, ThirdPartyErrorException, EntityErrorException {
         return new ResponseEntity<>(authenticationService.login(user), HttpStatus.OK);
     }
 

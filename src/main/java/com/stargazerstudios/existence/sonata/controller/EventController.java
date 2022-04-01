@@ -4,6 +4,8 @@ import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorE
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
+import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
+import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.service.EventServiceImpl;
 import com.stargazerstudios.existence.sonata.utils.EventExporterUtil;
@@ -11,6 +13,7 @@ import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,13 +43,15 @@ public class EventController {
     }
 
     @PostMapping("/event")
-    public ResponseEntity<EventDTO> createEvent(@RequestBody EventWrapper event)
+    public ResponseEntity<EventDTO> createEvent(@Validated(PostValidation.class)
+                                                    @RequestBody EventWrapper event)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
         return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.OK);
     }
 
     @PutMapping("/event")
-    public ResponseEntity<EventDTO> updateEvent(@RequestBody EventWrapper event)
+    public ResponseEntity<EventDTO> updateEvent(@Validated(PutValidation.class)
+                                                    @RequestBody EventWrapper event)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
         return new ResponseEntity<>(eventService.updateEvent(event), HttpStatus.OK);
     }

@@ -41,7 +41,7 @@ public class RoleServiceImpl implements RoleService{
 
     @Override
     public RoleDTO getRole(RoleWrapper wRole) throws EntityNotFoundException {
-        String name = stringUtil.checkInput(wRole.getName());
+        String name = stringUtil.trimToUpper(wRole.getName());
         Optional<Role> roleData = roleDAO.findByName(name);
         if (roleData.isPresent()) {
             Role role = roleData.get();

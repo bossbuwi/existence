@@ -1,10 +1,8 @@
 package com.stargazerstudios.existence.sonata.service;
 
-import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
@@ -64,24 +62,17 @@ public class ZoneServiceImpl implements ZoneService{
     @Override
     public ZoneDTO createZone(ZoneWrapper wZone)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
-        String zonalPrefix = stringUtil.checkInputTrimToUpper(wZone.getZonal_prefix());
-        if (zonalPrefix.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("zonal_prefix");
-
-        String zoneName = stringUtil.checkInputTrimToUpper(wZone.getZone_name());
-        if (zoneName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("zone_name");
-
-        String systemName = stringUtil.checkInputTrimToUpper(wZone.getSystem());
-        if (systemName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("system");
-
-        String machineName = stringUtil.checkInputTrimToUpper(wZone.getMachine());
-        if (machineName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("machine");
+        String zonalPrefix = stringUtil.trimToUpper(wZone.getZonal_prefix());
+        String zoneName = stringUtil.trimToUpper(wZone.getZone_name());
+        String systemName = stringUtil.trimToUpper(wZone.getSystem());
+        String machineName = stringUtil.trimToUpper(wZone.getMachine());
 
         Optional<System> systemData = systemDAO.findSystemOnMachine(systemName, machineName);
         if (systemData.isEmpty()) throw new EntityNotFoundException("system", "global_prefix", systemName);
 
         Zone zone = new Zone();
-        zone.setZoneName(wZone.getZone_name());
-        zone.setZonalPrefix(wZone.getZonal_prefix());
+        zone.setZoneName(zoneName);
+        zone.setZonalPrefix(zonalPrefix);
         zone.setSystem(systemData.get());
 
         try {

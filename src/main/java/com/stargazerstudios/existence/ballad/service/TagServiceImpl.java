@@ -59,13 +59,12 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public TagDTO getTag(TagWrapper tag) throws UnknownInputException, EntityErrorException {
+    public TagDTO getTag(TagWrapper tag)
+            throws UnknownInputException, EntityErrorException {
         String tagName = stringUtil.checkInputTrimToUpper(tag.getName());
-        if (tagName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
         Optional<Tag> tagData = tagDAO.findByName(tagName);
         if (tagData.isPresent()) {
-            TagDTO tagDTO = tagUtil.wrapTag(tagData.get());
-            return tagDTO;
+            return tagUtil.wrapTag(tagData.get());
         } else {
             throw new EntityNotFoundException("tag", "name", tagName);
         }
@@ -74,7 +73,6 @@ public class TagServiceImpl implements TagService{
     @Override
     public TagDTO createTag(TagWrapper wTag) throws DatabaseErrorException, UnknownInputException {
         String name = stringUtil.checkInputTrimToUpper(wTag.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
 
         Tag tag = new Tag();
         tag.setName(name);
@@ -99,10 +97,8 @@ public class TagServiceImpl implements TagService{
     public TagDTO updateTag(TagWrapper wTag)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
         String name = stringUtil.checkInputTrimToUpper(wTag.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
 
         String newName = stringUtil.checkInputTrimToUpper(wTag.getNew_name());
-        if (newName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("new_name");
 
         Optional<Tag> tagData = tagDAO.findByName(name);
         if (tagData.isEmpty()) throw new EntityNotFoundException("tag", "name", name);
@@ -130,15 +126,13 @@ public class TagServiceImpl implements TagService{
     public TagDTO addStories(TagWrapper wTag)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException{
         String name = stringUtil.checkInputTrimToUpper(wTag.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
 
         String[] stories = wTag.getStories();
-        if (stories == null || stories.length == 0) throw new InvalidInputException("stories");
         Set<String> storyQuery = new HashSet<>();
 
         for (String story : stories) {
             String item = stringUtil.checkInputTrimToUpper(story);
-            if (item.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
+            if (item.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("stories");
             storyQuery.add(item);
         }
 
@@ -148,7 +142,6 @@ public class TagServiceImpl implements TagService{
         if (!storyQuery.equals(storyResultSet)) {
             storyQuery.removeAll(storyResultSet);
             throw new InvalidInputException("stories");
-            // TODO: This needs to quantify the invalid stories.
         }
 
         Optional<Tag> tagData = tagDAO.findByName(name);
@@ -174,10 +167,8 @@ public class TagServiceImpl implements TagService{
     public TagDTO removeStories(TagWrapper wTag)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
         String name = stringUtil.checkInputTrimToUpper(wTag.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
 
         String[] stories = wTag.getStories();
-        if (stories == null || stories.length == 0) throw new InvalidInputException("stories");
 
         Optional<Tag> tagData = tagDAO.findByName(name);
         if (tagData.isEmpty()) throw new EntityNotFoundException("tag", "name", name);
@@ -215,7 +206,6 @@ public class TagServiceImpl implements TagService{
     public TagDTO deleteTag(TagWrapper wTag)
             throws UnknownInputException, DatabaseErrorException, EntityErrorException{
         String tagName = stringUtil.checkInputTrimToUpper(wTag.getName());
-        if (tagName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
 
         Optional<Tag> tagData = tagDAO.findByName(tagName);
         if (tagData.isPresent()) {

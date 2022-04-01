@@ -1,10 +1,8 @@
 package com.stargazerstudios.existence.sonata.service;
 
-import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
@@ -60,11 +58,8 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public SystemDTO createSystem(SystemWrapper wSystem)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
-        String globalPrefix = stringUtil.checkInputTrimToUpper(wSystem.getGlobal_prefix());
-        if (globalPrefix.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("global_prefix");
-
-        String machineName = stringUtil.checkInputTrimToUpper(wSystem.getMachine());
-        if (machineName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("machine");
+        String globalPrefix = stringUtil.trimToUpper(wSystem.getGlobal_prefix());
+        String machineName = stringUtil.trimToUpper(wSystem.getMachine());
 
         Optional<Machine> machineData = machineDAO.findByName(machineName);
         if (machineData.isEmpty()) throw new EntityNotFoundException("machine", "name", machineName);

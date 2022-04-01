@@ -35,6 +35,7 @@ import org.springframework.security.web.authentication.rememberme.AbstractRememb
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.UnsupportedMediaTypeException;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,10 +90,12 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             throws UnknownInputException, AuthorizationErrorException,
                 SystemErrorException, ThirdPartyErrorException,
                 DatabaseErrorException, EntityErrorException {
-        String username = stringUtil.checkInput(wUser.getUsername());
-        String password = stringUtil.checkInput(wUser.getPassword());
-        if (username.equals(EnumUtilOutput.EMPTY.getValue()) || password.equals(EnumUtilOutput.EMPTY.getValue()))
-            throw new InvalidInputException("username or password");
+//        String username = stringUtil.checkInput(wUser.getUsername());
+//        String password = stringUtil.checkInput(wUser.getPassword());
+//        if (username.equals(EnumUtilOutput.EMPTY.getValue()) || password.equals(EnumUtilOutput.EMPTY.getValue()))
+//            throw new InvalidInputException("username or password");
+        String username = wUser.getUsername();
+        String password = wUser.getPassword();
         Optional<User> userData = userDAO.findByUsername(username);
         // If user is found, check if raw password matches with hash
         if (userData.isPresent()) {
@@ -210,7 +213,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         try {
             User userLDAP = userMono.block(Duration.ofMillis(20000));
             return userLDAP.getUsername() != null && !userLDAP.getUsername().isEmpty();
-        } catch (UnsupportedMediaTypeException e) {
+        } catch (WebClientResponseException e) {
             throw new UserUnauthorizedException();
         } catch (Exception e) {
             e.printStackTrace();
