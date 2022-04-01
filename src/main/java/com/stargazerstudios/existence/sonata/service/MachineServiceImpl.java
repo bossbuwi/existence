@@ -1,10 +1,8 @@
 package com.stargazerstudios.existence.sonata.service;
 
-import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
 import com.stargazerstudios.existence.conductor.erratum.input.UnexpectedInputException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
@@ -69,8 +67,7 @@ public class MachineServiceImpl implements MachineService {
     @Override
     public MachineDTO createMachine(MachineWrapper wMachine)
             throws UnknownInputException, DatabaseErrorException {
-        String name = stringUtil.checkInputTrimToUpper(wMachine.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
+        String name = stringUtil.trimToUpper(wMachine.getName());
 
         Machine machine = new Machine();
         machine.setName(name);
@@ -79,13 +76,13 @@ public class MachineServiceImpl implements MachineService {
             machineDAO.save(machine);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
-            throw new DuplicateEntityException("machine", "name", name);
-        } catch (Exception e) {
-            e.printStackTrace();
             ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
             String constraint = ex.getConstraintName();
-            if (constraint.equals(ConsSonataConstraint.UNIQUE_SYSTEM_PER_MACHINE))
+            if (constraint.equals(ConsSonataConstraint.UNIQUE_MACHINE_NAME))
                 throw new DuplicateEntityException("machine", "name", name);
+            throw new EntitySaveErrorException("machine");
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new EntitySaveErrorException("machine");
         }
 
@@ -95,12 +92,8 @@ public class MachineServiceImpl implements MachineService {
     @Override
     public MachineDTO updateMachine(MachineWrapper wMachine)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
-        String name = stringUtil.checkInputTrimToUpper(wMachine.getName());
-        if (name.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("name");
-
-        String newName = stringUtil.checkInputTrimToUpper(wMachine.getNew_name());
-        if (newName.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("new_name");
-
+        String name = stringUtil.trimToUpper(wMachine.getName());
+        String newName = stringUtil.trimToUpper(wMachine.getNew_name());
         if (name.equals(newName)) throw new UnexpectedInputException("new_name is same as the current name");
 
         Optional<Machine> machineData = machineDAO.findByName(name);
@@ -115,7 +108,7 @@ public class MachineServiceImpl implements MachineService {
             e.printStackTrace();
             ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
             String constraint = ex.getConstraintName();
-            if (constraint.equals(ConsSonataConstraint.UNIQUE_SYSTEM_PER_MACHINE))
+            if (constraint.equals(ConsSonataConstraint.UNIQUE_MACHINE_NAME))
                 throw new DuplicateEntityException("machine", "name", newName);
             throw new EntitySaveErrorException("machine");
         } catch (Exception e) {

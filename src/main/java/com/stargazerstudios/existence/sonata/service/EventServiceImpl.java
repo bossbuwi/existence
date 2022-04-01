@@ -108,23 +108,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDTO createEvent(EventWrapper wEvent)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
-        // Check required fields
-        String startDateIn = stringUtil.checkInputTrimToUpper(wEvent.getStart_date());
-        if (startDateIn.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("start_date");
-        String endDateIn = stringUtil.checkInputTrimToUpper(wEvent.getEnd_date());
-        if (endDateIn.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("end_date");
-        String globalPrefix = stringUtil.checkInputTrimToUpper(wEvent.getGlobal_prefix());
-        if (globalPrefix.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("global_prefix");
-        String machine = stringUtil.checkInputTrimToUpper(wEvent.getMachine());
-        if (machine.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("machine");
+        String startDateIn = stringUtil.trimToUpper(wEvent.getStart_date());
+        String endDateIn = stringUtil.trimToUpper(wEvent.getEnd_date());
+        String globalPrefix = stringUtil.trimToUpper(wEvent.getGlobal_prefix());
+        String machine = stringUtil.trimToUpper(wEvent.getMachine());
 
-        // Check arrays
-        String[] eventTypesArr = wEvent.getEvent_types();
-        if (eventTypesArr == null || eventTypesArr.length == 0) throw new InvalidInputException("event_types");
-        String[] zonesArr = wEvent.getZones();
-        if (zonesArr == null || zonesArr.length == 0) throw new InvalidInputException("zones");
-
-        // Validate dates
         LocalDate startDate;
         try {
             startDate = LocalDate.parse(startDateIn);
@@ -141,6 +129,7 @@ public class EventServiceImpl implements EventService {
 
         if (endDate.isBefore(startDate)) throw new InvalidInputException("end_date");
 
+        String[] eventTypesArr = wEvent.getEvent_types();
         Set<String> eventTypeQuery = new HashSet<>();
         for (String item: eventTypesArr) {
             String out = stringUtil.checkInputTrimToUpper(item);
@@ -149,6 +138,7 @@ public class EventServiceImpl implements EventService {
             eventTypeQuery.add(out);
         }
 
+        String[] zonesArr = wEvent.getZones();
         Set<String> zoneQuery = new HashSet<>();
         for (String item: zonesArr) {
             String out = stringUtil.checkInputTrimToUpper(item);
@@ -217,7 +207,6 @@ public class EventServiceImpl implements EventService {
     public EventDTO updateEvent(EventWrapper wEvent)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
         long id = wEvent.getId();
-        if (id <= 0) throw new InvalidInputException("id");
 
         String globalPrefixIn = null;
         String machineIn = null;
@@ -295,7 +284,8 @@ public class EventServiceImpl implements EventService {
         System system = null;
         if (globalPrefixIn != null && machineIn != null) {
             Optional<System> systemData = systemDAO.findSystemOnMachine(globalPrefixIn, machineIn);
-            if (systemData.isEmpty()) throw new EntityNotFoundException("system", "global_prefix", globalPrefixIn, "machine", "name", machineIn);
+            if (systemData.isEmpty())
+                throw new EntityNotFoundException("system", "global_prefix", globalPrefixIn, "machine", "name", machineIn);
             system = systemData.get();
             event.setSystem(system);
         }
