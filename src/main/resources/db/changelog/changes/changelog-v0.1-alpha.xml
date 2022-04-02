@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- Symphony -->
+    <include file="db/changelog/changes/symphony/create-roles-table-changelog-1.xml"/>
+    <include file="db/changelog/changes/symphony/insert-into-roles-table-changelog-11.xml"/>
+    <include file="db/changelog/changes/symphony/create-users-table-changelog-2.xml"/>
+    <include file="db/changelog/changes/symphony/create-settings-table-changelog-3.xml"/>
+    <include file="db/changelog/changes/symphony/insert-into-settings-table-changelog-31.xml"/>
+    <include file="db/changelog/changes/symphony/create-users-roles-table-changelog-4.xml"/>
+
+    <!-- Sonata -->
+    <include file="db/changelog/changes/sonata/create-machines-table-changelog-1.xml"/>
+    <include file="db/changelog/changes/sonata/create-systems-table-changelog-2.xml"/>
+    <include file="db/changelog/changes/sonata/create-zones-table-changelog-3.xml"/>
+    <include file="db/changelog/changes/sonata/create-event-types-table-changelog-4.xml"/>
+    <include file="db/changelog/changes/sonata/insert-into-event-types-table-changelog-41.xml"/>
+    <include file="db/changelog/changes/sonata/create-events-table-changelog-5.xml"/>
+    <include file="db/changelog/changes/sonata/create-events-zones-table-changelog-6.xml"/>
+    <include file="db/changelog/changes/sonata/create-events-event-types-table-changelog-7.xml"/>
+
+    <!-- Ballad -->
+    <include file="db/changelog/changes/ballad/create-stories-table-changelog-1.xml"/>
+    <include file="db/changelog/changes/ballad/create-tags-table-changelog-2.xml"/>
+    <include file="db/changelog/changes/ballad/create-stories-tags-table-changelog-3.xml"/>
+</databaseChangeLog>
