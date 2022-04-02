@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="postgresql"/>
+    <changeSet author="v0.2-beta" id="20220402-032">
+        <comment>Insert settings available since v0.2-beta.</comment>
+        <insert tableName="symphony_settings">
+            <column name="key" value="settingexpliciterror"/>
+            <column name="value" value="N"/>
+            <column name="length" value="1"/>
+            <column name="type" value="B"/>
+            <column name="description" value="Throw error if a setting is attempted to be set to an invalid value instead of defaulting to its default value."/>
+            <column name="default_value" value="N"/>
+            <column name="valid_values" value="Y,N"/>
+            <column name="added_by" value="0.2-beta"/>
+            <column name="changed_by" value="admin"/>
+            <column name="last_changed_date" valueDate="${now}"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

@@ -1,7 +1,6 @@
 package com.stargazerstudios.existence.symphony.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.stargazerstudios.existence.symphony.entity.Setting;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -21,18 +20,4 @@ public class SettingDTO {
     private String last_changed_by;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Timestamp last_changed_date;
-
-    public SettingDTO(Setting setting) {
-        setId(setting.getId());
-        setKey(setting.getKey());
-        setValue(setting.getValue());
-        setLength(setting.getLength());
-        setType(setting.getType());
-        setDesc(setting.getDescription());
-        setDefault_value(setting.getDefaultValue());
-        setValid_values(setting.getValidValues());
-        setAdded_by(setting.getAddedBy());
-        setLast_changed_by(setting.getChangedBy());
-        setLast_changed_date(setting.getDateChanged());
-    }
 }
