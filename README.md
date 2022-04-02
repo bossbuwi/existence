@@ -2,10 +2,10 @@
 
 ### Project Details
 
-**Framework:** [Spring Boot](https://spring.io/projects/spring-boot) version 2.6.0-RC1  
+**Framework:** [Spring Boot](https://spring.io/projects/spring-boot) version 2.6.5
 **Status:** Active - Ongoing  
-**Last Release Date:** None  
-**Latest Version:** None  
+**Last Release Date:** 10 March 2022  
+**Latest Version:** v0.1-alpha  
 **Author:** [bossbuwi](https://github.com/bossbuwi)
 
 ***
