@@ -29,6 +29,11 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.getAllUsers(), HttpStatus.OK);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> countUsers() {
+        return new ResponseEntity<>(userAccessService.countUsers(), HttpStatus.OK);
+    }
+
     @GetMapping("/user")
     public ResponseEntity<UserDTO> getUser(@Validated(GetValidation.class)
                                                @RequestBody UserWrapper user)
