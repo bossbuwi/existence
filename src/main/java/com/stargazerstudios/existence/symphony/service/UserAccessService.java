@@ -10,6 +10,7 @@ import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
 import java.util.List;
 
 public interface UserAccessService {
+    Long countUsers();
     List<UserDTO> getAllUsers();
     UserDTO getUser(UserWrapper user)
             throws UnknownInputException, EntityErrorException;

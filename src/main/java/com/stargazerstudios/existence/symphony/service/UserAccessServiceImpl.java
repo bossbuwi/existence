@@ -56,6 +56,11 @@ public class UserAccessServiceImpl implements UserAccessService{
     private PasswordEncoder passwordEncoder;
 
     @Override
+    public Long countUsers() {
+        return userDAO.count();
+    }
+
+    @Override
     public List<UserDTO> getAllUsers() {
         List<User> users = userDAO.findAll();
         List<UserDTO> userDTOs = new ArrayList<>();
