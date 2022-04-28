@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface MachineService {
     List<MachineDTO> getAllMachines();
+    Long getMachineCount();
     MachineDTO getMachineById(long id);
     MachineDTO getMachineByName(String name);
     MachineDTO createMachine(MachineWrapper machine)
