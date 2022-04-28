@@ -55,6 +55,11 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
+    public Long getMachineCount() {
+        return machineDAO.count();
+    }
+
+    @Override
     public MachineDTO getMachineById(long id) {
         return null;
     }

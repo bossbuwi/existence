@@ -29,6 +29,11 @@ public class MachineController {
         return new ResponseEntity<>(machineService.getAllMachines(), HttpStatus.OK);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> getMachineCount() {
+        return new ResponseEntity<>(machineService.getMachineCount(), HttpStatus.OK);
+    }
+
     @PostMapping("/machine")
     public ResponseEntity<MachineDTO> createMachine(@Validated(PostValidation.class)
                                                         @RequestBody MachineWrapper wMachine)
