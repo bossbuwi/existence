@@ -106,6 +106,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public Long getEventCount() {
+        return eventDAO.count();
+    }
+
+    @Override
     public EventDTO createEvent(EventWrapper wEvent)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
         String startDateIn = stringUtil.trimToUpper(wEvent.getStart_date());
