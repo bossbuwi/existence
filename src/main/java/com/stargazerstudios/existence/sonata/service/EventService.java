@@ -14,6 +14,7 @@ import java.util.List;
 public interface EventService {
     List<EventDTO> getAllEvents();
     List<EventDTO> getEventsByDate(String date) throws UnknownInputException;
+    Long getEventCount();
     EventDTO createEvent(EventWrapper event)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException;
     EventDTO updateEvent(EventWrapper event)

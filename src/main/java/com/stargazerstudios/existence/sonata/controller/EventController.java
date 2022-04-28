@@ -42,6 +42,11 @@ public class EventController {
         return new ResponseEntity<>(eventService.getEventsByDate(date), HttpStatus.OK);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> getEventCount() {
+        return new ResponseEntity<>(eventService.getEventCount(), HttpStatus.OK);
+    }
+
     @PostMapping("/event")
     public ResponseEntity<EventDTO> createEvent(@Validated(PostValidation.class)
                                                     @RequestBody EventWrapper event)
