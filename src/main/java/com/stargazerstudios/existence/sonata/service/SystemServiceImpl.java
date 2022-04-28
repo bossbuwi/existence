@@ -56,6 +56,11 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
+    public Long countSystems() {
+        return systemDAO.count();
+    }
+
+    @Override
     public SystemDTO createSystem(SystemWrapper wSystem)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
         String globalPrefix = stringUtil.trimToUpper(wSystem.getGlobal_prefix());

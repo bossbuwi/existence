@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface SystemService {
     List<SystemDTO> getAllSystems();
+    Long countSystems();
     SystemDTO createSystem(SystemWrapper wSystem)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException;
 }

@@ -28,6 +28,11 @@ public class SystemController {
         return new ResponseEntity<>(systemService.getAllSystems(), HttpStatus.OK);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> getSystemCount() {
+        return new ResponseEntity<>(systemService.countSystems(), HttpStatus.OK);
+    }
+
     @PostMapping("/system")
     public ResponseEntity<SystemDTO> createSystem(@Validated(PostValidation.class)
                                                       @RequestBody SystemWrapper wSystem)
