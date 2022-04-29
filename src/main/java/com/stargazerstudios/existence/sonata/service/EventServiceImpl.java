@@ -106,6 +106,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public EventDTO getLatestEvent() {
+        Optional<Event> eventData = eventDAO.findFirstByOrderByDateCreatedDesc();
+        return eventData.map(event -> eventUtil.wrapEvent(event)).orElse(null);
+    }
+
+    @Override
     public Long getEventCount() {
         return eventDAO.count();
     }

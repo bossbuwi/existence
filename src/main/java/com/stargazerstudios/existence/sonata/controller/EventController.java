@@ -42,6 +42,11 @@ public class EventController {
         return new ResponseEntity<>(eventService.getEventsByDate(date), HttpStatus.OK);
     }
 
+    @GetMapping("/latest")
+    public ResponseEntity<EventDTO> getLatestEvent() {
+        return new ResponseEntity<>(eventService.getLatestEvent(), HttpStatus.OK);
+    }
+
     @GetMapping("/count")
     public ResponseEntity<Long> getEventCount() {
         return new ResponseEntity<>(eventService.getEventCount(), HttpStatus.OK);
