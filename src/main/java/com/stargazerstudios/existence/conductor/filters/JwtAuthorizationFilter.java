@@ -97,6 +97,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_LOGIN);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_CONCERTO);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_FRONTEND_ROOT);
+        excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_USER_COUNT);
+        excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_SYSTEM_COUNT);
+        excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_EVENT_COUNT);
+        excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_EVENT_LATEST);
         return excludeUrlPatterns.stream().anyMatch(p -> pathMatcher.match(p, request.getServletPath()));
     }
 }
