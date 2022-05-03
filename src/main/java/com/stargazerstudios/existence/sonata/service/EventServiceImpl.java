@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
@@ -96,6 +97,37 @@ public class EventServiceImpl implements EventService {
 
         List<EventDTO> eventsList = new ArrayList<>();
         List<Event> events = eventDAO.findEventsByDate(localDate);
+        if (!events.isEmpty()) {
+            for (Event event: events) {
+                EventDTO eventDTO = eventUtil.wrapEvent(event);
+                eventsList.add(eventDTO);
+            }
+        }
+        return eventsList;
+    }
+
+    @Override
+    public List<EventDTO> getEventsOnMonth(String date) throws UnknownInputException {
+        LocalDate startDate;
+        LocalDate endDate;
+
+        try {
+            if (date.length() > 7) {
+                String nDate = date.substring(0, 7);
+                YearMonth ym = YearMonth.parse(nDate);
+                startDate = ym.atDay(1);
+                endDate = ym.atEndOfMonth();
+            } else {
+                YearMonth ym = YearMonth.parse(date);
+                startDate = ym.atDay(1);
+                endDate = ym.atEndOfMonth();
+            }
+        } catch (DateTimeParseException e) {
+            throw new InvalidInputException("date");
+        }
+
+        List<EventDTO> eventsList = new ArrayList<>();
+        List<Event> events = eventDAO.findEventsBetweenDates(startDate, endDate);
         if (!events.isEmpty()) {
             for (Event event: events) {
                 EventDTO eventDTO = eventUtil.wrapEvent(event);
