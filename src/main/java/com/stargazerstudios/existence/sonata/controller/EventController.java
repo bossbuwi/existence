@@ -42,6 +42,12 @@ public class EventController {
         return new ResponseEntity<>(eventService.getEventsByDate(date), HttpStatus.OK);
     }
 
+    @GetMapping("/date/range")
+    public ResponseEntity<List<EventDTO>> getEventsOnMonth(@RequestParam String date)
+            throws UnknownInputException {
+        return new ResponseEntity<>(eventService.getEventsOnMonth(date), HttpStatus.OK);
+    }
+
     @GetMapping("/latest")
     public ResponseEntity<EventDTO> getLatestEvent() {
         return new ResponseEntity<>(eventService.getLatestEvent(), HttpStatus.OK);
