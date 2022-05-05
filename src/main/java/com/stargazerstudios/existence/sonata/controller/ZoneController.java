@@ -17,18 +17,20 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/sonata/zones")
+@RequestMapping("/sonata")
 public class ZoneController {
 
     @Autowired
     private ZoneServiceImpl zoneService;
 
-    @GetMapping("/index")
+    /* Unguarded Endpoints */
+    @GetMapping("/con/zones/index")
     public ResponseEntity<List<ZoneDTO>> getAllZones() {
         return new ResponseEntity<>(zoneService.getAllZones(), HttpStatus.OK);
     }
 
-    @PostMapping("/zone")
+    /* Guarded Endpoints */
+    @PostMapping("/zones/zone")
     public ResponseEntity<ZoneDTO> createZone(@Validated(PostValidation.class)
                                                   @RequestBody ZoneWrapper wZone)
             throws DatabaseErrorException, UnknownInputException, EntityErrorException {

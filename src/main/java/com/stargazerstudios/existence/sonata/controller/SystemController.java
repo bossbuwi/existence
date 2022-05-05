@@ -17,23 +17,25 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/sonata/systems")
+@RequestMapping("/sonata")
 public class SystemController {
 
     @Autowired
     private SystemServiceImpl systemService;
 
-    @GetMapping("/index")
+    /* Unguarded Endpoints */
+    @GetMapping("/con/systems/index")
     public ResponseEntity<List<SystemDTO>> getAllSystems() {
         return new ResponseEntity<>(systemService.getAllSystems(), HttpStatus.OK);
     }
 
-    @GetMapping("/count")
+    @GetMapping("/con/systems/count")
     public ResponseEntity<Long> getSystemCount() {
         return new ResponseEntity<>(systemService.countSystems(), HttpStatus.OK);
     }
 
-    @PostMapping("/system")
+    /* Guarded Endpoints */
+    @PostMapping("/systems/system")
     public ResponseEntity<SystemDTO> createSystem(@Validated(PostValidation.class)
                                                       @RequestBody SystemWrapper wSystem)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {

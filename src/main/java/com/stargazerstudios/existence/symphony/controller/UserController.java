@@ -18,30 +18,32 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/symphony/users")
+@RequestMapping("/symphony")
 public class UserController {
 
     @Autowired
     private UserAccessService userAccessService;
 
-    @GetMapping("/index")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return new ResponseEntity<>(userAccessService.getAllUsers(), HttpStatus.OK);
-    }
-
-    @GetMapping("/count")
+    /* Unguarded Enpoints */
+    @GetMapping("/con/users/count")
     public ResponseEntity<Long> countUsers() {
         return new ResponseEntity<>(userAccessService.countUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/user")
+    /* Unguarded Endpoints */
+    @GetMapping("/users/index")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return new ResponseEntity<>(userAccessService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/users/user")
     public ResponseEntity<UserDTO> getUser(@Validated(GetValidation.class)
                                                @RequestBody UserWrapper user)
             throws UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.getUser(user), HttpStatus.OK);
     }
 
-    @PostMapping("/user")
+    @PostMapping("/users/user")
     public ResponseEntity<UserDTO> createUser(@Validated(PostValidation.class)
                                                   @RequestBody UserWrapper user)
             throws AuthorizationErrorException, DatabaseErrorException,
@@ -49,7 +51,7 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.createUser(user), HttpStatus.OK);
     }
 
-    @PutMapping("/user/change-password")
+    @PutMapping("/users/user/change-password")
     public ResponseEntity<UserDTO> updateUserPassword(@Validated(PutValidation.class)
                                                           @RequestBody UserWrapper user)
             throws AuthorizationErrorException, DatabaseErrorException,
@@ -57,7 +59,7 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.updateUserPassword(user), HttpStatus.OK);
     }
 
-    @PutMapping("/user/add-roles")
+    @PutMapping("/users/user/add-roles")
     public ResponseEntity<UserDTO> addRoles(@Validated(PutRelationValidation.class)
                                                 @RequestBody UserWrapper user)
             throws AuthorizationErrorException, DatabaseErrorException,
@@ -65,7 +67,7 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.addRoles(user), HttpStatus.OK);
     }
 
-    @PutMapping("/user/remove-roles")
+    @PutMapping("/users/user/remove-roles")
     public ResponseEntity<UserDTO> removeRoles(@Validated(PutRelationValidation.class)
                                                    @RequestBody UserWrapper user)
             throws AuthorizationErrorException, DatabaseErrorException,
@@ -73,7 +75,7 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.removeRoles(user), HttpStatus.OK);
     }
 
-    @PutMapping("/user/ban-user")
+    @PutMapping("/users/user/ban-user")
     public ResponseEntity<UserDTO> banUser(@Validated(AuthValidation.class)
                                                @RequestBody UserWrapper user)
             throws AuthorizationErrorException, DatabaseErrorException,
@@ -81,7 +83,7 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.banUser(user), HttpStatus.OK);
     }
 
-    @PutMapping("/user/unban-user")
+    @PutMapping("/users/user/unban-user")
     public ResponseEntity<UserDTO> unbanUser(@Validated(AuthValidation.class)
                                                  @RequestBody UserWrapper user)
             throws AuthorizationErrorException, DatabaseErrorException,
@@ -89,7 +91,7 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.unbanUser(user), HttpStatus.OK);
     }
 
-    @DeleteMapping("/user")
+    @DeleteMapping("/users/user")
     public ResponseEntity<UserDTO> deleteUser(@Validated(DeleteValidation.class)
                                                   @RequestBody UserWrapper user)
             throws AuthorizationErrorException, DatabaseErrorException,

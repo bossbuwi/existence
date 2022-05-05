@@ -17,53 +17,55 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/ballad/tags")
+@RequestMapping("/ballad")
 public class TagController {
 
     @Autowired
     private TagServiceImpl tagService;
 
-    @GetMapping("/index")
+    /* Unguarded Endpoints */
+    @GetMapping("/con/tags/index")
     public ResponseEntity<List<TagDTO>> getAllTags() {
         return new ResponseEntity<>(tagService.getAllTags(), HttpStatus.OK);
     }
 
-    @GetMapping("/tag")
+    @GetMapping("/con/tags/tag")
     public ResponseEntity<TagDTO> getTag(@Validated(GetValidation.class)
                                              @RequestBody TagWrapper tag)
             throws UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(tagService.getTag(tag), HttpStatus.OK);
     }
 
-    @PostMapping("/tag")
+    /* Guarded Endpoints */
+    @PostMapping("/tags/tag")
     public ResponseEntity<TagDTO> createTag(@Validated(PostValidation.class)
                                                 @RequestBody TagWrapper tag)
             throws DatabaseErrorException, UnknownInputException {
         return new ResponseEntity<>(tagService.createTag(tag), HttpStatus.OK);
     }
 
-    @PutMapping("/tag")
+    @PutMapping("/tags/tag")
     public ResponseEntity<TagDTO> updateTag(@Validated(PutValidation.class)
                                                 @RequestBody TagWrapper tag)
             throws DatabaseErrorException, UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(tagService.updateTag(tag), HttpStatus.OK);
     }
 
-    @PutMapping("/tag/add-stories")
+    @PutMapping("/tags/tag/add-stories")
     public ResponseEntity<TagDTO> addStory(@Validated(PutRelationValidation.class)
                                                @RequestBody TagWrapper tag)
             throws DatabaseErrorException, UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(tagService.addStories(tag), HttpStatus.OK);
     }
 
-    @PutMapping("/tag/remove-stories")
+    @PutMapping("/tags/tag/remove-stories")
     public ResponseEntity<TagDTO> removeStory(@Validated(PutRelationValidation.class)
                                                   @RequestBody TagWrapper tag)
             throws DatabaseErrorException, UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(tagService.removeStories(tag), HttpStatus.OK);
     }
 
-    @DeleteMapping("/tag")
+    @DeleteMapping("/tags/tag")
     public ResponseEntity<TagDTO> deleteTag(@Validated(DeleteValidation.class)
                                                 @RequestBody TagWrapper tag)
             throws DatabaseErrorException, UnknownInputException, EntityErrorException {

@@ -20,30 +20,30 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/symphony/settings")
+@RequestMapping("/symphony")
 public class SettingController {
 
     @Autowired
     private SettingServiceImpl settingService;
 
-    @GetMapping("/index")
+    @GetMapping("/settings/index")
     public ResponseEntity<List<SettingDTO>> getAllSettings() {
         return new ResponseEntity<>(settingService.getAllSettings(), HttpStatus.OK);
     }
 
-    @GetMapping("/setting/{type}")
+    @GetMapping("/settings/setting/{type}")
     public ResponseEntity<List<SettingDTO>> getSettingsByType(@NotBlank @PathVariable("type") String type)
             throws EntityErrorException {
         return new ResponseEntity<>(settingService.getSettingsByType(type), HttpStatus.OK);
     }
 
-    @GetMapping("/setting/{id}")
+    @GetMapping("/settings/setting/{id}")
     public ResponseEntity<SettingDTO> getSettingById(@Min(1) @PathVariable("id") long id)
             throws EntityErrorException {
         return new ResponseEntity<>(settingService.getSettingById(id), HttpStatus.OK);
     }
 
-    @PutMapping("/setting")
+    @PutMapping("/settings/setting")
     public ResponseEntity<SettingDTO> modifySetting(@Validated(PutValidation.class)
                                                         @RequestBody SettingWrapper setting)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, SystemErrorException {
