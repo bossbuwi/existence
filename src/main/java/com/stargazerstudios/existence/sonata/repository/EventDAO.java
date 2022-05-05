@@ -13,7 +13,9 @@ import java.util.Optional;
 public interface EventDAO extends JpaRepository<Event, Long> {
     @Query(value = "SELECT e FROM Event e WHERE e.startDate <= ?1 AND e.endDate >= ?1")
     List<Event> findEventsByDate(LocalDate date);
-    @Query(value = "SELECT e FROM Event e WHERE e.startDate >= ?1 AND e.endDate <= ?2")
+    @Query(value = "SELECT e FROM Event e " +
+            "WHERE e.startDate BETWEEN ?1 AND ?2 " +
+            "OR ?1 BETWEEN e.startDate AND e.endDate")
     List<Event> findEventsBetweenDates(LocalDate dateStart, LocalDate dateEnd);
     Optional<Event> findFirstByOrderByDateCreatedDesc();
 }

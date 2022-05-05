@@ -43,9 +43,9 @@ public class EventController {
     }
 
     @GetMapping("/date/range")
-    public ResponseEntity<List<EventDTO>> getEventsOnMonth(@RequestParam String date)
+    public ResponseEntity<List<EventDTO>> getEventsBetweenDates(@RequestParam String start, @RequestParam String end)
             throws UnknownInputException {
-        return new ResponseEntity<>(eventService.getEventsOnMonth(date), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.getEventsBetweenDates(start, end), HttpStatus.OK);
     }
 
     @GetMapping("/latest")

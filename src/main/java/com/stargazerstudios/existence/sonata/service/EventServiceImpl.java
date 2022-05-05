@@ -107,21 +107,15 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventDTO> getEventsOnMonth(String date) throws UnknownInputException {
+    public List<EventDTO> getEventsBetweenDates(String start, String end) throws UnknownInputException {
         LocalDate startDate;
         LocalDate endDate;
 
         try {
-            if (date.length() > 7) {
-                String nDate = date.substring(0, 7);
-                YearMonth ym = YearMonth.parse(nDate);
-                startDate = ym.atDay(1);
-                endDate = ym.atEndOfMonth();
-            } else {
-                YearMonth ym = YearMonth.parse(date);
-                startDate = ym.atDay(1);
-                endDate = ym.atEndOfMonth();
-            }
+            String sDate = start.substring(0, 10);
+            String eDate = end.substring(0, 10);
+            startDate = LocalDate.parse(sDate);
+            endDate = LocalDate.parse(eDate);
         } catch (DateTimeParseException e) {
             throw new InvalidInputException("date");
         }
