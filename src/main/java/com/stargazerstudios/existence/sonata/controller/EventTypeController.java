@@ -11,13 +11,14 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/sonata/event-types")
+@RequestMapping("/sonata")
 public class EventTypeController {
 
     @Autowired
     private EventTypeServiceImpl eventTypeService;
 
-    @GetMapping("/index")
+    /* Unguarded Endpoints */
+    @GetMapping("/con/event-types/index")
     public ResponseEntity<List<EventTypeDTO>> getAllEvents() {
         return new ResponseEntity<>(eventTypeService.getAllEvents(), HttpStatus.OK);
     }

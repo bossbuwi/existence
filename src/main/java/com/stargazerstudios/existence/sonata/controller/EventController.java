@@ -22,7 +22,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/sonata/events")
+@RequestMapping("/sonata")
 public class EventController {
 
     @Autowired
@@ -31,48 +31,50 @@ public class EventController {
     @Autowired
     private EventExporterUtil eventExporterUtil;
 
-    @GetMapping("/index")
+    /* Unguarded Endpoints */
+    @GetMapping("/con/events/index")
     public ResponseEntity<List<EventDTO>> getAllEvents() {
         return new ResponseEntity<>(eventService.getAllEvents(), HttpStatus.OK);
     }
 
-    @GetMapping("/date")
+    @GetMapping("/con/events/date")
     public ResponseEntity<List<EventDTO>> getEventsOnDate(@RequestParam String date)
             throws UnknownInputException {
         return new ResponseEntity<>(eventService.getEventsByDate(date), HttpStatus.OK);
     }
 
-    @GetMapping("/date/range")
+    @GetMapping("/con/events/date/range")
     public ResponseEntity<List<EventDTO>> getEventsBetweenDates(@RequestParam String start, @RequestParam String end)
             throws UnknownInputException {
         return new ResponseEntity<>(eventService.getEventsBetweenDates(start, end), HttpStatus.OK);
     }
 
-    @GetMapping("/latest")
+    @GetMapping("/con/events/latest")
     public ResponseEntity<EventDTO> getLatestEvent() {
         return new ResponseEntity<>(eventService.getLatestEvent(), HttpStatus.OK);
     }
 
-    @GetMapping("/count")
+    @GetMapping("/con/events/count")
     public ResponseEntity<Long> getEventCount() {
         return new ResponseEntity<>(eventService.getEventCount(), HttpStatus.OK);
     }
 
-    @PostMapping("/event")
+    /* Guarded Endpoints */
+    @PostMapping("/events/event")
     public ResponseEntity<EventDTO> createEvent(@Validated(PostValidation.class)
                                                     @RequestBody EventWrapper event)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException {
         return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.OK);
     }
 
-    @PutMapping("/event")
+    @PutMapping("/events/event")
     public ResponseEntity<EventDTO> updateEvent(@Validated(PutValidation.class)
                                                     @RequestBody EventWrapper event)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
         return new ResponseEntity<>(eventService.updateEvent(event), HttpStatus.OK);
     }
 
-    @GetMapping("/export")
+    @GetMapping("/events/export")
     public void exportEventsToWorkbook(HttpServletResponse response) throws IOException {
         eventService.exportEvents(response);
     }

@@ -15,18 +15,20 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/symphony/roles")
+@RequestMapping("/symphony")
 public class RoleController {
 
     @Autowired
     private RoleServiceImpl roleService;
 
-    @GetMapping("/index")
+    /* Unguarded Endpoints */
+    @GetMapping("/con/roles/index")
     public ResponseEntity<List<RoleDTO>> getAllRoles() {
         return new ResponseEntity<>(roleService.getAllRoles(), HttpStatus.OK);
     }
 
-    @GetMapping("/role")
+    /* Guarded Endpoints */
+    @GetMapping("/roles/role")
     public ResponseEntity<RoleDTO> getRole(@Validated(GetValidation.class)
                                                @RequestBody RoleWrapper role)
             throws EntityNotFoundException {

@@ -18,30 +18,32 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/sonata/machines")
+@RequestMapping("/sonata")
 public class MachineController {
 
     @Autowired
     private MachineServiceImpl machineService;
 
-    @GetMapping("/index")
+    /* Unguarded Endpoints */
+    @GetMapping("/con/machines/index")
     public ResponseEntity<List<MachineDTO>> getAllMachines() {
         return new ResponseEntity<>(machineService.getAllMachines(), HttpStatus.OK);
     }
 
-    @GetMapping("/count")
+    @GetMapping("/con/machines/count")
     public ResponseEntity<Long> getMachineCount() {
         return new ResponseEntity<>(machineService.getMachineCount(), HttpStatus.OK);
     }
 
-    @PostMapping("/machine")
+    /* Guarded Endpoints */
+    @PostMapping("/machines/machine")
     public ResponseEntity<MachineDTO> createMachine(@Validated(PostValidation.class)
                                                         @RequestBody MachineWrapper wMachine)
             throws DatabaseErrorException, UnknownInputException {
         return new ResponseEntity<>(machineService.createMachine(wMachine), HttpStatus.OK);
     }
 
-    @PutMapping("/machine")
+    @PutMapping("/machines/machine")
     public ResponseEntity<MachineDTO> updateMachine(@Validated(PutValidation.class)
                                                         @RequestBody MachineWrapper wMachine)
             throws DatabaseErrorException, UnknownInputException, EntityErrorException {

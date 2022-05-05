@@ -23,7 +23,7 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationServiceImpl authenticationService;
 
-    @PostMapping("/login")
+    @PostMapping("/con/login")
     public ResponseEntity<UserDTO> login(@Validated(PostValidation.class)
                                              @RequestBody UserWrapper user)
             throws AuthorizationErrorException, SystemErrorException, DatabaseErrorException,
@@ -31,7 +31,7 @@ public class AuthenticationController {
         return new ResponseEntity<>(authenticationService.login(user), HttpStatus.OK);
     }
 
-    @PostMapping("/autologin")
+    @PostMapping("/con/autologin")
     public ResponseEntity<UserDTO> autoLogin(String token) throws AuthorizationErrorException {
         return new ResponseEntity<>(authenticationService.autologin(token), HttpStatus.OK);
     }
