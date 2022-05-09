@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.List;
 
@@ -72,6 +73,12 @@ public class EventController {
                                                     @RequestBody EventWrapper event)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
         return new ResponseEntity<>(eventService.updateEvent(event), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/events/event/{id}")
+    public ResponseEntity<EventDTO> deleteEvent(@NotBlank @PathVariable("id") long id)
+            throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
+        return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.OK);
     }
 
     @GetMapping("/events/export")

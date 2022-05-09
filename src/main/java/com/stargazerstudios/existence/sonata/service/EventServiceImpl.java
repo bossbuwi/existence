@@ -3,6 +3,7 @@ package com.stargazerstudios.existence.sonata.service;
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityRelationErrorException;
@@ -402,6 +403,25 @@ public class EventServiceImpl implements EventService {
             throw new EntitySaveErrorException("event");
         }
 
+        return eventUtil.wrapEvent(event);
+    }
+
+    @Override
+    public EventDTO deleteEvent(long id)
+            throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
+        if (!isAuthorized) throw new UserUnauthorizedException();
+
+        Optional<Event> eventData = eventDAO.findById(id);
+        if (eventData.isEmpty()) throw new EntityNotFoundException("event", "id", Long.toString(id));
+
+        Event event = eventData.get();
+        try {
+            eventDAO.delete(event);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EntityDeletionErrorException("event");
+        }
         return eventUtil.wrapEvent(event);
     }
 
