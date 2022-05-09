@@ -21,5 +21,7 @@ public interface EventService {
             throws UnknownInputException, EntityErrorException, DatabaseErrorException;
     EventDTO updateEvent(EventWrapper event)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException;
+    EventDTO deleteEvent(long id)
+            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException;
     void exportEvents(HttpServletResponse response) throws IOException;
 }
