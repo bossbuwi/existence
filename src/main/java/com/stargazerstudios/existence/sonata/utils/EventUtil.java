@@ -32,6 +32,8 @@ public class EventUtil {
         System system = event.getSystem();
         eventDTO.setSystem(system.getGlobalPrefix());
 
+        eventDTO.setMachine(system.getMachine().getName());
+
         Set<Zone> zoneSet = event.getZones();
         ArrayList<String> zones = new ArrayList<>();
         if (zoneSet != null && !zoneSet.isEmpty()) {

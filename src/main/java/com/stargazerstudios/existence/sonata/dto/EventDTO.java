@@ -10,6 +10,7 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor
 public class EventDTO {
     private long id;
+    private String machine;
     private String system;
     private List<String> zones;
     private List<String> event_types;
