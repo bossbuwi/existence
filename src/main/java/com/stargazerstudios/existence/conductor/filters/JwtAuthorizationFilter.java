@@ -96,6 +96,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         AntPathMatcher pathMatcher = new AntPathMatcher();
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_CONCERTO);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_FRONTEND_ROOT);
+        excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_FRONTEND_CSS);
+        excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_FRONTEND_JS);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_BALLAD_UNGUARDED);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_CONCERTO_UNGUARDED);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_SONATA_UNGUARDED);

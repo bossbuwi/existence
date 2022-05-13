@@ -108,6 +108,13 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<excludes>
 						<exclude>
@@ -115,6 +122,13 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<layout>ZIP</layout>
+					<includes>
+						<include>
+							<groupId>not-exist-in-my-project</groupId>
+							<artifactId>not-exist-in-my-project</artifactId>
+						</include>
+					</includes>
 				</configuration>
 			</plugin>
 <!--			<plugin>-->
@@ -152,13 +166,36 @@
 				<configuration>
 					<archive>
 						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>libs/</classpathPrefix>
 							<packageName>com.stargazerstudios.existence</packageName>
+							<mainClass>
+								com.stargazerstudios.existence.ExistenceApplication
+							</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Created-By>bossbuwi</Created-By>
 						</manifestEntries>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/libs
+							</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
         </plugins>
 	</build>

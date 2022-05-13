@@ -35,3 +35,5 @@ build/
 ### Angular Build Files ###
 src/main/resources/public/
 !src/main/resources/public/info.txt
+/src/main/resources/static/
+existence.log
