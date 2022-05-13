@@ -1,3 +1,3 @@
 @ECHO OFF
 cd target
-start java -jar "existence-0.0.1-SNAPSHOT.jar"
+start java -jar "existence-0.0.1-SNAPSHOT.jar" --spring.profiles.active=dev
