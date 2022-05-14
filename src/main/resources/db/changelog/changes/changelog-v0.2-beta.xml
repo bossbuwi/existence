@@ -7,4 +7,6 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     <!-- Symphony -->
     <include file="db/changelog/changes/symphony/insert-into-settings-table-changelog-32.xml"/>
+    <!-- Sonata -->
+    <include file="db/changelog/changes/sonata/create-rules-table-changelog-8.xml"/>
 </databaseChangeLog>
