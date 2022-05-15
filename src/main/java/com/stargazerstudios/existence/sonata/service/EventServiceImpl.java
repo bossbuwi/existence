@@ -213,12 +213,20 @@ public class EventServiceImpl implements EventService {
         if (exclusives.size() > 1) throw new EntityErrorException("Only one exclusive event type may be used.");
         Set<EventType> eventTypes = new HashSet<>(eventTypeDb);
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
         Event event = new Event();
-        event.setCreatedBy(username);
-        event.setLastChangedBy(username);
+
+        if (wEvent.is_imported()) {
+            String createdBy = wEvent.getCreated_by();
+            String modifiedBy = wEvent.getLast_modified_by();
+            event.setCreatedBy(createdBy);
+            event.setLastChangedBy(modifiedBy);
+        } else {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+            event.setCreatedBy(username);
+            event.setLastChangedBy(username);
+        }
+
         event.setStartDate(startDate);
         event.setEndDate(endDate);
         event.setSystem(system);
@@ -435,11 +443,5 @@ public class EventServiceImpl implements EventService {
         String headerValue = "attachment; filename=events_" + currentDateTime + ".xlsx";
         response.addHeader(headerKey, headerValue);
         exporterUtil.exportToWorkbook(response, events);
-    }
-
-    private <T> boolean hasDuplicates(Iterable<T> all) {
-        Set<T> set = new HashSet<T>();
-        for (T each: all) if (!set.add(each)) return true;
-        return false;
     }
 }

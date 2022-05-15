@@ -41,4 +41,10 @@ public class EventWrapper {
     private String compiled_sources;
 
     private String api_used;
+
+    private String created_by;
+
+    private String last_modified_by;
+
+    private boolean is_imported;
 }

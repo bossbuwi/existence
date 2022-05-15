@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet author="v0.1-beta" id="20220515-081">
+        <comment>Insert default rules.</comment>
+        <insert tableName="sonata_rules">
+            <column name="body" value="Please contact the system owners for the system password."/>
+        </insert>
+        <insert tableName="sonata_rules">
+            <column name="body" value="Please fill up the information on the log correctly."/>
+        </insert>
+        <insert tableName="sonata_rules">
+            <column name="body" value="Please delete compiled sources on xxINVLIB after using the system."/>
+        </insert>
+        <insert tableName="sonata_rules">
+            <column name="body" value="Please return features that were turned ON or OFF after use."/>
+        </insert>
+        <insert tableName="sonata_rules">
+            <column name="body" value="If possible, please reverse inserted transactions after testing."/>
+        </insert>
+        <insert tableName="sonata_rules">
+            <column name="body" value="Before reserving for a COB, please inform the system owners beforehand."/>
+        </insert>
+        <insert tableName="sonata_rules">
+            <column name="body" value="Password to the desired system(s) will only be provided after an event has been logged."/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
