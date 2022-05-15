@@ -8,6 +8,7 @@ import com.stargazerstudios.existence.conductor.validation.groups.PostValidation
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.service.EventServiceImpl;
+import com.stargazerstudios.existence.sonata.service.SheetImportServiceImpl;
 import com.stargazerstudios.existence.sonata.utils.EventExporterUtil;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class EventController {
 
     @Autowired
     private EventExporterUtil eventExporterUtil;
+
+    @Autowired
+    private SheetImportServiceImpl importService;
 
     /* Unguarded Endpoints */
     @GetMapping("/con/events/index")
@@ -84,5 +88,11 @@ public class EventController {
     @GetMapping("/events/export")
     public void exportEventsToWorkbook(HttpServletResponse response) throws IOException {
         eventService.exportEvents(response);
+    }
+
+    @PostMapping("/events/import")
+    public ResponseEntity<List<EventDTO>> importEventsFromWorkbook()
+            throws DatabaseErrorException, UnknownInputException, IOException, EntityErrorException {
+        return new ResponseEntity<>(importService.importSpreadSheet(), HttpStatus.OK);
     }
 }
