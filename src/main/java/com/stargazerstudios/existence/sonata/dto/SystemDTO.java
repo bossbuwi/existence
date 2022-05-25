@@ -12,6 +12,7 @@ public class SystemDTO {
 
     private long id;
     private String global_prefix;
+    private String release;
     private String description;
     private String url;
     private String owners;

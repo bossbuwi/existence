@@ -1,6 +1,8 @@
 package com.stargazerstudios.existence.sonata.wrapper;
 
+import com.stargazerstudios.existence.conductor.validation.groups.PostFullValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
+import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -9,10 +11,14 @@ import javax.validation.constraints.NotBlank;
 public class ZoneWrapper {
     private long id;
 
-    @NotBlank(groups = PostValidation.class)
+    @NotBlank(groups = {
+            PostValidation.class, PutValidation.class, PostFullValidation.class
+    })
     private String zonal_prefix;
 
-    @NotBlank(groups = PostValidation.class)
+    @NotBlank(groups = {
+            PostValidation.class, PutValidation.class, PostFullValidation.class
+    })
     private String zone_name;
 
     private String new_zonal_prefix;

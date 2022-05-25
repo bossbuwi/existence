@@ -16,6 +16,7 @@ import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorExceptio
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
+import com.stargazerstudios.existence.sonata.service.EventService;
 import com.stargazerstudios.existence.symphony.constants.ConsSymphonyConstraint;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.entity.Role;
@@ -23,7 +24,7 @@ import com.stargazerstudios.existence.symphony.entity.User;
 import com.stargazerstudios.existence.symphony.repository.RoleDAO;
 import com.stargazerstudios.existence.symphony.repository.UserDAO;
 import com.stargazerstudios.existence.symphony.utils.UserUtil;
-import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
+import com.stargazerstudios.existence.symphony.wrapper.AuthWrapper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,6 +43,9 @@ public class UserAccessServiceImpl implements UserAccessService{
 
     @Autowired
     private RoleDAO roleDAO;
+
+    @Autowired
+    private EventService eventService;
 
     @Autowired
     private UserUtil userUtil;
@@ -72,7 +76,7 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO getUser(UserWrapper wUser) throws UnknownInputException, EntityErrorException {
+    public UserDTO getUser(AuthWrapper wUser) throws EntityErrorException {
         String username = wUser.getUsername();
 
         Optional<User> userData = userDAO.findByUsername(username);
@@ -83,8 +87,20 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO createUser(UserWrapper wUser)
-            throws AuthorizationErrorException, UnknownInputException,
+    public UserDTO getDetailedUser(long id) throws EntityErrorException {
+        Optional<User> userData = userDAO.findById(id);
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "id", Long.toString(id));
+
+        User user = userData.get();
+        UserDTO userDTO = userUtil.wrapUser(user);
+        userDTO.setEvents_added(eventService.getNumberOfEventsByUser(id));
+        userDTO.setLatest_event(eventService.getLastestEventByUser(user.getUsername()));
+        return userDTO;
+    }
+
+    @Override
+    public UserDTO createUser(AuthWrapper wUser)
+            throws AuthorizationErrorException,
                 EntityErrorException, DatabaseErrorException {
         if (!authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue())) throw new UserUnauthorizedException();
 
@@ -120,7 +136,7 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO updateUserPassword(UserWrapper wUser)
+    public UserDTO updateUserPassword(AuthWrapper wUser)
             throws UnknownInputException, AuthorizationErrorException,
                 EntityErrorException, DatabaseErrorException {
         String username = wUser.getUsername();
@@ -164,7 +180,7 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO deleteUser(UserWrapper wUser)
+    public UserDTO deleteUser(AuthWrapper wUser)
             throws UnknownInputException, AuthorizationErrorException,
                 EntityErrorException, DatabaseErrorException{
         boolean isSuperUserOrHigher = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
@@ -193,7 +209,7 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO addRoles(UserWrapper wUser)
+    public UserDTO addRoles(AuthWrapper wUser)
             throws AuthorizationErrorException, UnknownInputException,
                 EntityErrorException, DatabaseErrorException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
@@ -247,7 +263,7 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO removeRoles(UserWrapper wUser)
+    public UserDTO removeRoles(AuthWrapper wUser)
             throws AuthorizationErrorException, UnknownInputException,
                 EntityErrorException, DatabaseErrorException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
@@ -310,7 +326,7 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO banUser(UserWrapper wUser)
+    public UserDTO banUser(AuthWrapper wUser)
             throws UnknownInputException, AuthorizationErrorException,
                 EntityErrorException, DatabaseErrorException {
         String username = wUser.getUsername();
@@ -346,7 +362,7 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO unbanUser(UserWrapper wUser)
+    public UserDTO unbanUser(AuthWrapper wUser)
             throws UnknownInputException, AuthorizationErrorException,
                 EntityErrorException, DatabaseErrorException {
         String username = wUser.getUsername();

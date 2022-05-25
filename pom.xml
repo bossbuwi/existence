@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.stargazerstudios</groupId>
 	<artifactId>existence</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.2beta</version>
 	<name>Existence</name>
 	<description>Existence is data in its purest form.</description>
 	<properties>

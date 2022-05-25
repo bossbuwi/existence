@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.symphony.utils;
 
+import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.entity.Role;
 import com.stargazerstudios.existence.symphony.entity.User;
@@ -18,6 +19,7 @@ public class UserUtil {
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
         userDTO.setToken(user.getToken());
+
         Set<Role> roles = user.getRoles();
 
         if (!roles.isEmpty()) {

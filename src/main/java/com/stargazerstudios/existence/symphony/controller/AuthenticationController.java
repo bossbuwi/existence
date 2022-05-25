@@ -5,7 +5,7 @@ import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorExcept
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.service.AuthenticationServiceImpl;
-import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
+import com.stargazerstudios.existence.symphony.wrapper.AuthWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class AuthenticationController {
 
     @PostMapping("/con/login")
     public ResponseEntity<UserDTO> login(@Validated(PostValidation.class)
-                                             @RequestBody UserWrapper user)
+                                             @RequestBody AuthWrapper user)
             throws AuthorizationErrorException, SystemErrorException, DatabaseErrorException,
                 UnknownInputException, ThirdPartyErrorException, EntityErrorException {
         return new ResponseEntity<>(authenticationService.login(user), HttpStatus.OK);

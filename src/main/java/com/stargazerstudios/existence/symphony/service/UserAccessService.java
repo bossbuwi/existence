@@ -5,27 +5,28 @@ import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorExcept
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
-import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
+import com.stargazerstudios.existence.symphony.wrapper.AuthWrapper;
 
 import java.util.List;
 
 public interface UserAccessService {
     Long countUsers();
     List<UserDTO> getAllUsers();
-    UserDTO getUser(UserWrapper user)
-            throws UnknownInputException, EntityErrorException;
-    UserDTO createUser(UserWrapper user)
-            throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException;
-    UserDTO updateUserPassword(UserWrapper user)
+    UserDTO getUser(AuthWrapper user)
+            throws EntityErrorException;
+    UserDTO getDetailedUser(long id) throws EntityErrorException;
+    UserDTO createUser(AuthWrapper user)
+            throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
+    UserDTO updateUserPassword(AuthWrapper user)
             throws UnknownInputException, AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
-    UserDTO deleteUser(UserWrapper user)
+    UserDTO deleteUser(AuthWrapper user)
             throws UnknownInputException, AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
-    UserDTO addRoles(UserWrapper user)
+    UserDTO addRoles(AuthWrapper user)
             throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException;
-    UserDTO removeRoles(UserWrapper user)
+    UserDTO removeRoles(AuthWrapper user)
             throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException;
-    UserDTO banUser(UserWrapper user)
+    UserDTO banUser(AuthWrapper user)
             throws UnknownInputException, AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
-    UserDTO unbanUser(UserWrapper user)
+    UserDTO unbanUser(AuthWrapper user)
             throws UnknownInputException, AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
 }

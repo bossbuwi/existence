@@ -14,7 +14,7 @@ import com.stargazerstudios.existence.symphony.entity.User;
 import com.stargazerstudios.existence.symphony.repository.RoleDAO;
 import com.stargazerstudios.existence.symphony.repository.UserDAO;
 import com.stargazerstudios.existence.symphony.utils.UserUtil;
-import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
+import com.stargazerstudios.existence.symphony.wrapper.AuthWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,7 +49,7 @@ public class ExistenceService {
         return new ExistenceIdentity();
     }
 
-    public UserDTO resetAdminPassword(UserWrapper wUser)
+    public UserDTO resetAdminPassword(AuthWrapper wUser)
             throws UserUnauthorizedException, SystemErrorException {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
@@ -80,7 +80,7 @@ public class ExistenceService {
         return userUtil.wrapUser(admin);
     }
 
-    public UserDTO resetAdminRoles(UserWrapper wUser)
+    public UserDTO resetAdminRoles(AuthWrapper wUser)
             throws UserUnauthorizedException, SystemErrorException {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());

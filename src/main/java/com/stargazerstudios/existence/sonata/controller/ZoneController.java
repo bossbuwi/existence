@@ -36,4 +36,12 @@ public class ZoneController {
             throws DatabaseErrorException, UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(zoneService.createZone(wZone), HttpStatus.OK);
     }
+
+    public ResponseEntity<ZoneDTO> updateZone() {
+        return null;
+    }
+
+    public ResponseEntity<ZoneDTO> deleteZone() {
+        return null;
+    }
 }
