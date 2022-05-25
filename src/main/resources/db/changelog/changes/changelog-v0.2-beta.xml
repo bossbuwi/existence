@@ -10,4 +10,5 @@
     <!-- Sonata -->
     <include file="db/changelog/changes/sonata/create-rules-table-changelog-8.xml"/>
     <include file="db/changelog/changes/sonata/insert-into-rules-table-changelog-81.xml"/>
+    <include file="db/changelog/changes/sonata/change-systems-table-changelog-21.xml"/>
 </databaseChangeLog>

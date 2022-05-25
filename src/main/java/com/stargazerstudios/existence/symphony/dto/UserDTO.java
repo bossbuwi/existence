@@ -3,6 +3,7 @@ package com.stargazerstudios.existence.symphony.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -21,4 +22,8 @@ public class UserDTO {
     private List<String> roles;
     @JsonInclude(Include.NON_EMPTY)
     private String token;
+    @JsonInclude(Include.NON_DEFAULT)
+    private long events_added;
+    @JsonInclude(Include.NON_EMPTY)
+    private EventDTO latest_event;
 }

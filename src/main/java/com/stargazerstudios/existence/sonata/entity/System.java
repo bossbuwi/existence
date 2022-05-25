@@ -20,6 +20,9 @@ public class System {
     @Column(name = "global_prefix")
     private String globalPrefix;
 
+    @Column(name = "release")
+    private String release;
+
     @Column(name = "description")
     private String description;
 

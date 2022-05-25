@@ -18,4 +18,6 @@ public interface EventDAO extends JpaRepository<Event, Long> {
             "OR ?1 BETWEEN e.startDate AND e.endDate")
     List<Event> findEventsBetweenDates(LocalDate dateStart, LocalDate dateEnd);
     Optional<Event> findFirstByOrderByDateCreatedDesc();
+    long countByCreatedBy(String username);
+    Optional<Event> findFirstByCreatedByOrderByDateCreatedDesc(String username);
 }

@@ -5,7 +5,6 @@ import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
 import com.stargazerstudios.existence.conductor.erratum.root.*;
 import com.stargazerstudios.existence.conductor.erratum.system.FatalErrorException;
 import com.stargazerstudios.existence.conductor.erratum.system.InvalidPropertyErrorException;
@@ -20,7 +19,7 @@ import com.stargazerstudios.existence.symphony.repository.UserDAO;
 import com.stargazerstudios.existence.symphony.entity.User;
 import com.stargazerstudios.existence.symphony.utils.RoleUtil;
 import com.stargazerstudios.existence.symphony.utils.UserUtil;
-import com.stargazerstudios.existence.symphony.wrapper.UserWrapper;
+import com.stargazerstudios.existence.symphony.wrapper.AuthWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,7 +32,6 @@ import org.springframework.security.web.authentication.logout.CookieClearingLogo
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.UnsupportedMediaTypeException;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
@@ -86,7 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDTO login(UserWrapper wUser)
+    public UserDTO login(AuthWrapper wUser)
             throws UnknownInputException, AuthorizationErrorException,
                 SystemErrorException, ThirdPartyErrorException,
                 DatabaseErrorException, EntityErrorException {

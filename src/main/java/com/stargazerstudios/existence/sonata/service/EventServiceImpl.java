@@ -26,6 +26,8 @@ import com.stargazerstudios.existence.sonata.repository.SystemDAO;
 import com.stargazerstudios.existence.sonata.utils.EventExporterUtil;
 import com.stargazerstudios.existence.sonata.utils.EventUtil;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
+import com.stargazerstudios.existence.symphony.entity.User;
+import com.stargazerstudios.existence.symphony.repository.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
@@ -47,6 +49,8 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 public class EventServiceImpl implements EventService {
 
+    @Autowired
+    private UserDAO userDAO;
     @Autowired
     private EventDAO eventDAO;
 
@@ -443,5 +447,24 @@ public class EventServiceImpl implements EventService {
         String headerValue = "attachment; filename=events_" + currentDateTime + ".xlsx";
         response.addHeader(headerKey, headerValue);
         exporterUtil.exportToWorkbook(response, events);
+    }
+
+    @Override
+    public Long getNumberOfEventsByUser(long id) throws EntityErrorException {
+        Optional<User> userData = userDAO.findById(id);
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "id", Long.toString(id));
+
+        User user = userData.get();
+        return eventDAO.countByCreatedBy(user.getUsername());
+    }
+
+    @Override
+    public EventDTO getLastestEventByUser(String username) throws EntityErrorException {
+        Optional<User> userData = userDAO.findByUsername(username);
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
+
+        Optional<Event> eventData = eventDAO.findFirstByCreatedByOrderByDateCreatedDesc(username);
+        return eventData.map(event -> eventUtil.wrapEvent(event)).orElse(null);
+
     }
 }

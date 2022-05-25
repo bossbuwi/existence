@@ -16,24 +16,32 @@ public class ExistenceIdentity implements Serializable {
     private String app_description;
     private String named_release;
     private String version_number;
+    private String release_date;
     private String source_repository;
     private String developer;
     private String dev_site;
     private String database;
     private String backend_framework;
-    private String language;
+    private String backend_language;
+    private String frontend_framework;
+    private String frontend_language;
+    private String frontend_theme;
 
     public ExistenceIdentity() {
         setApp_name(AboutExistence.APP_NAME);
         setApp_description(AboutExistence.APP_DESCRIPTION);
         setNamed_release(AboutExistence.NAMED_RELEASE);
         setVersion_number(AboutExistence.VERSION_NUMBER);
+        setRelease_date(AboutExistence.RELEASE_DATE);
         setSource_repository(AboutExistence.SOURCE_REPOSITORY);
         setSource_repository(AboutExistence.SOURCE_REPOSITORY);
         setDeveloper(AboutExistence.Developer.DEV_NAME);
         setDev_site(AboutExistence.Developer.DEV_SITE);
         setDatabase(AboutExistence.BackendStack.DATABASE);
         setBackend_framework(AboutExistence.BackendStack.FRAMEWORK);
-        setLanguage(AboutExistence.BackendStack.LANGUAGE);
+        setBackend_language(AboutExistence.BackendStack.LANGUAGE);
+        setFrontend_framework(AboutExistence.FrontendStack.FRAMEWORK);
+        setFrontend_language(AboutExistence.FrontendStack.LANGUAGE);
+        setFrontend_theme(AboutExistence.FrontendStack.THEME);
     }
 }

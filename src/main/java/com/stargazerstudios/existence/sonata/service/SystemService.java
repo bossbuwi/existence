@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.sonata.service;
 
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
@@ -12,5 +13,11 @@ public interface SystemService {
     List<SystemDTO> getAllSystems();
     Long countSystems();
     SystemDTO createSystem(SystemWrapper wSystem)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException;
+            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException;
+    SystemDTO updateSystem(SystemWrapper wSystem)
+            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException;
+    SystemDTO deleteSystem(long id)
+            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException;
+    SystemDTO createFullSystem(SystemWrapper wSystem)
+            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException;
 }

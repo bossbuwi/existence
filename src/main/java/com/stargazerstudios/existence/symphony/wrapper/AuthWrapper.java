@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 @Getter @Setter @NoArgsConstructor
-public class UserWrapper {
+public class AuthWrapper {
     @NotBlank(groups = {
             PostValidation.class, GetValidation.class, PutValidation.class,
             PutRelationValidation.class, AuthValidation.class, DeleteValidation.class

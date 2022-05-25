@@ -36,5 +36,9 @@ build/
 src/main/resources/public/
 !src/main/resources/public/info.txt
 /src/main/resources/static/
+
+### Custom Ignores
 *.log
 *.gz
+*.xlsx
+utils/
