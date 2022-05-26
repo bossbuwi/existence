@@ -101,15 +101,60 @@
 				<directory>src/main/resources/</directory>
 				<excludes>
 					<exclude>frontend/**</exclude>
+					<exclude>static/js/**.map</exclude>
+					<exclude>static/js/**-legacy**.js</exclude>
 				</excludes>
 			</resource>
 		</resources>
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>build-frontend</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<workingDirectory>src/main/resources/frontend/reality</workingDirectory>
+							<arguments>
+								<argument>run</argument>
+								<argument>build</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/libs
+							</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- This executes on the spring-boot:repackage phase -->
+			<!-- That phase is after maven has finished running -->
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>repackage-without-dependencies</id>
 						<goals>
 							<goal>repackage</goal>
 						</goals>
@@ -130,35 +175,6 @@
 						</include>
 					</includes>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.6.0</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>npm</executable>
-							<workingDirectory>src/main/resources/frontend/reality</workingDirectory>
-							<arguments>
-								<argument>run</argument>
-								<argument>build</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-<!--				<configuration>-->
-<!--					<executable>npm</executable>-->
-<!--					<workingDirectory>src/main/resources/frontend/reality</workingDirectory>-->
-<!--					<arguments>-->
-<!--						<argument>run</argument>-->
-<!--						<argument>build</argument>-->
-<!--					</arguments>-->
-<!--				</configuration>-->
 			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -187,24 +203,6 @@
 						</manifestEntries>
 					</archive>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>
-								${project.build.directory}/libs
-							</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
         </plugins>
 	</build>
