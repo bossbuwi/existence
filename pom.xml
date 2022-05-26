@@ -131,26 +131,35 @@
 					</includes>
 				</configuration>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>org.codehaus.mojo</groupId>-->
-<!--				<artifactId>exec-maven-plugin</artifactId>-->
-<!--				<version>1.6.0</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<phase>validate</phase>-->
-<!--						<goals>-->
-<!--							<goal>exec</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<workingDirectory>src/main/resources/frontend/reality</workingDirectory>
+							<arguments>
+								<argument>run</argument>
+								<argument>build</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
 <!--				<configuration>-->
-<!--					<executable>ng</executable>-->
-<!--					<workingDirectory>src/main/resources/frontend/existence</workingDirectory>-->
+<!--					<executable>npm</executable>-->
+<!--					<workingDirectory>src/main/resources/frontend/reality</workingDirectory>-->
 <!--					<arguments>-->
+<!--						<argument>run</argument>-->
 <!--						<argument>build</argument>-->
 <!--					</arguments>-->
 <!--				</configuration>-->
-<!--			</plugin>-->
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
