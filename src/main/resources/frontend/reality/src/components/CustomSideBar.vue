@@ -11,6 +11,7 @@
         v-for="item in filteredList"
         :key="item.title"
         :to="item.route"
+        color="blue darken-4"
         link
       >
         <v-list-item-icon>
