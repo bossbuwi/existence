@@ -31,7 +31,7 @@
         <addForeignKeyConstraint
                 baseTableName="sonata_zones"
                 baseColumnNames="system_id"
-                constraintName="fk_system_id"
+                constraintName="fk_system_id_on_zones"
                 referencedTableName="sonata_systems"
                 referencedColumnNames="id"/>
         <addUniqueConstraint

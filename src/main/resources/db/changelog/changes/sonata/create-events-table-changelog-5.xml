@@ -42,7 +42,7 @@
         <addForeignKeyConstraint
                 baseTableName="sonata_events"
                 baseColumnNames="system_id"
-                constraintName="fk_system_id"
+                constraintName="fk_system_id_on_events"
                 referencedTableName="sonata_systems"
                 referencedColumnNames="id"/>
         <rollback>

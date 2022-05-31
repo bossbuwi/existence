@@ -57,6 +57,7 @@ public class SheetImportServiceImpl implements SheetImportService {
             throw e;
         }
 
+        workbook.close();
         return eventList;
     }
 
