@@ -2,10 +2,10 @@
 
 ### Project Details
 
-**Framework:** [Spring Boot](https://spring.io/projects/spring-boot) version 2.6.5  
+**Framework:** [Spring Boot](https://spring.io/projects/spring-boot) version 2.6.7  
 **Status:** Active - Ongoing  
-**Last Release Date:** 10 March 2022  
-**Latest Version:** v0.1-alpha  
+**Last Release Date:** 01 June 2022  
+**Latest Version:** v0.2beta  
 **Author:** [bossbuwi](https://github.com/bossbuwi)
 
 _This project contains sources from the late project [reality](https://github.com/bossbuwi/reality),
