@@ -39,7 +39,7 @@ export default Vue.extend({
       { title: 'Systems', icon: 'mdi-web', route: '/systems' },
       { title: 'Calendar', icon: 'mdi-calendar-outline', route: '/calendar' },
       { title: 'Events', icon: 'mdi-alarm', route: '/events' },
-      { title: 'Reports', icon: 'mdi-chart-box-outline', route: '/reports', online: 'yes', restricted: 'yes' },
+      { title: 'Search', icon: 'mdi-magnify', route: '/search' },
       { title: 'User Profile', icon: 'mdi-account-outline', route: '/user', online: 'yes' },
       { title: 'Settings', icon: 'mdi-cog-outline', route: '/settings', online: 'yes', restricted: 'yes' },
       { title: 'About', icon: 'mdi-application-brackets-outline', route: '/about' }

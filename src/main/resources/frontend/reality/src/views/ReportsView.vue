@@ -1,20 +1,29 @@
 <template>
-  <div class="reports">
-    <h1>This is the reports page</h1>
-  </div>
+  <v-container fluid>
+    <v-row>
+      <v-col>
+        <search-panel>
+
+        </search-panel>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import SearchPanel from '../components/SearchPanel.vue'
 
 export default Vue.extend({
   name: 'ReportsView',
 
-  components: {},
+  components: {
+    SearchPanel
+  },
 
   metaInfo () {
     return {
-      title: process.env.VUE_APP_NAME + ' — Reports'
+      title: process.env.VUE_APP_NAME + ' — Search'
     }
   }
 })
