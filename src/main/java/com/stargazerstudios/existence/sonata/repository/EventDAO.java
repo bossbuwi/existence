@@ -2,6 +2,7 @@ package com.stargazerstudios.existence.sonata.repository;
 
 import com.stargazerstudios.existence.sonata.entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface EventDAO extends JpaRepository<Event, Long> {
+public interface EventDAO extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
     @Query(value = "SELECT e FROM Event e WHERE e.startDate <= ?1 AND e.endDate >= ?1")
     List<Event> findEventsByDate(LocalDate date);
     @Query(value = "SELECT e FROM Event e " +

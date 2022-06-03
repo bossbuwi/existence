@@ -25,11 +25,13 @@ import com.stargazerstudios.existence.sonata.repository.EventTypeDAO;
 import com.stargazerstudios.existence.sonata.repository.SystemDAO;
 import com.stargazerstudios.existence.sonata.utils.EventExporterUtil;
 import com.stargazerstudios.existence.sonata.utils.EventUtil;
+import com.stargazerstudios.existence.sonata.wrapper.EventFilterWrapper;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import com.stargazerstudios.existence.symphony.entity.User;
 import com.stargazerstudios.existence.symphony.repository.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,9 +43,11 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+
+import static com.stargazerstudios.existence.sonata.specs.EventSpecs.*;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -465,6 +469,30 @@ public class EventServiceImpl implements EventService {
 
         Optional<Event> eventData = eventDAO.findFirstByCreatedByOrderByDateCreatedDesc(username);
         return eventData.map(event -> eventUtil.wrapEvent(event)).orElse(null);
+    }
 
+    @Override
+    public List<EventDTO> filterEvents(EventFilterWrapper wEvent) {
+        Specification<Event> dateSpec = where(betweenDateLiterals(wEvent.getStart_date(), wEvent.getEnd_date()))
+                .or(betweenDateFields(wEvent.getStart_date(), wEvent.getEnd_date()));
+        Specification<Event> technicalSpec = where(withId(wEvent.getId()))
+                .and(withMachine(wEvent.getMachine()))
+                .and(withSystem(wEvent.getGlobal_prefix()));
+        Specification<Event> detailSpec = where(withJiraCase(wEvent.getJira_case()))
+                .and(withFeaturesOn(wEvent.getFeatures_on()))
+                .and(withFeaturesOff(wEvent.getFeatures_off()))
+                .and(withCompiledSources(wEvent.getCompiled_sources()))
+                .and(withApiUsed(wEvent.getApi_used()))
+                .and(withCreatedBy(wEvent.getCreated_by()))
+                .and(withLastChangedBy(wEvent.getLast_modified_by()));
+        Specification<Event> finalSpec = dateSpec.and(technicalSpec).and(detailSpec);
+        List<Event> events = eventDAO.findAll(finalSpec);
+
+        List<EventDTO> eventDTOs = new ArrayList<>();
+        for (Event event: events) {
+            eventDTOs.add(eventUtil.wrapEvent(event));
+        }
+
+        return eventDTOs;
     }
 }

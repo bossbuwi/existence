@@ -40,18 +40,18 @@ const routes: Array<RouteConfig> = [
     component: EventsView
   },
   {
-    path: '/reports',
-    name: 'reports',
-    component: ReportsView,
-    beforeEnter: (to, from, next) => {
-      const admin = user.roles.find((x: string) => x === 'ROLE_ADMIN')
-      console.log(user.roles)
-      if (admin === undefined) {
-        next('/')
-      } else {
-        next()
-      }
-    }
+    path: '/search',
+    name: 'search',
+    component: ReportsView
+    // beforeEnter: (to, from, next) => {
+    //   const admin = user.roles.find((x: string) => x === 'ROLE_ADMIN')
+    //   console.log(user.roles)
+    //   if (admin === undefined) {
+    //     next('/')
+    //   } else {
+    //     next()
+    //   }
+    // }
   },
   {
     path: '/user',

@@ -10,6 +10,7 @@ import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.service.EventServiceImpl;
 import com.stargazerstudios.existence.sonata.service.SheetImportServiceImpl;
 import com.stargazerstudios.existence.sonata.utils.EventExporterUtil;
+import com.stargazerstudios.existence.sonata.wrapper.EventFilterWrapper;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,6 +63,11 @@ public class EventController {
     @GetMapping("/con/events/count")
     public ResponseEntity<Long> getEventCount() {
         return new ResponseEntity<>(eventService.getEventCount(), HttpStatus.OK);
+    }
+
+    @GetMapping("/con/events/filter")
+    public ResponseEntity<List<EventDTO>> filterEvents(@RequestBody EventFilterWrapper event) {
+        return new ResponseEntity<>(eventService.filterEvents(event), HttpStatus.OK);
     }
 
     /* Guarded Endpoints */

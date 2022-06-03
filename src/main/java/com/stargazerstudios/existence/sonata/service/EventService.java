@@ -5,6 +5,7 @@ import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorExcept
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
+import com.stargazerstudios.existence.sonata.wrapper.EventFilterWrapper;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,4 +27,5 @@ public interface EventService {
     void exportEvents(HttpServletResponse response) throws IOException;
     Long getNumberOfEventsByUser(long id) throws EntityErrorException;
     EventDTO getLastestEventByUser(String username) throws EntityErrorException;
+    List<EventDTO> filterEvents(EventFilterWrapper event);
 }
