@@ -94,7 +94,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         User user = userData.get();
         UserDTO userDTO = userUtil.wrapUser(user);
         userDTO.setEvents_added(eventService.getNumberOfEventsByUser(id));
-        userDTO.setLatest_event(eventService.getLastestEventByUser(user.getUsername()));
+        userDTO.setLatest_event(eventService.getLatestEventByUser(user.getUsername()));
         return userDTO;
     }
 

@@ -20,8 +20,8 @@ public class System {
     @Column(name = "global_prefix")
     private String globalPrefix;
 
-    @Column(name = "release")
-    private String release;
+//    @Column(name = "release")
+//    private String release;
 
     @Column(name = "description")
     private String description;
@@ -49,4 +49,8 @@ public class System {
 
     @OneToMany(mappedBy = "system")
     private Set<Event> events;
+
+    @ManyToOne
+    @JoinColumn(name = "release_id")
+    private Release release;
 }

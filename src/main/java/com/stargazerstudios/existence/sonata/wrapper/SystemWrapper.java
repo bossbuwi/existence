@@ -21,7 +21,7 @@ public class SystemWrapper {
     @NotBlank(groups = {
             PostValidation.class, PutValidation.class, PostFullValidation.class
     })
-    private String release;
+    private long release_id;
     private String description;
     private String url;
     private String owners;

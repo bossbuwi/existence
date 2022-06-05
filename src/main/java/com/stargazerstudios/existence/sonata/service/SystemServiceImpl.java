@@ -16,8 +16,10 @@ import com.stargazerstudios.existence.sonata.constants.ConsSonataConstraint;
 import com.stargazerstudios.existence.sonata.dto.SystemDTO;
 import com.stargazerstudios.existence.sonata.dto.ZoneDTO;
 import com.stargazerstudios.existence.sonata.entity.Machine;
+import com.stargazerstudios.existence.sonata.entity.Release;
 import com.stargazerstudios.existence.sonata.entity.System;
 import com.stargazerstudios.existence.sonata.repository.MachineDAO;
+import com.stargazerstudios.existence.sonata.repository.ReleaseDAO;
 import com.stargazerstudios.existence.sonata.repository.SystemDAO;
 import com.stargazerstudios.existence.sonata.utils.SystemUtil;
 import com.stargazerstudios.existence.sonata.wrapper.SystemWrapper;
@@ -36,11 +38,15 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class SystemServiceImpl implements SystemService {
 
+    // TODO: Incorporate the new Release entity
     @Autowired
     private SystemDAO systemDAO;
 
     @Autowired
     private MachineDAO machineDAO;
+
+    @Autowired
+    private ReleaseDAO releaseDAO;
 
     @Autowired
     private ZoneServiceImpl zoneService;
@@ -85,9 +91,16 @@ public class SystemServiceImpl implements SystemService {
         Optional<Machine> machineData = machineDAO.findByName(machineName);
         if (machineData.isEmpty()) throw new EntityNotFoundException("machine", "name", machineName);
 
+        long releaseId = wSystem.getRelease_id();
+        Optional<Release> releaseData = releaseDAO.findById(releaseId);
+        if (releaseData.isEmpty()) throw new EntityNotFoundException("release", "id", Long.toString(releaseId));
+
         System system = new System();
         system.setGlobalPrefix(globalPrefix);
-        system.setRelease(wSystem.getRelease().trim());
+
+        Release release = releaseData.get();
+        system.setRelease(release);
+
         system.setOwners(wSystem.getOwners());
         system.setDescription(wSystem.getDescription());
         system.setUrl(wSystem.getUrl());
@@ -129,7 +142,12 @@ public class SystemServiceImpl implements SystemService {
         Machine machine = machineData.get();
         system.setMachine(machine);
 
-        system.setRelease(wSystem.getRelease().trim());
+        long releaseId = wSystem.getRelease_id();
+        Optional<Release> releaseData = releaseDAO.findById(releaseId);
+        if (releaseData.isEmpty()) throw new EntityNotFoundException("release", "id", Long.toString(releaseId));
+
+        Release release = releaseData.get();
+        system.setRelease(release);
         system.setGlobalPrefix(stringUtil.trimToUpper(wSystem.getGlobal_prefix()));
         system.setDescription(wSystem.getDescription());
         system.setUrl(wSystem.getUrl());

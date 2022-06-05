@@ -5,10 +5,9 @@
         xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-    <!-- v0.1-alpha changelog -->
-    <include file="db/changelog/changes/changelog-v0.1-alpha.xml"/>
-    <!-- v0.2-beta changelog -->
-    <include file="db/changelog/changes/changelog-v0.2-beta.xml"/>
-    <!-- v1.0-cassiopeia changelog -->
-    <include file="db/changelog/changes/changelog-v1.0-cassiopeia.xml"/>
+    <!-- Sonata -->
+    <include file="db/changelog/changes/sonata/create-releases-table-changelog-9.xml"/>
+    <include file="db/changelog/changes/sonata/insert-into-releases-table-changelog-91.xml"/>
+    <include file="db/changelog/changes/sonata/change-systems-table-changelog-22.xml"/>
+    <include file="db/changelog/changes/sonata/update-systems-table-changelog-23.xml"/>
 </databaseChangeLog>

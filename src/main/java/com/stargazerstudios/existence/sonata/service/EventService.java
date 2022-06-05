@@ -26,6 +26,6 @@ public interface EventService {
             throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException;
     void exportEvents(HttpServletResponse response) throws IOException;
     Long getNumberOfEventsByUser(long id) throws EntityErrorException;
-    EventDTO getLastestEventByUser(String username) throws EntityErrorException;
+    EventDTO getLatestEventByUser(String username) throws EntityErrorException;
     List<EventDTO> filterEvents(EventFilterWrapper event);
 }

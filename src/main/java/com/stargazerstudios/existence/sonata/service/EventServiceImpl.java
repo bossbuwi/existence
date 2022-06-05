@@ -463,7 +463,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDTO getLastestEventByUser(String username) throws EntityErrorException {
+    public EventDTO getLatestEventByUser(String username) throws EntityErrorException {
         Optional<User> userData = userDAO.findByUsername(username);
         if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
 
