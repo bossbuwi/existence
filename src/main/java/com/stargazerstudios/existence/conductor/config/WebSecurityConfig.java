@@ -42,9 +42,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors();
+        http.headers().frameOptions().disable();
         http.csrf().disable()
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers(WebSecurityURI.Unguarded.URI_H2).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_CONCERTO).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_FRONTEND_ROOT).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_FRONTEND_CSS).permitAll()

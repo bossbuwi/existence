@@ -7,6 +7,7 @@ import DashboardView from '../views/DashboardView.vue'
 import SystemsView from '../views/SystemsView.vue'
 import CalendarView from '../views/CalendarView.vue'
 import EventsView from '../views/EventsView.vue'
+import CoblogView from '../views/CoblogView.vue'
 import ReportsView from '../views/ReportsView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
 import SettingsView from '../views/SettingsView.vue'
@@ -40,18 +41,14 @@ const routes: Array<RouteConfig> = [
     component: EventsView
   },
   {
+    path: '/coblogs',
+    name: 'coblogs',
+    component: CoblogView
+  },
+  {
     path: '/search',
     name: 'search',
     component: ReportsView
-    // beforeEnter: (to, from, next) => {
-    //   const admin = user.roles.find((x: string) => x === 'ROLE_ADMIN')
-    //   console.log(user.roles)
-    //   if (admin === undefined) {
-    //     next('/')
-    //   } else {
-    //     next()
-    //   }
-    // }
   },
   {
     path: '/user',

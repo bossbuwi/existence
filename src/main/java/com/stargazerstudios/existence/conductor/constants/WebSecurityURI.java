@@ -3,6 +3,8 @@ package com.stargazerstudios.existence.conductor.constants;
 public class WebSecurityURI {
 
     public static class Unguarded {
+
+        public static final String URI_H2 = "/h2-console/**";
         public static final String URI_CONCERTO = "/drapes/dreams";
         public static final String URI_FRONTEND_ROOT = "/*";
         public static final String URI_FRONTEND_CSS = "/css/**";

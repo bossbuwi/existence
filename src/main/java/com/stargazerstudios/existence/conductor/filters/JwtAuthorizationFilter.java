@@ -94,6 +94,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         Collection<String> excludeUrlPatterns = new ArrayList<>();
         AntPathMatcher pathMatcher = new AntPathMatcher();
+        excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_H2);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_CONCERTO);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_FRONTEND_ROOT);
         excludeUrlPatterns.add(WebSecurityURI.Unguarded.URI_FRONTEND_CSS);

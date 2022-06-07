@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.sonata.entity;
 
+import com.stargazerstudios.existence.requiem.entity.Coblog;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -49,6 +50,9 @@ public class System {
 
     @OneToMany(mappedBy = "system")
     private Set<Event> events;
+
+    @OneToMany(mappedBy = "system")
+    private Set<Coblog> coblogs;
 
     @ManyToOne
     @JoinColumn(name = "release_id")

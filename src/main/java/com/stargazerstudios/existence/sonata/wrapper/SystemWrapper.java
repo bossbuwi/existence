@@ -18,7 +18,7 @@ public class SystemWrapper {
             PostValidation.class, PutValidation.class, PostFullValidation.class
     })
     private String global_prefix;
-    @NotBlank(groups = {
+    @Min(value = 1, groups = {
             PostValidation.class, PutValidation.class, PostFullValidation.class
     })
     private long release_id;
