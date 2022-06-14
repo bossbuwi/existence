@@ -11,6 +11,7 @@ public class WebSecurityURI {
         public static final String URI_FRONTEND_JS = "/js/**";
         public static final String URI_BALLAD_UNGUARDED = "/ballad/con/**";
         public static final String URI_CONCERTO_UNGUARDED = "/concerto/con/**";
+        public static final String URI_REQUIEM_UNGUARDED = "/requiem/con/**";
         public static final String URI_SONATA_UNGUARDED = "/sonata/con/**";
         public static final String URI_SYMPHONY_UNGUARDED = "/symphony/con/**";
     }

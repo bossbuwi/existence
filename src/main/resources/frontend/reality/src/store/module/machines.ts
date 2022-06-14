@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { Commit } from 'vuex'
 
-const getDefaultState = () => {
+const getDefaultMachineState = () => {
   return {
     machines: {
       count: 0
@@ -13,7 +13,7 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+const state = getDefaultMachineState()
 
 const getters = {
   getMachineCount: (state: any) => state.machines.count,
@@ -47,7 +47,7 @@ const actions = {
 
 const mutations = {
   resetMachineState (state: any) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultMachineState())
   },
 
   setMachineCount (state: any, count: number) {

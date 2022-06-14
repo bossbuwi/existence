@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { Commit } from 'vuex'
 
-const getDefaultState = () => {
+const getDefaultUserState = () => {
   return {
     users: {
       count: 0
@@ -13,7 +13,7 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+const state = getDefaultUserState()
 
 const getters = {
   getUserCount: (state: any) => state.users.count,
@@ -55,7 +55,7 @@ const actions = {
 
 const mutations = {
   resetUserState (state: any) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultUserState())
   },
 
   setUserCount (state: any, count: number) {

@@ -15,6 +15,7 @@ public class CoblogDTO {
     private boolean open;
     private String active_user;
     private String conclusion;
+    private long number_of_components;
     private String created_by;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Timestamp creation_date;

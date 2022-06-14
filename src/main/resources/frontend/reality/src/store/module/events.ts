@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { Commit } from 'vuex'
 
-const getDefaultState = () => {
+const getDefaultEventState = () => {
   return {
     events: {
       count: 0 as number
@@ -40,7 +40,7 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+const state = getDefaultEventState()
 
 const getters = {
   getEventCount: (state: any) => state.events.count,
@@ -150,7 +150,7 @@ const actions = {
 
 const mutations = {
   resetEventState (state: any) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultEventState())
   },
 
   setEventCount (state: any, count: number) {

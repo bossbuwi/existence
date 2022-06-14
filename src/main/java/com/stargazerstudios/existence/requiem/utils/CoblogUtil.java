@@ -22,6 +22,7 @@ public class CoblogUtil {
         coblogDTO.setLast_changed_by(coblog.getLastChangedBy());
         coblogDTO.setCreation_date(coblog.getDateCreated());
         coblogDTO.setLast_changed_date(coblog.getDateChanged());
+        coblogDTO.setNumber_of_components(coblog.getComponents().size());
         return coblogDTO;
     }
 }

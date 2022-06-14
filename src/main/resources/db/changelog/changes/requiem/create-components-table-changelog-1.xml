@@ -18,10 +18,10 @@
             <column name="sequence" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="details" type="VARCHAR(16384)">
+            <column name="details" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="resolution" type="VARCHAR(16384)">
+            <column name="resolution" type="TEXT">
                 <constraints nullable="false"/>
             </column>
             <column name="created_by" type="VARCHAR(255)">

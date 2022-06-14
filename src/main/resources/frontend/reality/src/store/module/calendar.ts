@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Commit } from 'vuex'
 import { Event } from '@/models/event'
 
-const getDefaultState = () => {
+const getDefaultCalendarState = () => {
   return {
     range: [
 
@@ -11,7 +11,7 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+const state = getDefaultCalendarState()
 
 const getters = {
   getEventsOnDateRange: (state: any) => state.range
@@ -42,7 +42,7 @@ const actions = {
 
 const mutations = {
   resetCalendarState (state: any) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultCalendarState())
   },
 
   addEventOnRange (state: any, event: Event) {

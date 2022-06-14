@@ -53,6 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(WebSecurityURI.Unguarded.URI_FRONTEND_JS).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_BALLAD_UNGUARDED).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_CONCERTO_UNGUARDED).permitAll()
+                .antMatchers(WebSecurityURI.Unguarded.URI_REQUIEM_UNGUARDED).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_SONATA_UNGUARDED).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_SYMPHONY_UNGUARDED).permitAll()
                 .anyRequest().authenticated()

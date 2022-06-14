@@ -61,9 +61,11 @@ export default Vue.extend({
           return this.items
         }
 
+        // eslint-disable-next-line
         return this.items.filter((x: any) => x.restricted !== 'yes')
       }
 
+      // eslint-disable-next-line
       return this.items.filter((x: any) => x.online !== 'yes')
     }
   }

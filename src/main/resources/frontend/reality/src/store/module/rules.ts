@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { Commit } from 'vuex'
 
-const getDefaultState = () => {
+const getDefaultRuleState = () => {
   return {
     rules: [
 
@@ -10,7 +10,7 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+const state = getDefaultRuleState()
 
 const getters = {
   getRules: (state: any) => state.rules
@@ -33,7 +33,7 @@ const actions = {
 
 const mutations = {
   resetRuleState (state: any) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultRuleState())
   },
 
   addRule (state: any, rule: any) {

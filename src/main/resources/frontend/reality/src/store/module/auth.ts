@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { Commit } from 'vuex'
 
-const getDefaultState = () => {
+const getDefaultAuthState = () => {
   return {
     user: {
       id: 0 as number,
@@ -14,7 +14,7 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+const state = getDefaultAuthState()
 
 const getters = {
   isAuthenticated: (state: any) => state.user.id > 0,
@@ -40,7 +40,7 @@ const actions = {
 
 const mutations = {
   resetAuthState (state: any) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultAuthState())
   },
 
   setUser (state: any, user: any) {

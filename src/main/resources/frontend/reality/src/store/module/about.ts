@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { Commit } from 'vuex'
 
-const getDefaultState = () => {
+const getDefaultAboutState = () => {
   return {
     about: {
 
@@ -10,7 +10,7 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+const state = getDefaultAboutState()
 
 const getters = {
   getAppDetails: (state: any) => state.about
@@ -26,7 +26,7 @@ const actions = {
 
 const mutations = {
   resetAboutState (state: any) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultAboutState())
   },
 
   setAbout (state: any, about: any) {
