@@ -14,7 +14,8 @@
       </v-btn>
     </v-toolbar>
     <v-card>
-      <v-card-title>Initializing COB Log</v-card-title>
+      <v-card-title v-if="stepperEnabled">Initializing COB Log</v-card-title>
+      <v-card-title v-if="!stepperEnabled">Cob Log</v-card-title>
       <v-card-text v-if="stepperEnabled">
         <coblog-stepper
           @stepper-complete="stepperComplete"
@@ -25,19 +26,19 @@
       <v-card-text v-if="!stepperEnabled">
         <v-row>
           <v-col cols="2">
-            Runday
+            Runday:
           </v-col>
           <v-col cols="auto">
             {{ runday }}
           </v-col>
-        </v-row>
-        <v-row>
+          <v-spacer></v-spacer>
           <v-col cols="2">
-            Next Runday
+            Next Runday:
           </v-col>
           <v-col cols="auto">
             {{ nextRunday }}
           </v-col>
+          <v-spacer></v-spacer>
         </v-row>
       </v-card-text>
     </v-card>
@@ -49,6 +50,7 @@ import Vue from 'vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import CoblogStepper from '@/components/coblog/CoblogStepper.vue'
 import ComponentForm from '@/components/ComponentForm.vue'
+import ComponentCard from '@/components/ComponentCard.vue'
 
 export default Vue.extend({
   name: 'CoblogForm',

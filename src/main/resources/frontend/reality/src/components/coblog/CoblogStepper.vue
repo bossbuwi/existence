@@ -41,7 +41,7 @@
           color="primary"
           @click="chapter = 2"
         >
-          Continue
+          Next
         </v-btn>
         <v-btn text
           @click="previousChapter"
@@ -58,7 +58,7 @@
           color="primary"
           @click="submitSystem"
         >
-          Continue
+          Next
         </v-btn>
         <v-btn text
           @click="previousChapter"
@@ -198,7 +198,7 @@ export default Vue.extend({
         }
         if (this.runday > this.nextRunday || this.runday === this.nextRunday) {
           this.dateHasError = true
-          this.dateErrorText = 'The run day must be earlier than the next run day.'
+          this.dateErrorText = 'The next run day must be later than the run day.'
           return false
         } else {
           this.dateHasError = false
