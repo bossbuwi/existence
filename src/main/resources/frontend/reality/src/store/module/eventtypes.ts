@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { Commit } from 'vuex'
 
-const getDefaultState = () => {
+const getDefaultEventTypeState = () => {
   return {
     list: [
 
@@ -10,7 +10,7 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+const state = getDefaultEventTypeState()
 
 const getters = {
   getEventTypesList: (state: any) => state.list
@@ -37,7 +37,7 @@ const actions = {
 
 const mutations = {
   resetEventTypeState (state: any) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultEventTypeState())
   },
 
   addEventTypeToList (state: any, eventtype: any) {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!-- Sonata -->
+    <include file="db/changelog/changes/sonata/create-releases-table-changelog-9.xml"/>
+    <include file="db/changelog/changes/sonata/insert-into-releases-table-changelog-91.xml"/>
+    <include file="db/changelog/changes/sonata/change-systems-table-changelog-22.xml"/>
+    <include file="db/changelog/changes/sonata/update-systems-table-changelog-23.xml"/>
+    <!-- Requiem -->
+    <include file="db/changelog/changes/requiem/create-components-table-changelog-1.xml"/>
+    <include file="db/changelog/changes/requiem/create-coblogs-table-changelog-2.xml"/>
+    <include file="db/changelog/changes/requiem/change-coblogs-table-changelog-21.xml"/>
+    <include file="db/changelog/changes/requiem/create-coblogs-components-table-changelog-3.xml"/>
+</databaseChangeLog>

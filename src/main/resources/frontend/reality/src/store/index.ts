@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Vue from 'vue'
 import Vuex, { Commit } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
@@ -11,6 +12,8 @@ import calendar from './module/calendar'
 import eventtypes from './module/eventtypes'
 import rules from './module/rules'
 import about from './module/about'
+import coblogs from './module/coblogs'
+import components from './module/components'
 
 Vue.use(Vuex)
 const ls = new SecureLS({ isCompression: false })
@@ -61,7 +64,9 @@ export default new Vuex.Store({
     calendar,
     eventtypes,
     rules,
-    about
+    about,
+    coblogs,
+    components
   },
 
   plugins: [createPersistedState({

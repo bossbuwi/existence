@@ -271,6 +271,7 @@ export default Vue.extend({
       this.formTitleBarColor = 'error'
     },
 
+    // eslint-disable-next-line
     itemRightClicked (event: any, { item }: { item: any}) {
       this.showMenu = false
       this.selectedEvent = item
@@ -281,6 +282,7 @@ export default Vue.extend({
       })
     },
 
+    // eslint-disable-next-line
     itemClicked (args: any, { item }: { item: any }) {
       this.selectedEvent = item
       this.enquireMode()

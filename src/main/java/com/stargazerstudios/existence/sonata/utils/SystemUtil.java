@@ -20,7 +20,7 @@ public class SystemUtil {
         SystemDTO systemDTO = new SystemDTO();
         systemDTO.setId(system.getId());
         systemDTO.setGlobal_prefix(system.getGlobalPrefix());
-        systemDTO.setRelease(system.getRelease());
+        systemDTO.setRelease(system.getRelease().getName());
         systemDTO.setDescription(system.getDescription());
         systemDTO.setUrl(system.getUrl());
         systemDTO.setOwners(system.getOwners());

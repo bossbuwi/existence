@@ -159,12 +159,14 @@ export default Vue.extend({
       this.newFormDialog = false
     },
 
+    // eslint-disable-next-line
     itemClicked (args: any, { item }: { item: any }) {
       console.log(item)
       this.selectedSystem = item
       this.systemDialog = true
     },
 
+    // eslint-disable-next-line
     itemRightClicked (event: any, { item }: { item: any}) {
       console.log(item)
     },

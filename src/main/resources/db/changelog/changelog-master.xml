@@ -9,4 +9,6 @@
     <include file="db/changelog/changes/changelog-v0.1-alpha.xml"/>
     <!-- v0.2-beta changelog -->
     <include file="db/changelog/changes/changelog-v0.2-beta.xml"/>
+    <!-- v1.0-cassiopeia changelog -->
+    <include file="db/changelog/changes/changelog-v1.0-cassiopeia.xml"/>
 </databaseChangeLog>

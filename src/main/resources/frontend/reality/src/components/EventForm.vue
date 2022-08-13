@@ -324,6 +324,7 @@ export default Vue.extend({
       errorStatus: 'getErrorStatus',
       event: 'getEvent'
     }),
+    // can just use plain data don't you think? check coblogform.vue
     submitEnabled: {
       get () {
         if (this.mode === 'complete') return false

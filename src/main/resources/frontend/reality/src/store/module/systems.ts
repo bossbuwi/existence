@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Commit } from 'vuex'
 import { System } from 'src/models/system'
 
-const getDefaultState = () => {
+const getDefaultSystemState = () => {
   return {
     systems: {
       count: 0
@@ -14,7 +14,7 @@ const getDefaultState = () => {
   }
 }
 
-const state = getDefaultState()
+const state = getDefaultSystemState()
 
 const getters = {
   getSystemCount: (state: any) => state.systems.count,
@@ -57,7 +57,7 @@ const actions = {
 
 const mutations = {
   resetSystemState (state: any) {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultSystemState())
   },
 
   setSystemCount (state: any, count: number) {
