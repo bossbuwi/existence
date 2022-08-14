@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="postgresql"/>
+    <property name="now" value="now()" dbms="h2"/>
+    <changeSet author="v1.0-cassiopeia" id="20220813-033">
+        <comment>Insert settings available since v1.0-cassiopeia.</comment>
+        <insert tableName="symphony_settings">
+            <column name="key" value="RQM001"/>
+            <column name="value" value="N"/>
+            <column name="length" value="1"/>
+            <column name="type" value="SW"/>
+            <column name="description" value="Controls the availability of the constellation Requiem."/>
+            <column name="default_value" value="N"/>
+            <column name="valid_values" value="Y,N"/>
+            <column name="added_by" value="v1.0-cassiopeia"/>
+            <column name="changed_by" value="admin"/>
+            <column name="last_changed_date" valueDate="${now}"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

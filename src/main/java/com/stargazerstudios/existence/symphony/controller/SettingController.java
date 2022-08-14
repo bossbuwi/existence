@@ -31,10 +31,19 @@ public class SettingController {
         return new ResponseEntity<>(settingService.getAllSettings(), HttpStatus.OK);
     }
 
-    @GetMapping("/settings/setting/{type}")
-    public ResponseEntity<List<SettingDTO>> getSettingsByType(@NotBlank @PathVariable("type") String type)
-            throws EntityErrorException {
-        return new ResponseEntity<>(settingService.getSettingsByType(type), HttpStatus.OK);
+    @GetMapping("/settings/setting/switchable")
+    public ResponseEntity<List<SettingDTO>> getAllSwitchableFeatures() {
+        return new ResponseEntity<>(settingService.getAllSwitchableFeatures(), HttpStatus.OK);
+    }
+
+    @GetMapping("/settings/setting/backend")
+    public ResponseEntity<List<SettingDTO>> getAllBackendFeatures() {
+        return new ResponseEntity<>(settingService.getAllBackendFeatures(), HttpStatus.OK);
+    }
+
+    @GetMapping("/settings/setting/frontend")
+    public ResponseEntity<List<SettingDTO>> getAllFrontendFeatures() {
+        return new ResponseEntity<>(settingService.getAllFrontendFeatures(), HttpStatus.OK);
     }
 
     @GetMapping("/settings/setting/{id}")

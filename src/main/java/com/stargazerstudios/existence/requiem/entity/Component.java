@@ -24,10 +24,12 @@ public class Component {
     @Column(name = "sequence")
     private String sequence;
 
-    @Column(name = "details")
+    @Lob
+    @Column(name = "details", columnDefinition = "text")
     private String details;
 
-    @Column(name = "resolution")
+    @Lob
+    @Column(name = "resolution", columnDefinition = "text")
     private String resolution;
 
     @Column(name = "created_by")

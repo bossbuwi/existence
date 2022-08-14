@@ -10,6 +10,8 @@
     <include file="db/changelog/changes/sonata/insert-into-releases-table-changelog-91.xml"/>
     <include file="db/changelog/changes/sonata/change-systems-table-changelog-22.xml"/>
     <include file="db/changelog/changes/sonata/update-systems-table-changelog-23.xml"/>
+    <!-- Symphony -->
+    <include file="db/changelog/changes/symphony/insert-into-settings-table-changelog-33.xml"/>
     <!-- Requiem -->
     <include file="db/changelog/changes/requiem/create-components-table-changelog-1.xml"/>
     <include file="db/changelog/changes/requiem/create-coblogs-table-changelog-2.xml"/>

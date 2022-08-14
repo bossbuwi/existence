@@ -7,14 +7,6 @@ module.exports = defineConfig({
   devServer: {
     proxy: mode
   },
-  // devServer: {
-  //   proxy: {
-  //     '^/sonata': {
-  //       target: 'http://localhost:8080',
-  //       changeOrigin: true
-  //     }
-  //   }
-  // },
   transpileDependencies: [
     'vuetify'
   ]

@@ -11,8 +11,10 @@ import java.util.List;
 
 public interface SettingService {
     List<SettingDTO> getAllSettings();
+    List<SettingDTO> getAllSwitchableFeatures();
+    List<SettingDTO> getAllBackendFeatures();
+    List<SettingDTO> getAllFrontendFeatures();
     SettingDTO getSettingById(long id) throws EntityErrorException;
     SettingDTO getSettingByKey(String key) throws EntityErrorException;
-    List<SettingDTO> getSettingsByType(String type) throws EntityErrorException;
     SettingDTO modifySetting(SettingWrapper settingWrapper) throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, SystemErrorException;
 }

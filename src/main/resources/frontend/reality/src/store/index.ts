@@ -14,6 +14,7 @@ import rules from './module/rules'
 import about from './module/about'
 import coblogs from './module/coblogs'
 import components from './module/components'
+import settings from './module/settings'
 
 Vue.use(Vuex)
 const ls = new SecureLS({ isCompression: false })
@@ -66,7 +67,8 @@ export default new Vuex.Store({
     rules,
     about,
     coblogs,
-    components
+    components,
+    settings
   },
 
   plugins: [createPersistedState({

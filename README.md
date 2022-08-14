@@ -98,8 +98,8 @@ This is not needed during production or if a standalone JAR file is published be
 1. Make a copy of the file `.env` on _frontenddir_ and rename it to `.env.local`
 2. Amend the properties shown below:
 ```
-VUE_DEV_SERVER=http:localhost:8080
-VUE_DEFAULT_URL=http:localhost:8090
+VUE_DEV_SERVER=http://localhost:8080
+VUE_DEFAULT_URL=http://localhost:8090
 ```
 _The **VUE_DEV_SERVER** property is the current Spring Boot address.
 If Spring Boot's port is modified, this needs to be modified as well.
