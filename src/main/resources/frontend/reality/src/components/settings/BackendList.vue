@@ -103,9 +103,5 @@ export default Vue.extend({
       this.$emit('item-clicked', item)
     }
   }
-
-  // async mounted () {
-  //   await this.getBackendList()
-  // }
 })
 </script>

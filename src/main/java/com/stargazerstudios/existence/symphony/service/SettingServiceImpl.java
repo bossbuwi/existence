@@ -11,6 +11,7 @@ import com.stargazerstudios.existence.conductor.erratum.root.SystemErrorExceptio
 import com.stargazerstudios.existence.conductor.erratum.system.InvalidSettingException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.symphony.constants.EnumSettingType;
+import com.stargazerstudios.existence.symphony.constants.EnumValidValues;
 import com.stargazerstudios.existence.symphony.dto.SettingDTO;
 import com.stargazerstudios.existence.symphony.repository.SettingDAO;
 import com.stargazerstudios.existence.symphony.entity.Setting;
@@ -123,16 +124,31 @@ public class SettingServiceImpl implements SettingService{
         }
 
         String validValuesStr = setting.getValidValues();
-        List<String> validValues = Arrays.asList(validValuesStr.split(","));
-        if (validValues.contains(newValue) && newValue.length() == setting.getLength()) {
+        int index = validValuesStr.indexOf(",");
+        if (index == -1) {
+            // length must be checked first if valid
+            if (validValuesStr.equals(EnumValidValues.ALPHA.getValue())) {
+                //check for valid alpha
+            } else if (validValuesStr.equals(EnumValidValues.NUMERIC.getValue())) {
+                //check for valid number
+            } else if (validValuesStr.equals(EnumValidValues.ALPHANUMERIC.getValue())) {
+                //basically anything is possible here
+                //is it still needed?
+            }
             setting.setValue(newValue);
             setting.setChangedBy(username);
         } else {
-            if (settingUtil.getCurrentSetting("settingexpliciterror").equals("Y"))
-                throw new InvalidSettingException("settingexpliciterror");
+            List<String> validValues = Arrays.asList(validValuesStr.split(","));
+            if (validValues.contains(newValue) && newValue.length() == setting.getLength()) {
+                setting.setValue(newValue);
+                setting.setChangedBy(username);
+            } else {
+                if (settingUtil.getCurrentSetting("settingexpliciterror").equals("Y"))
+                    throw new InvalidSettingException(setting.getKey());
 
-            setting.setValue(setting.getDefaultValue());
-            setting.setChangedBy(username);
+                setting.setValue(setting.getDefaultValue());
+                setting.setChangedBy(username);
+            }
         }
 
         try {

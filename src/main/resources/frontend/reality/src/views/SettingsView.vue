@@ -19,6 +19,7 @@
       <v-tab-item :eager="preload">
         <frontend-list
           :key="recreateFrontendList"
+          @item-clicked="itemClicked"
         >
         </frontend-list>
       </v-tab-item>
@@ -26,6 +27,7 @@
       <v-tab-item :eager="preload">
         <switchable-list
           :key="recreateSwitchableList"
+          @item-clicked="itemClicked"
         >
         </switchable-list>
       </v-tab-item>
@@ -33,12 +35,13 @@
     <v-dialog
       v-model="settingDialog"
       max-width="600px"
+      :key="dialogKey"
       persistent
-      eager
     >
       <setting-dialog
         :settingItem="selectedItem"
         :title="selectedItem.key"
+        :settingType="selectedItem.type"
         @close-popup="closeDialog"
       >
       </setting-dialog>
@@ -47,6 +50,14 @@
 </template>
 
 <script lang="ts">
+/**
+ * The lists need to be reworked.
+ * They are basically the same.
+ * The only difference between them is the type of setting that they display.
+ * A reusable component should suffice.
+ * The whole settings list could be fetched when this view is mounted and filtered
+ * to display the relevant types on each of the three list.
+ */
 import Vue from 'vue'
 import { mapActions } from 'vuex'
 import BackendList from '@/components/settings/BackendList.vue'
@@ -75,6 +86,7 @@ export default Vue.extend({
       recreateFrontendList: 0,
       recreateSwitchableList: 0,
       settingDialog: false,
+      dialogKey: 0,
       selectedItem: {
         id: 0,
         key: '',
@@ -117,6 +129,7 @@ export default Vue.extend({
     // eslint-disable-next-line
     itemClicked (args: any) {
       this.selectedItem = args
+      this.dialogKey += 1
       this.settingDialog = true
     },
 

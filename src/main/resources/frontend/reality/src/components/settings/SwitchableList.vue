@@ -13,6 +13,7 @@
         :loading="loading"
         loading-text="Fetching data, please wait."
         :items-per-page="10"
+        @click:row="itemClicked"
         sort-by="id"
         sort-asc
       >
@@ -31,12 +32,12 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 
 export default Vue.extend({
-  name: 'BackendList',
+  name: 'SwitchableList',
 
   components: {
 
@@ -95,11 +96,12 @@ export default Vue.extend({
       } catch (error) {
 
       }
+    },
+
+    // eslint-disable-next-line
+    itemClicked (args: any, { item }: { item: any }) {
+      this.$emit('item-clicked', item)
     }
   }
-
-  // async mounted () {
-  //   await this.getSwitchableList()
-  // }
 })
 </script>
