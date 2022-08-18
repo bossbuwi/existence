@@ -12,6 +12,7 @@ axios.defaults.baseURL = process.env.VUE_DEFAULT_URL
 initializeApplication()
 
 function initializeApplication () {
+  // fetchDependencies()
   new Vue({
     router,
     store,
@@ -19,3 +20,8 @@ function initializeApplication () {
     render: h => h(App)
   }).$mount('#app')
 }
+
+// function fetchDependencies () {
+//   store.dispatch('GetDisabledSwitchableFeatures')
+//   store.dispatch('GetFrontendList')
+// }

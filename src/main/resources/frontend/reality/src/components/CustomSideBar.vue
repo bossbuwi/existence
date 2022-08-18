@@ -14,6 +14,13 @@
         color="blue darken-4"
         link
       >
+      <!-- <v-list-item
+        v-for="item in items"
+        :key="item.title"
+        :to="item.route"
+        color="blue darken-4"
+        link
+      > -->
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -26,7 +33,7 @@
   </v-navigation-drawer>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
 
@@ -56,28 +63,24 @@ export default Vue.extend({
     }),
 
     filteredList () {
-      const newList = this.items
-      const disabledList: any[] = this.disabledSwitchableFeatures
+      let navList = []
+      const disabledList = this.disabledSwitchableFeatures
 
-      disabledList.forEach((element: any) => {
-        newList.filter((x: any) => x.feature === element.key)
+      disabledList.forEach(element => {
+        navList = this.items.filter(x => x.feature !== element.key)
       })
 
-      console.log(newList)
-
       if (this.isAuth > 0) {
-        const admin: string = this.getUser.roles.find((x: string) => x === 'ROLE_ADMIN')
+        const admin = this.getUser.roles.find(x => x === 'ROLE_ADMIN')
 
         if (admin === 'ROLE_ADMIN') {
-          return newList
+          return navList
         }
 
-        // eslint-disable-next-line
-        return newList.filter((x: any) => x.restricted !== 'yes')
+        return navList.filter(x => x.restricted !== 'yes')
       }
 
-      // eslint-disable-next-line
-      return newList.filter((x: any) => x.online !== 'yes')
+      return navList.filter(x => x.online !== 'yes')
     }
   }
 })
