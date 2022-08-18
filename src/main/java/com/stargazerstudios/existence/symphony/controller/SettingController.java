@@ -26,24 +26,29 @@ public class SettingController {
     @Autowired
     private SettingServiceImpl settingService;
 
-    @GetMapping("/settings/index")
+    @GetMapping("/con/settings/index")
     public ResponseEntity<List<SettingDTO>> getAllSettings() {
         return new ResponseEntity<>(settingService.getAllSettings(), HttpStatus.OK);
     }
 
-    @GetMapping("/settings/setting/switchable")
+    @GetMapping("/con/settings/setting/switchable")
     public ResponseEntity<List<SettingDTO>> getAllSwitchableFeatures() {
         return new ResponseEntity<>(settingService.getAllSwitchableFeatures(), HttpStatus.OK);
     }
 
-    @GetMapping("/settings/setting/backend")
+    @GetMapping("/con/settings/setting/backend")
     public ResponseEntity<List<SettingDTO>> getAllBackendFeatures() {
         return new ResponseEntity<>(settingService.getAllBackendFeatures(), HttpStatus.OK);
     }
 
-    @GetMapping("/settings/setting/frontend")
+    @GetMapping("/con/settings/setting/frontend")
     public ResponseEntity<List<SettingDTO>> getAllFrontendFeatures() {
         return new ResponseEntity<>(settingService.getAllFrontendFeatures(), HttpStatus.OK);
+    }
+
+    @GetMapping("con/settings/setting/switchable/disabled")
+    public ResponseEntity<List<SettingDTO>> getDisabledSwitchableFeatures() {
+        return new ResponseEntity<>(settingService.getDisabledSwitchableFeatures(), HttpStatus.OK);
     }
 
     @GetMapping("/settings/setting/{id}")

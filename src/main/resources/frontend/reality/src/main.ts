@@ -9,9 +9,13 @@ Vue.config.productionTip = false
 axios.defaults.withCredentials = true
 axios.defaults.baseURL = process.env.VUE_DEFAULT_URL
 
-new Vue({
-  router,
-  store,
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+initializeApplication()
+
+function initializeApplication () {
+  new Vue({
+    router,
+    store,
+    vuetify,
+    render: h => h(App)
+  }).$mount('#app')
+}

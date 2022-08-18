@@ -79,7 +79,8 @@ export default Vue.extend({
     ...mapGetters({
       isAuth: 'isAuthenticated',
       user: 'getUserState',
-      backendList: 'getBackendList'
+      backendList: 'getBackendList',
+      frontendList: 'getFrontendList'
     })
   },
 

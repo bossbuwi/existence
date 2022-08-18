@@ -83,6 +83,13 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
+    public List<SettingDTO> getDisabledSwitchableFeatures() {
+        List<SettingDTO> disabledSwitchableList = getAllSwitchableFeatures();
+        disabledSwitchableList.removeIf(x -> x.getValue().equals("Y"));
+        return disabledSwitchableList;
+    }
+
+    @Override
     public SettingDTO getSettingById(long id) throws EntityErrorException {
         Optional<Setting> settingData = settingDAO.findById(id);
         if (settingData.isPresent()) {

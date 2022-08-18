@@ -13,6 +13,9 @@ const getDefaultSettingsState = () => {
 		switchable: [
 
 		],
+    disabled: [
+
+    ],
     item: {
       id: 0 as number,
       key: '' as string,
@@ -47,24 +50,26 @@ const getDefaultSwitchableState = () => {
   }
 }
 
+const getDefaultDisabledSwitchableState = () => {
+  return {
+    disabled: []
+  }
+}
+
 const state = getDefaultSettingsState()
 
 const getters = {
   getBackendList: (state: any) => state.backend,
   getFrontendList: (state: any) => state.frontend,
   getSwitchableList: (state: any) => state.switchable,
+  getDisabledSwitchableList: (state: any) => state.disabled,
   getSetting: (state: any) => state.item
 }
 
 const actions = {
-  async GetBackendList ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }) {
-    commit('resetBackendState')
-		const token = rootGetters.getToken
-    await axios.get('symphony/settings/setting/backend', {
-      headers: {
-        Authorization: 'Bearer ' + token
-      }
-    }).then((result) => {
+  async GetBackendList ({ commit }: { commit: Commit }) {
+    await axios.get('symphony/con/settings/setting/backend').then((result) => {
+      commit('resetBackendState')
       const backendArr = result.data
       backendArr.forEach((element: any) => {
         commit('addBackend', element)
@@ -74,14 +79,9 @@ const actions = {
     })
   },
 
-	async GetFrontendList ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }) {
-    commit('resetFrontendState')
-		const token = rootGetters.getToken
-    await axios.get('symphony/settings/setting/frontend', {
-      headers: {
-        Authorization: 'Bearer ' + token
-      }
-    }).then((result) => {
+	async GetFrontendList ({ commit }: { commit: Commit }) {
+    await axios.get('symphony/con/settings/setting/frontend').then((result) => {
+      commit('resetFrontendState')
       const frontendArr = result.data
       frontendArr.forEach((element: any) => {
         commit('addFrontend', element)
@@ -91,17 +91,24 @@ const actions = {
     })
   },
 
-	async GetSwitchableList ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }) {
-    commit('resetSwitchableState')
-		const token = rootGetters.getToken
-    await axios.get('symphony/settings/setting/switchable', {
-      headers: {
-        Authorization: 'Bearer ' + token
-      }
-    }).then((result) => {
+	async GetSwitchableList ({ commit }: { commit: Commit }) {
+    await axios.get('symphony/con/settings/setting/switchable').then((result) => {
+      commit('resetSwitchableState')
       const switchableArr = result.data
       switchableArr.forEach((element: any) => {
         commit('addSwitchable', element)
+      })
+    }).catch((error) => {
+      console.log(error.response.data)
+    })
+  },
+
+  async GetDisabledSwitchableFeatures ({ commit }: { commit: Commit }) {
+    await axios.get('symphony/con/settings/setting/switchable/disabled').then((result) => {
+      commit('resetDisabledSwitchableState')
+      const switchableArr = result.data
+      switchableArr.forEach((element: any) => {
+        commit('addDisabledSwitchable', element)
       })
     }).catch((error) => {
       console.log(error.response.data)
@@ -158,6 +165,10 @@ const mutations = {
     Object.assign(state, getDefaultSwitchableState())
   },
 
+  resetDisabledSwitchableState (state: any) {
+    Object.assign(state, getDefaultDisabledSwitchableState())
+  },
+
   addBackend (state: any, setting: any) {
     state.backend.push(setting)
   },
@@ -168,6 +179,10 @@ const mutations = {
 
 	addSwitchable (state: any, setting: any) {
     state.switchable.push(setting)
+  },
+
+  addDisabledSwitchable (state: any, setting: any) {
+    state.disabled.push(setting)
   },
 
   setSetting (state: any, setting: any) {

@@ -14,6 +14,7 @@ public interface SettingService {
     List<SettingDTO> getAllSwitchableFeatures();
     List<SettingDTO> getAllBackendFeatures();
     List<SettingDTO> getAllFrontendFeatures();
+    List<SettingDTO> getDisabledSwitchableFeatures();
     SettingDTO getSettingById(long id) throws EntityErrorException;
     SettingDTO getSettingByKey(String key) throws EntityErrorException;
     SettingDTO modifySetting(SettingWrapper settingWrapper) throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, SystemErrorException;

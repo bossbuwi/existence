@@ -39,7 +39,7 @@ export default Vue.extend({
       { title: 'Systems', icon: 'mdi-web', route: '/systems' },
       { title: 'Calendar', icon: 'mdi-calendar-outline', route: '/calendar' },
       { title: 'Events', icon: 'mdi-alarm', route: '/events' },
-      { title: 'Coblogs', icon: 'mdi-list-status', route: '/coblogs' },
+      { title: 'Coblogs', icon: 'mdi-list-status', route: '/coblogs', feature: 'RQM001' },
       { title: 'Search', icon: 'mdi-magnify', route: '/search' },
       { title: 'User Profile', icon: 'mdi-account-outline', route: '/user', online: 'yes' },
       { title: 'Settings', icon: 'mdi-cog-outline', route: '/settings', online: 'yes', restricted: 'yes' },
@@ -50,23 +50,34 @@ export default Vue.extend({
   computed: {
     ...mapGetters({
       isAuth: 'isAuthenticated',
-      getUser: 'getUserState'
+      getUser: 'getUserState',
+      frontendFeatures: 'getFrontendList',
+      disabledSwitchableFeatures: 'getDisabledSwitchableList'
     }),
 
     filteredList () {
+      const newList = this.items
+      const disabledList: any[] = this.disabledSwitchableFeatures
+
+      disabledList.forEach((element: any) => {
+        newList.filter((x: any) => x.feature === element.key)
+      })
+
+      console.log(newList)
+
       if (this.isAuth > 0) {
         const admin: string = this.getUser.roles.find((x: string) => x === 'ROLE_ADMIN')
 
         if (admin === 'ROLE_ADMIN') {
-          return this.items
+          return newList
         }
 
         // eslint-disable-next-line
-        return this.items.filter((x: any) => x.restricted !== 'yes')
+        return newList.filter((x: any) => x.restricted !== 'yes')
       }
 
       // eslint-disable-next-line
-      return this.items.filter((x: any) => x.online !== 'yes')
+      return newList.filter((x: any) => x.online !== 'yes')
     }
   }
 })
