@@ -65,7 +65,16 @@ const routes: Array<RouteConfig> = [
   {
     path: '/search',
     name: 'search',
-    component: ReportsView
+    component: ReportsView,
+    beforeEnter: (to, from, next) => {
+      const feature = 'SNA001'
+      const filteredArr = disabledFeatures.filter((x: any) => x.feature === feature)
+      if (filteredArr.length === 0) {
+        next('/')
+      } else {
+        next()
+      }
+    }
   },
   {
     path: '/user',
