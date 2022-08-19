@@ -1,5 +1,8 @@
 <template>
-  <v-app id="inspire">
+  <v-app
+    id="inspire"
+    v-if="!isFetching"
+  >
     <custom-app-bar/>
     <custom-side-bar/>
     <v-main>
@@ -58,7 +61,7 @@ export default Vue.extend({
 
   data () {
     return {
-
+      isFetching: true
     }
   },
 
@@ -72,11 +75,20 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'DismissError', 'SetDate', 'Logout'
+      'DismissError', 'SetDate', 'Logout',
+      'GetFrontendList', 'GetDisabledSwitchableFeatures'
     ]),
 
     dismissError () {
       this.DismissError()
+    },
+
+    async getFrontendList () {
+      await this.GetFrontendList()
+    },
+
+    async getDisabledSwitchableFeatures () {
+      await this.GetDisabledSwitchableFeatures()
     }
   },
 
@@ -87,6 +99,13 @@ export default Vue.extend({
     if (duration > 17000000) {
       await this.Logout()
     }
+
+    await Promise.all([
+      this.getFrontendList(),
+      this.getDisabledSwitchableFeatures()
+    ])
+
+    this.isFetching = false
   }
 })
 </script>

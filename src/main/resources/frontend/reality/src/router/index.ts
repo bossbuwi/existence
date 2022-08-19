@@ -16,8 +16,16 @@ import AboutView from '../views/AboutView.vue'
 Vue.use(VueRouter)
 Vue.use(VueMeta)
 
+function fetchDependencies () {
+  store.dispatch('GetDisabledSwitchableFeatures')
+  store.dispatch('GetFrontendList')
+}
+
+fetchDependencies()
+
 const isAuth = store.getters.isAuthenticated
 const user = store.getters.getUserState
+const disabledFeatures = store.getters.getDisabledSwitchableList
 
 const routes: Array<RouteConfig> = [
   {
@@ -43,12 +51,30 @@ const routes: Array<RouteConfig> = [
   {
     path: '/coblogs',
     name: 'coblogs',
-    component: CoblogView
+    component: CoblogView,
+    beforeEnter: (to, from, next) => {
+      const feature = 'RQM001'
+      const filteredArr = disabledFeatures.filter((x: any) => x.feature === feature)
+      if (filteredArr.length === 0) {
+        next('/')
+      } else {
+        next()
+      }
+    }
   },
   {
     path: '/search',
     name: 'search',
-    component: ReportsView
+    component: ReportsView,
+    beforeEnter: (to, from, next) => {
+      const feature = 'SNA001'
+      const filteredArr = disabledFeatures.filter((x: any) => x.feature === feature)
+      if (filteredArr.length === 0) {
+        next('/')
+      } else {
+        next()
+      }
+    }
   },
   {
     path: '/user',

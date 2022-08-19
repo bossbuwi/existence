@@ -10,6 +10,8 @@ import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorExceptio
 import com.stargazerstudios.existence.conductor.erratum.root.SystemErrorException;
 import com.stargazerstudios.existence.conductor.erratum.system.InvalidSettingException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
+import com.stargazerstudios.existence.symphony.constants.EnumSettingType;
+import com.stargazerstudios.existence.symphony.constants.EnumValidValues;
 import com.stargazerstudios.existence.symphony.dto.SettingDTO;
 import com.stargazerstudios.existence.symphony.repository.SettingDAO;
 import com.stargazerstudios.existence.symphony.entity.Setting;
@@ -45,6 +47,49 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
+    public List<SettingDTO> getAllSwitchableFeatures() {
+        List<Setting> settingList = settingDAO.findSettingByType(EnumSettingType.SWITCHABLE_FEATURE.getValue());
+        List<SettingDTO> settingDTOList = new ArrayList<>();
+        if (!settingList.isEmpty()) {
+            for (Setting setting : settingList) {
+                settingDTOList.add(settingUtil.wrapSetting(setting));
+            }
+        }
+        return settingDTOList;
+    }
+
+    @Override
+    public List<SettingDTO> getAllBackendFeatures() {
+        List<Setting> settingList = settingDAO.findSettingByType(EnumSettingType.BACKEND_FEATURE.getValue());
+        List<SettingDTO> settingDTOList = new ArrayList<>();
+        if (!settingList.isEmpty()) {
+            for (Setting setting : settingList) {
+                settingDTOList.add(settingUtil.wrapSetting(setting));
+            }
+        }
+        return settingDTOList;
+    }
+
+    @Override
+    public List<SettingDTO> getAllFrontendFeatures() {
+        List<Setting> settingList = settingDAO.findSettingByType(EnumSettingType.FRONTEND_FEATURE.getValue());
+        List<SettingDTO> settingDTOList = new ArrayList<>();
+        if (!settingList.isEmpty()) {
+            for (Setting setting : settingList) {
+                settingDTOList.add(settingUtil.wrapSetting(setting));
+            }
+        }
+        return settingDTOList;
+    }
+
+    @Override
+    public List<SettingDTO> getDisabledSwitchableFeatures() {
+        List<SettingDTO> disabledSwitchableList = getAllSwitchableFeatures();
+        disabledSwitchableList.removeIf(x -> x.getValue().equals("Y"));
+        return disabledSwitchableList;
+    }
+
+    @Override
     public SettingDTO getSettingById(long id) throws EntityErrorException {
         Optional<Setting> settingData = settingDAO.findById(id);
         if (settingData.isPresent()) {
@@ -66,20 +111,6 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
-    public List<SettingDTO> getSettingsByType(String type)  throws EntityErrorException{
-        List<SettingDTO> settingDtoList = new ArrayList<>();
-        List<Setting> settingList = settingDAO.findSettingByType(type);
-        if (!settingList.isEmpty()) {
-            for (Setting setting: settingList) {
-                settingDtoList.add(settingUtil.wrapSetting(setting));
-            }
-        } else {
-            throw new EntityNotFoundException("setting", "type", type);
-        }
-        return settingDtoList;
-    }
-
-    @Override
     public SettingDTO modifySetting(SettingWrapper wSetting)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, SystemErrorException {
         boolean isAdminOrHigher = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
@@ -92,17 +123,39 @@ public class SettingServiceImpl implements SettingService{
         if (settingData.isEmpty()) throw new EntityNotFoundException("setting", "key", key);
 
         Setting setting = settingData.get();
+        String type = setting.getType();
+
+        if (type.equalsIgnoreCase(EnumSettingType.SWITCHABLE_FEATURE.getValue())) {
+            boolean isSuperuserOrHigher = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+            if (!isSuperuserOrHigher) throw new UserUnauthorizedException();
+        }
+
         String validValuesStr = setting.getValidValues();
-        List<String> validValues = Arrays.asList(validValuesStr.split(","));
-        if (validValues.contains(newValue) && newValue.length() == setting.getLength()) {
+        int index = validValuesStr.indexOf(",");
+        if (index == -1) {
+            // length must be checked first if valid
+            if (validValuesStr.equals(EnumValidValues.ALPHA.getValue())) {
+                //check for valid alpha
+            } else if (validValuesStr.equals(EnumValidValues.NUMERIC.getValue())) {
+                //check for valid number
+            } else if (validValuesStr.equals(EnumValidValues.ALPHANUMERIC.getValue())) {
+                //basically anything is possible here
+                //is it still needed?
+            }
             setting.setValue(newValue);
             setting.setChangedBy(username);
         } else {
-            if (settingUtil.getCurrentSetting("settingexpliciterror").equals("Y"))
-                throw new InvalidSettingException("settingexpliciterror");
+            List<String> validValues = Arrays.asList(validValuesStr.split(","));
+            if (validValues.contains(newValue) && newValue.length() == setting.getLength()) {
+                setting.setValue(newValue);
+                setting.setChangedBy(username);
+            } else {
+                if (settingUtil.getCurrentSetting("settingexpliciterror").equals("Y"))
+                    throw new InvalidSettingException(setting.getKey());
 
-            setting.setValue(setting.getDefaultValue());
-            setting.setChangedBy(username);
+                setting.setValue(setting.getDefaultValue());
+                setting.setChangedBy(username);
+            }
         }
 
         try {

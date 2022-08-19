@@ -24,10 +24,17 @@ public class Component {
     @Column(name = "sequence")
     private String sequence;
 
-    @Column(name = "details")
+    // This needs to be rethought. @Lob and columnDefinition are not originally
+    // part of this entity and are just added to make it compatible with
+    // in memory H2 database for testing and compilation.
+    // Once a proper test has been created, these codes should be removed or reworked.
+    @Lob
+    @Column(name = "details", columnDefinition = "text")
     private String details;
 
-    @Column(name = "resolution")
+    // See comment on property above.
+    @Lob
+    @Column(name = "resolution", columnDefinition = "text")
     private String resolution;
 
     @Column(name = "created_by")

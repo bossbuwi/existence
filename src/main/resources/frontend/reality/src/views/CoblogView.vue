@@ -3,7 +3,8 @@
     <v-tabs>
       <v-tabs-slider color="primary"></v-tabs-slider>
       <v-tab>Coblogs</v-tab>
-      <v-tab>components</v-tab>
+      <v-tab>Components</v-tab>
+
       <v-tab-item :eager="preload">
         <coblog-list
           :key="recreateCoblist"
@@ -11,6 +12,7 @@
         >
         </coblog-list>
       </v-tab-item>
+
       <v-tab-item :eager="preload">
         <component-list
           :key="recreateComponentlist"
@@ -36,9 +38,9 @@
 <script>
 import Vue from 'vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import CoblogList from '@/components/CoblogList.vue'
-import ComponentList from '@/components/ComponentList.vue'
-import CoblogForm from '@/components/CoblogForm.vue'
+import CoblogList from '@/components/coblog/CoblogList.vue'
+import ComponentList from '@/components/coblog/ComponentList.vue'
+import CoblogForm from '@/components/coblog/CoblogForm.vue'
 
 export default Vue.extend({
   name: 'CoblogView',

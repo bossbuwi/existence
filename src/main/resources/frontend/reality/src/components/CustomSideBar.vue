@@ -14,6 +14,13 @@
         color="blue darken-4"
         link
       >
+      <!-- <v-list-item
+        v-for="item in items"
+        :key="item.title"
+        :to="item.route"
+        color="blue darken-4"
+        link
+      > -->
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -26,7 +33,7 @@
   </v-navigation-drawer>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
 
@@ -39,8 +46,8 @@ export default Vue.extend({
       { title: 'Systems', icon: 'mdi-web', route: '/systems' },
       { title: 'Calendar', icon: 'mdi-calendar-outline', route: '/calendar' },
       { title: 'Events', icon: 'mdi-alarm', route: '/events' },
-      { title: 'Coblogs', icon: 'mdi-list-status', route: '/coblogs' },
-      { title: 'Search', icon: 'mdi-magnify', route: '/search' },
+      { title: 'Coblogs', icon: 'mdi-list-status', route: '/coblogs', feature: 'RQM001' },
+      { title: 'Search', icon: 'mdi-magnify', route: '/search', feature: 'SNA001' },
       { title: 'User Profile', icon: 'mdi-account-outline', route: '/user', online: 'yes' },
       { title: 'Settings', icon: 'mdi-cog-outline', route: '/settings', online: 'yes', restricted: 'yes' },
       { title: 'About', icon: 'mdi-application-brackets-outline', route: '/about' }
@@ -50,23 +57,30 @@ export default Vue.extend({
   computed: {
     ...mapGetters({
       isAuth: 'isAuthenticated',
-      getUser: 'getUserState'
+      getUser: 'getUserState',
+      frontendFeatures: 'getFrontendList',
+      disabledSwitchableFeatures: 'getDisabledSwitchableList'
     }),
 
     filteredList () {
+      let navList = this.items
+      const disabledList = this.disabledSwitchableFeatures
+
+      disabledList.forEach(element => {
+        navList = navList.filter(x => x.feature !== element.key)
+      })
+
       if (this.isAuth > 0) {
-        const admin: string = this.getUser.roles.find((x: string) => x === 'ROLE_ADMIN')
+        const admin = this.getUser.roles.find(x => x === 'ROLE_ADMIN')
 
         if (admin === 'ROLE_ADMIN') {
-          return this.items
+          return navList
         }
 
-        // eslint-disable-next-line
-        return this.items.filter((x: any) => x.restricted !== 'yes')
+        return navList.filter(x => x.restricted !== 'yes')
       }
 
-      // eslint-disable-next-line
-      return this.items.filter((x: any) => x.online !== 'yes')
+      return navList.filter(x => x.online !== 'yes')
     }
   }
 })
