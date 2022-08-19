@@ -82,7 +82,7 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public SystemDTO createSystem(SystemWrapper wSystem)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
-        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
         String globalPrefix = stringUtil.trimToUpper(wSystem.getGlobal_prefix());

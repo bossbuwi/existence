@@ -44,9 +44,10 @@ public class Initializer {
      */
     @EventListener(ApplicationReadyEvent.class)
     private void postStartUp() {
-        checkDefaultAdmin();
-        checkJwtKey();
         checkRoles();
+        checkJwtKey();
+        checkDefaultAdmin();
+        checkDefaultUser();
     }
 
     /**
@@ -54,11 +55,11 @@ public class Initializer {
      * one and grants it maximum authority.
      */
     private void checkDefaultAdmin() {
-        Optional<User> adminData = userDAO.findByUsername(EnumAuthorization.DEFAULT_USER.getValue());
+        Optional<User> adminData = userDAO.findByUsername(EnumAuthorization.DEFAULT_OWNER.getValue());
         if (adminData.isEmpty()) {
             User admin = new User();
-            admin.setUsername(EnumAuthorization.DEFAULT_USER.getValue());
-            String hashPword = passwordEncoder.encode(EnumAuthorization.DEFAULT_USER.getValue());
+            admin.setUsername(EnumAuthorization.DEFAULT_OWNER.getValue());
+            String hashPword = passwordEncoder.encode(EnumAuthorization.DEFAULT_OWNER.getValue());
             admin.setPassword(hashPword);
 
             Set<String> roleNames = new HashSet<>(Arrays.asList(
@@ -86,6 +87,29 @@ public class Initializer {
         }
     }
 
+    private void checkDefaultUser() {
+        Optional<User> userData = userDAO.findByUsername(EnumAuthorization.DEFAULT_USER.getValue());
+        if (userData.isEmpty()) {
+            User user = new User();
+            user.setUsername(EnumAuthorization.DEFAULT_USER.getValue());
+            String hashPword = passwordEncoder.encode(EnumAuthorization.DEFAULT_USER.getValue());
+            user.setPassword(hashPword);
+
+            Optional<Role> userRole = roleDAO.findByName(EnumAuthorization.USER.getValue());
+            Role role = userRole.get();
+
+            Set<Role> roles = new HashSet<>();
+            roles.add(role);
+            user.setRoles(roles);
+
+            try {
+                userDAO.save(user);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Checks if the property "jwt.secret" has been defined on the application.properties file.
      * If not, this throws an error that is readable on the system logs.
@@ -106,7 +130,9 @@ public class Initializer {
     private void checkRoles() {
         Set<String> roleNames = new HashSet<>();
         for (EnumAuthorization auth: EnumAuthorization.values()) {
-            if (!auth.equals(EnumAuthorization.DEFAULT_USER)) roleNames.add(auth.getValue());
+            if (!auth.equals(EnumAuthorization.DEFAULT_OWNER) && !auth.equals(EnumAuthorization.DEFAULT_USER)) {
+                roleNames.add(auth.getValue());
+            }
         }
 
         final List<Role> roles = roleDAO.findRolesBySet(roleNames);

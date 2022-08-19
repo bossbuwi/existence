@@ -1,7 +1,8 @@
 package com.stargazerstudios.existence.conductor.constants;
 
 public enum EnumAuthorization {
-    DEFAULT_USER("admin"),
+    DEFAULT_OWNER("admin"),
+    DEFAULT_USER("user01"),
     OWNER("ROLE_OWNER"),
     SUPERUSER("ROLE_SUPERUSER"),
     ADMIN("ROLE_ADMIN"),
