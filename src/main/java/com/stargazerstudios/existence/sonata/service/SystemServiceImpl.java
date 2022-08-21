@@ -128,7 +128,7 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public SystemDTO updateSystem(SystemWrapper wSystem)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
-        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
         long id = wSystem.getId();
@@ -176,7 +176,7 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public SystemDTO deleteSystem(long id)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
-        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
         Optional<System> systemData = systemDAO.findById(id);
@@ -185,7 +185,8 @@ public class SystemServiceImpl implements SystemService {
 
         try {
             systemDAO.delete(system);
-        } catch (Exception e) {
+            systemDAO.flush();
+        } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             throw new EntityDeletionErrorException("system");
         }
@@ -196,6 +197,8 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public SystemDTO createFullSystem(SystemWrapper wSystem)
             throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
+        if (!isAuthorized) throw new UserUnauthorizedException();
         SystemDTO systemDTO = createSystem(wSystem);
         ArrayList<String> zones = new ArrayList<>();
 

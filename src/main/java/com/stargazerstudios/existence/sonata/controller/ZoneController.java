@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.sonata.controller;
 
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
@@ -33,7 +34,7 @@ public class ZoneController {
     @PostMapping("/zones/zone")
     public ResponseEntity<ZoneDTO> createZone(@Validated(PostValidation.class)
                                                   @RequestBody ZoneWrapper wZone)
-            throws DatabaseErrorException, UnknownInputException, EntityErrorException {
+            throws AuthorizationErrorException, DatabaseErrorException, UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(zoneService.createZone(wZone), HttpStatus.OK);
     }
 

@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.sonata.service;
 
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
@@ -11,6 +12,6 @@ import java.util.List;
 public interface ZoneService {
     List<ZoneDTO> getAllZones();
     ZoneDTO createZone(ZoneWrapper wZone)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException;
+            throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException;
     ZoneDTO updateZone(ZoneWrapper wZone);
 }

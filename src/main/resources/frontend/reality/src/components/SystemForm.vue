@@ -130,7 +130,7 @@
                   name="Owner"
                 >
                   <v-text-field
-                    v-model="systemForm.owner"
+                    v-model="systemForm.owners"
                     label="Owner"
                     type="text"
                     :error-messages="errors"
@@ -253,12 +253,16 @@ export default Vue.extend({
       machines: [],
       machineLoading: false,
       machineDisabled: false,
+      releases: [],
+      releaseLoading: false,
+      releaseDisabled: false,
       systemForm: {
         machine: '',
         globalPrefix: '',
         release: '',
         url: '',
-        description: ''
+        description: '',
+        owners: ''
       },
       zoneFields: [
 
@@ -316,6 +320,31 @@ export default Vue.extend({
 
     removeZone (parm) {
       console.log(parm)
+    },
+
+    submit () {
+      console.log('submit clicked')
+      const zonesData = []
+      this.zoneFields.forEach(element => {
+        const zone = {
+          zonal_prefix: '',
+          zone_name: ''
+        }
+        zone.zonal_prefix = element.prefix
+        zone.zone_name = element.name
+        zonesData.push(zone)
+      })
+
+      const fullSystemData = {}
+      fullSystemData.machine = this.systemForm.machine.name
+      fullSystemData.global_prefix = this.systemForm.globalPrefix
+      fullSystemData.release_id = this.systemForm.release
+      fullSystemData.url = this.systemForm.url
+      fullSystemData.description = this.systemForm.description
+      fullSystemData.owners = this.systemForm.owners
+      fullSystemData.zones = zonesData
+
+      console.log(fullSystemData)
     }
   },
 
