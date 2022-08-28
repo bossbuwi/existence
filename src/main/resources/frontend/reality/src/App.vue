@@ -8,7 +8,7 @@
     <v-main>
       <router-view></router-view>
       <v-dialog
-        v-model="dialog"
+        v-model="errorDialog"
         width="500"
         persistent
       >
@@ -18,7 +18,7 @@
           </v-card-title>
           <v-card-text>
             <v-list flat>
-              <v-list-item two-line>
+              <v-list-item three-line>
                 <v-list-item-content>
                   <v-list-item-title>Message</v-list-item-title>
                   <v-list-item-subtitle>{{ error.message }}</v-list-item-subtitle>
@@ -70,7 +70,13 @@ export default Vue.extend({
       dialog: 'getErrorStatus',
       error: 'getError',
       user: 'getUserState'
-    })
+    }),
+    errorDialog: {
+      get () {
+        if (this.dialog) return true
+        return false
+      }
+    }
   },
 
   methods: {

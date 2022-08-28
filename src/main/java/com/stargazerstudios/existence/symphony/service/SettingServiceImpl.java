@@ -113,8 +113,8 @@ public class SettingServiceImpl implements SettingService{
     @Override
     public SettingDTO modifySetting(SettingWrapper wSetting)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, SystemErrorException {
-        boolean isAdminOrHigher = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
-        if (!isAdminOrHigher) throw new UserUnauthorizedException();
+        boolean isSuperuserOrHigher = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        if (!isSuperuserOrHigher) throw new UserUnauthorizedException();
         String username = authorityUtil.getAuthUsername();
 
         String key = wSetting.getKey();
@@ -123,13 +123,6 @@ public class SettingServiceImpl implements SettingService{
         if (settingData.isEmpty()) throw new EntityNotFoundException("setting", "key", key);
 
         Setting setting = settingData.get();
-        String type = setting.getType();
-
-        if (type.equalsIgnoreCase(EnumSettingType.SWITCHABLE_FEATURE.getValue())) {
-            boolean isSuperuserOrHigher = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
-            if (!isSuperuserOrHigher) throw new UserUnauthorizedException();
-        }
-
         String validValuesStr = setting.getValidValues();
         int index = validValuesStr.indexOf(",");
         if (index == -1) {

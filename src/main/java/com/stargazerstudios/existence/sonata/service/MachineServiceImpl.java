@@ -71,7 +71,7 @@ public class MachineServiceImpl implements MachineService {
 
     @Override
     public MachineDTO createMachine(MachineWrapper wMachine)
-            throws UnknownInputException, DatabaseErrorException {
+            throws DatabaseErrorException {
         String name = stringUtil.trimToUpper(wMachine.getName());
 
         Machine machine = new Machine();

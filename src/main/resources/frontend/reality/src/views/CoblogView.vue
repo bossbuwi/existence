@@ -36,6 +36,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import Vue from 'vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import CoblogList from '@/components/coblog/CoblogList.vue'

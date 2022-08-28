@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.ArrayList;
 
 @Getter @Setter @NoArgsConstructor
 public class MachineDTO {
@@ -16,7 +16,7 @@ public class MachineDTO {
     private Timestamp creation_date;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Timestamp last_changed_date;
+    private int system_count;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<String> systems;
-
+    private ArrayList<String> systems;
 }

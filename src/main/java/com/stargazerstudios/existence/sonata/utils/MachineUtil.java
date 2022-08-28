@@ -18,12 +18,15 @@ public class MachineUtil {
         machineDTO.setLast_changed_date(machine.getDateChanged());
 
         Set<System> systems = machine.getSystems();
-        List<String> systemsList = new ArrayList<>();
+        ArrayList<String> systemsList = new ArrayList<>();
         if (systems != null && systems.size() > 0) {
             for (System system : systems) {
                 systemsList.add(system.getGlobalPrefix());
             }
         }
+
+        if (systems != null && systems.size() > 0) machineDTO.setSystem_count(systems.size());
+
         machineDTO.setSystems(systemsList);
         return machineDTO;
     }

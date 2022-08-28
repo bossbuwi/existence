@@ -10,7 +10,8 @@ import com.stargazerstudios.existence.sonata.wrapper.SystemWrapper;
 import java.util.List;
 
 public interface SystemService {
-    List<SystemDTO> getAllSystems();
+    List<SystemDTO> getSystems();
+    List<SystemDTO> getFullSystems();
     Long countSystems();
     SystemDTO createSystem(SystemWrapper wSystem)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException;

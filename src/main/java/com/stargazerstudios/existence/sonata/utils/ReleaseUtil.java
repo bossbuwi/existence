@@ -8,6 +8,13 @@ import org.springframework.stereotype.Service;
 public class ReleaseUtil {
 
     public ReleaseDTO wrapRelease(Release release) {
-        return null;
+        ReleaseDTO releaseDTO = new ReleaseDTO();
+        releaseDTO.setId(release.getId());
+        releaseDTO.setName(release.getName());
+
+        if (release.getSystems() != null) releaseDTO.setSystem_count(release.getSystems().size());
+        else releaseDTO.setSystem_count(0);
+
+        return releaseDTO;
     }
 }

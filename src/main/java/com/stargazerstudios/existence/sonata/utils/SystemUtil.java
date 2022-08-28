@@ -1,6 +1,7 @@
 package com.stargazerstudios.existence.sonata.utils;
 
 import com.stargazerstudios.existence.sonata.dto.SystemDTO;
+import com.stargazerstudios.existence.sonata.dto.ZoneDTO;
 import com.stargazerstudios.existence.sonata.entity.Machine;
 import com.stargazerstudios.existence.sonata.entity.System;
 import com.stargazerstudios.existence.sonata.entity.Zone;
@@ -15,6 +16,35 @@ public class SystemUtil {
 
     @Autowired
     private MachineUtil machineUtil;
+
+    @Autowired
+    private ZoneUtil zoneUtil;
+
+    public SystemDTO wrapFullSystem(System system) {
+        SystemDTO systemDTO = new SystemDTO();
+        systemDTO.setId(system.getId());
+        systemDTO.setGlobal_prefix(system.getGlobalPrefix());
+        systemDTO.setRelease(system.getRelease().getName());
+        systemDTO.setDescription(system.getDescription());
+        systemDTO.setUrl(system.getUrl());
+        systemDTO.setOwners(system.getOwners());
+        systemDTO.setCreation_date(system.getDateCreated());
+        systemDTO.setLast_changed_date(system.getDateChanged());
+
+        Machine machine = system.getMachine();
+        systemDTO.setMachine(machine.getName());
+
+        Set<Zone> zoneSet = system.getZones();
+
+        ArrayList<ZoneDTO> zones = new ArrayList<>();
+        if (zoneSet != null && !zoneSet.isEmpty()) {
+            for (Zone zone: zoneSet) {
+                zones.add(zoneUtil.wrapZone(zone));
+            }
+        }
+        systemDTO.setZones(zones);
+        return systemDTO;
+    }
 
     public SystemDTO wrapSystem(System system) {
         SystemDTO systemDTO = new SystemDTO();
@@ -31,14 +61,14 @@ public class SystemUtil {
         systemDTO.setMachine(machine.getName());
 
         Set<Zone> zoneSet = system.getZones();
-        ArrayList<String> zones = new ArrayList<>();
 
+        ArrayList<String> zoneNames = new ArrayList<>();
         if (zoneSet != null && !zoneSet.isEmpty()) {
             for (Zone zone: zoneSet) {
-                zones.add(zone.getZonalPrefix());
+                zoneNames.add(zone.getZonalPrefix());
             }
         }
-        systemDTO.setZones(zones);
+        systemDTO.setZone_names(zoneNames);
         return systemDTO;
     }
 }

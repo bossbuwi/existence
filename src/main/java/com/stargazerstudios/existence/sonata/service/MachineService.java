@@ -14,7 +14,7 @@ public interface MachineService {
     MachineDTO getMachineById(long id);
     MachineDTO getMachineByName(String name);
     MachineDTO createMachine(MachineWrapper machine)
-            throws UnknownInputException, DatabaseErrorException;
+            throws DatabaseErrorException;
     MachineDTO updateMachine(MachineWrapper machine)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException;
     MachineDTO deleteMachine(String name);

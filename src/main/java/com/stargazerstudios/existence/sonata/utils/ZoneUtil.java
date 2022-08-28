@@ -4,14 +4,10 @@ import com.stargazerstudios.existence.sonata.dto.ZoneDTO;
 import com.stargazerstudios.existence.sonata.entity.Machine;
 import com.stargazerstudios.existence.sonata.entity.System;
 import com.stargazerstudios.existence.sonata.entity.Zone;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ZoneUtil {
-
-    @Autowired
-    private SystemUtil systemUtil;
 
     public ZoneDTO wrapZone(Zone zone) {
         ZoneDTO zoneDTO = new ZoneDTO();

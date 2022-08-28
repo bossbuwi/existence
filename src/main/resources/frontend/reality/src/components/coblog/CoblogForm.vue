@@ -46,6 +46,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable */
 import Vue from 'vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import CoblogStepper from '@/components/coblog/CoblogStepper.vue'

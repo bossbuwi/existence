@@ -62,6 +62,7 @@
                 >
                   <v-text-field
                     v-model="systemForm.globalPrefix"
+                    @input="systemForm.globalPrefix = systemForm.globalPrefix.toUpperCase()"
                     label="Global Prefix*"
                     type="text"
                     :error-messages="errors"
@@ -78,12 +79,21 @@
                   name="Release"
                   rules="required"
                 >
-                  <v-text-field
+                  <!-- <v-text-field
                     v-model="systemForm.release"
                     label="Release*"
                     type="text"
                     :error-messages="errors"
-                  ></v-text-field>
+                  ></v-text-field> -->
+                  <v-select
+                    v-model="systemForm.release"
+                    :items="releases"
+                    :loading="releaseLoading"
+                    :disabled="releaseDisabled"
+                    label="Release*"
+                    :error-messages="errors"
+                    required
+                  ></v-select>
                 </validation-provider>
               </v-col>
               <v-col
@@ -145,6 +155,7 @@
                 fab
                 small
                 color="primary"
+                v-if="!formDisabled"
                 @click="addZone"
               >
                 <v-icon>
@@ -196,18 +207,21 @@
                   ></v-text-field>
                 </validation-provider>
               </v-col>
-              <!-- <v-btn
+              <v-btn
                 small
                 color="primary"
+                v-if="!formDisabled"
                 @click="removeZone(i)"
               >
                 <v-icon>
                   mdi-delete-outline
                 </v-icon>
-              </v-btn> -->
+              </v-btn>
             </v-row>
           </v-form>
-          <small v-if="!formDisabled">*indicates required field</small>
+          <v-row class="my-4">
+            <small v-if="!formDisabled">*indicates required field</small>
+          </v-row>
           <v-row
             class="my-4"
           >
@@ -239,8 +253,7 @@ export default Vue.extend({
   name: 'SystemForm',
 
   components: {
-    ValidationObserver,
-    ValidationProvider
+    ValidationObserver, ValidationProvider
   },
 
   props: [
@@ -272,7 +285,9 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters({
-      machineList: 'getMachineList'
+      machineList: 'getMachineList',
+      releaseList: 'getReleasesList',
+      errorStatus: 'getErrorStatus'
     }),
     submitEnabled: {
       get () {
@@ -280,8 +295,8 @@ export default Vue.extend({
         if (this.mode === 'create') return true
         if (this.mode === 'update') return true
         if (this.mode === 'delete') return true
-        // return false
-        return true
+        return false
+        // return true
       }
     },
     formDisabled: {
@@ -298,7 +313,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'GetMachinesList'
+      'GetMachinesList', 'GetReleasesList', 'PostFullSystem'
     ]),
 
     async getMachineList () {
@@ -307,8 +322,14 @@ export default Vue.extend({
       this.machineLoading = false
     },
 
+    async getReleasesList () {
+      this.releaseLoading = true
+      await this.GetReleasesList()
+      this.releaseLoading = false
+    },
+
     close () {
-      this.$emit('close-popup')
+      this.$emit('close-form')
     },
 
     addZone () {
@@ -319,11 +340,12 @@ export default Vue.extend({
     },
 
     removeZone (parm) {
-      console.log(parm)
+      this.zoneFields.splice(parm, 1)
     },
 
-    submit () {
-      console.log('submit clicked')
+    async submit () {
+      this.formLoading()
+
       const zonesData = []
       this.zoneFields.forEach(element => {
         const zone = {
@@ -338,21 +360,61 @@ export default Vue.extend({
       const fullSystemData = {}
       fullSystemData.machine = this.systemForm.machine.name
       fullSystemData.global_prefix = this.systemForm.globalPrefix
-      fullSystemData.release_id = this.systemForm.release
+      fullSystemData.release_id = this.systemForm.release.id
       fullSystemData.url = this.systemForm.url
       fullSystemData.description = this.systemForm.description
       fullSystemData.owners = this.systemForm.owners
       fullSystemData.zones = zonesData
 
-      console.log(fullSystemData)
+      switch (this.mode) {
+        case 'create':
+          await this.PostFullSystem(fullSystemData)
+          this.formSubmitted()
+          break
+        case 'update':
+          // await put model
+          this.formSubmitted()
+          break
+        case 'delete':
+          this.formDisabled = false
+          // await delete model
+          this.formSubmitted()
+          break
+        default:
+          break
+      }
+    },
+
+    formLoading () {
+      this.submitLoading = true
+    },
+
+    formSubmitted () {
+      if (!this.errorStatus) {
+        this.formComplete()
+      } else {
+        this.formError()
+      }
+    },
+
+    formComplete () {
+      this.submitLoading = false
+      this.$emit('form-submit', 'success')
+    },
+
+    formError () {
+      this.submitLoading = false
+      this.$emit('form-submit', 'error')
     }
   },
 
   async mounted () {
     await Promise.all([
-      this.getMachineList()
+      this.getMachineList(),
+      this.getReleasesList()
     ])
 
+    this.machineLoading = true
     const machineArr = this.machineList
     machineArr.forEach(element => {
       const item = {
@@ -361,6 +423,18 @@ export default Vue.extend({
       }
       this.machines.push(item)
     })
+    this.machineLoading = false
+
+    this.releaseLoading = true
+    const releaseArr = this.releaseList
+    releaseArr.forEach(element => {
+      const item = {
+        text: element.name,
+        value: element
+      }
+      this.releases.push(item)
+    })
+    this.releaseLoading = false
   }
 })
 </script>

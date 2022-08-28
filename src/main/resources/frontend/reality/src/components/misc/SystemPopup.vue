@@ -34,7 +34,7 @@
       <v-list-item two-line>
         <v-list-item-content>
           <v-list-item-title>Zones</v-list-item-title>
-          <v-list-item-subtitle>{{ systemItem.zones }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ zones }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
@@ -64,6 +64,7 @@
     </v-card-text>
   </v-card>
 </template>
+
 <script lang="ts">
 import Vue from 'vue'
 
@@ -77,8 +78,15 @@ export default Vue.extend({
   ],
 
   data () {
-    return {
+    return {}
+  },
 
+  computed: {
+    zones: {
+      get () {
+        const zonesArr = this.systemItem.zone_names as string[]
+        return zonesArr.join(', ')
+      }
     }
   },
 

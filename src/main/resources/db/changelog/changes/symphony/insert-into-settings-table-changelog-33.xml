@@ -27,7 +27,7 @@
             <column name="value" value="N"/>
             <column name="length" value="1"/>
             <column name="type" value="SW"/>
-            <column name="description" value="Controls the availability of the search feature."/>
+            <column name="description" value="Controls the availability of the constellation Sonata's search feature."/>
             <column name="default_value" value="N"/>
             <column name="valid_values" value="Y,N"/>
             <column name="added_by" value="v1.0-cassiopeia"/>

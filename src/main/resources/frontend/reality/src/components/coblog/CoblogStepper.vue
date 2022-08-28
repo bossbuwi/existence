@@ -88,6 +88,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable */
 import Vue from 'vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import CoblogStepOne from '@/components/coblog/CoblogStepOne.vue'
