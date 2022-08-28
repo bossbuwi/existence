@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Getter @Setter @NoArgsConstructor
 public class SystemDTO {
@@ -18,7 +19,9 @@ public class SystemDTO {
     private String owners;
     private String machine;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private ArrayList<String> zones;
+    private ArrayList<ZoneDTO> zones;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private ArrayList<String> zone_names;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Timestamp creation_date;

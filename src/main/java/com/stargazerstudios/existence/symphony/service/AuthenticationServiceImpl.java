@@ -122,7 +122,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                     throw new UserUnauthorizedException();
                 }
             }
-        } else if (username.equals(EnumAuthorization.DEFAULT_USER.getValue())){
+        } else if (username.equals(EnumAuthorization.DEFAULT_OWNER.getValue())){
             throw new FatalErrorException();
         } else {
             boolean isAuth = isAuthViaLDAP(username,password);

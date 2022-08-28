@@ -6,6 +6,7 @@ import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionE
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.input.InvalidCollectionException;
 import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
@@ -38,7 +39,6 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class SystemServiceImpl implements SystemService {
 
-    // TODO: Incorporate the new Release entity
     @Autowired
     private SystemDAO systemDAO;
 
@@ -61,7 +61,7 @@ public class SystemServiceImpl implements SystemService {
     private AuthorityUtil authorityUtil;
 
     @Override
-    public List<SystemDTO> getAllSystems() {
+    public List<SystemDTO> getSystems() {
         List<System> systems = systemDAO.findAll();
         List<SystemDTO> systemList = new ArrayList<>();
 
@@ -75,6 +75,11 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
+    public List<SystemDTO> getFullSystems() {
+        return null;
+    }
+
+    @Override
     public Long countSystems() {
         return systemDAO.count();
     }
@@ -82,7 +87,7 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public SystemDTO createSystem(SystemWrapper wSystem)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
-        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
         String globalPrefix = stringUtil.trimToUpper(wSystem.getGlobal_prefix());
@@ -122,13 +127,13 @@ public class SystemServiceImpl implements SystemService {
             throw new EntitySaveErrorException("system");
         }
 
-        return systemUtil.wrapSystem(system);
+        return systemUtil.wrapFullSystem(system);
     }
 
     @Override
     public SystemDTO updateSystem(SystemWrapper wSystem)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
-        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
         long id = wSystem.getId();
@@ -170,13 +175,13 @@ public class SystemServiceImpl implements SystemService {
             throw new EntitySaveErrorException("system");
         }
 
-        return systemUtil.wrapSystem(system);
+        return systemUtil.wrapFullSystem(system);
     }
 
     @Override
     public SystemDTO deleteSystem(long id)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
-        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
         Optional<System> systemData = systemDAO.findById(id);
@@ -185,25 +190,29 @@ public class SystemServiceImpl implements SystemService {
 
         try {
             systemDAO.delete(system);
-        } catch (Exception e) {
+            systemDAO.flush();
+        } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             throw new EntityDeletionErrorException("system");
         }
 
-        return systemUtil.wrapSystem(system);
+        return systemUtil.wrapFullSystem(system);
     }
 
     @Override
     public SystemDTO createFullSystem(SystemWrapper wSystem)
             throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
-        SystemDTO systemDTO = createSystem(wSystem);
-        ArrayList<String> zones = new ArrayList<>();
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
+        if (!isAuthorized) throw new UserUnauthorizedException();
 
+        if (wSystem.getZones().length == 0) throw new InvalidCollectionException("zones");
+        SystemDTO systemDTO = createSystem(wSystem);
+        ArrayList<ZoneDTO> zones = new ArrayList<>();
         for (ZoneWrapper zoneItem: wSystem.getZones()) {
             zoneItem.setSystem(wSystem.getGlobal_prefix());
             zoneItem.setMachine(wSystem.getMachine());
             ZoneDTO zoneDTO = zoneService.createZone(zoneItem);
-            zones.add(zoneDTO.getZonal_prefix());
+            zones.add(zoneDTO);
         }
 
         systemDTO.setZones(zones);

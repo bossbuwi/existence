@@ -6,4 +6,5 @@ import lombok.*;
 public class ReleaseDTO {
     private long id;
     private String name;
+    private int system_count;
 }

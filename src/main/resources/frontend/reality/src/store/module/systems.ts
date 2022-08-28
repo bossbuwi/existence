@@ -52,7 +52,22 @@ const actions = {
     }).catch((error) => {
       console.log(error.response.data)
     })
-  }
+  },
+
+  async PostFullSystem ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
+    const token = rootGetters.getToken
+    await axios.post('sonata/systems/system/full', form, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    }).then((result) => {
+
+    }).catch((error) => {
+      console.log(error.response.data)
+      commit('clearError')
+      commit('setError', error.response.data)
+    })
+  },
 }
 
 const mutations = {

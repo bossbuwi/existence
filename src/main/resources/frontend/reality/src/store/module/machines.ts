@@ -42,6 +42,21 @@ const actions = {
         commit('addMachineToList', element)
       })
     })
+  },
+
+  async PostMachine ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
+    const token = rootGetters.getToken
+    await axios.post('sonata/machines/machine', form, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    }).then((result) => {
+      console.log(result.data)
+    }).catch((error) => {
+      console.log(error.response.data)
+      commit('clearError')
+      commit('setError', error.response.data)
+    })
   }
 }
 

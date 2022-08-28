@@ -39,7 +39,7 @@ public class MachineController {
     @PostMapping("/machines/machine")
     public ResponseEntity<MachineDTO> createMachine(@Validated(PostValidation.class)
                                                         @RequestBody MachineWrapper wMachine)
-            throws DatabaseErrorException, UnknownInputException {
+            throws DatabaseErrorException {
         return new ResponseEntity<>(machineService.createMachine(wMachine), HttpStatus.OK);
     }
 

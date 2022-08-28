@@ -1,10 +1,11 @@
+/* eslint-disable */
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import VueMeta from 'vue-meta'
 import store from '../store/index'
 
 import DashboardView from '../views/DashboardView.vue'
-import SystemsView from '../views/SystemsView.vue'
+import MiscView from '../views/MiscView.vue'
 import CalendarView from '../views/CalendarView.vue'
 import EventsView from '../views/EventsView.vue'
 import CoblogView from '../views/CoblogView.vue'
@@ -34,9 +35,9 @@ const routes: Array<RouteConfig> = [
     component: DashboardView
   },
   {
-    path: '/systems',
-    name: 'system',
-    component: SystemsView
+    path: '/misc',
+    name: 'misc',
+    component: MiscView
   },
   {
     path: '/calendar',

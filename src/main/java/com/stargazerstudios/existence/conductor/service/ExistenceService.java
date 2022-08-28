@@ -54,7 +54,7 @@ public class ExistenceService {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
 
-        if (!username.equals(EnumAuthorization.DEFAULT_USER.getValue())) throw new UserUnauthorizedException();
+        if (!username.equals(EnumAuthorization.DEFAULT_OWNER.getValue())) throw new UserUnauthorizedException();
         if (username.equals(EnumUtilOutput.EMPTY.getValue())) throw new UserUnauthorizedException();
         if (password.equals(EnumUtilOutput.EMPTY.getValue())) throw new UserUnauthorizedException();
 
@@ -67,7 +67,7 @@ public class ExistenceService {
         if (adminData.isEmpty()) throw new FatalErrorException();
 
         User admin = adminData.get();
-        String hashPassword = passwordEncoder.encode(EnumAuthorization.DEFAULT_USER.getValue());
+        String hashPassword = passwordEncoder.encode(EnumAuthorization.DEFAULT_OWNER.getValue());
         admin.setPassword(hashPassword);
 
         try {
@@ -85,7 +85,7 @@ public class ExistenceService {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
 
-        if (!username.equals(EnumAuthorization.DEFAULT_USER.getValue())) throw new UserUnauthorizedException();
+        if (!username.equals(EnumAuthorization.DEFAULT_OWNER.getValue())) throw new UserUnauthorizedException();
         if (username.equals(EnumUtilOutput.EMPTY.getValue())) throw new UserUnauthorizedException();
         if (password.equals(EnumUtilOutput.EMPTY.getValue())) throw new UserUnauthorizedException();
 

@@ -58,7 +58,10 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {}
+    "rules": {
+      "camelcase": 0,
+      "no-unused-expressions": 0
+    }
   },
   "browserslist": [
     "> 1%",

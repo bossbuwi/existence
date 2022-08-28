@@ -120,10 +120,20 @@ export default Vue.extend({
       await this.GetSwitchableList()
     },
 
-    recreateTabs () {
-      this.recreateBackendList += 1
-      this.recreateFrontendList += 1
-      this.recreateSwitchableList += 1
+    recreateTabs (param: number) {
+      switch (param) {
+        case 0:
+          this.recreateBackendList += 1
+          break
+        case 1:
+          this.recreateFrontendList += 1
+          break
+        case 2:
+          this.recreateSwitchableList += 1
+          break
+        default:
+          break
+      }
     },
 
     // eslint-disable-next-line

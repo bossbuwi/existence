@@ -1,11 +1,15 @@
 package com.stargazerstudios.existence.sonata.service;
 
+import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
+import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
+import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.sonata.constants.ConsSonataConstraint;
 import com.stargazerstudios.existence.sonata.dto.ZoneDTO;
@@ -45,6 +49,9 @@ public class ZoneServiceImpl implements ZoneService{
     @Autowired
     private StringUtil stringUtil;
 
+    @Autowired
+    private AuthorityUtil authorityUtil;
+
     @Override
     public List<ZoneDTO> getAllZones() {
         List<ZoneDTO> zoneList = new ArrayList<>();
@@ -61,7 +68,10 @@ public class ZoneServiceImpl implements ZoneService{
 
     @Override
     public ZoneDTO createZone(ZoneWrapper wZone)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+            throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException {
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
+        if (!isAuthorized) throw new UserUnauthorizedException();
+
         String zonalPrefix = stringUtil.trimToUpper(wZone.getZonal_prefix());
         String zoneName = stringUtil.trimToUpper(wZone.getZone_name());
         String systemName = stringUtil.trimToUpper(wZone.getSystem());

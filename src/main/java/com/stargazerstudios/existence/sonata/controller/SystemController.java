@@ -30,7 +30,7 @@ public class SystemController {
     /* Unguarded Endpoints */
     @GetMapping("/con/systems/index")
     public ResponseEntity<List<SystemDTO>> getAllSystems() {
-        return new ResponseEntity<>(systemService.getAllSystems(), HttpStatus.OK);
+        return new ResponseEntity<>(systemService.getSystems(), HttpStatus.OK);
     }
 
     @GetMapping("/con/systems/count")
