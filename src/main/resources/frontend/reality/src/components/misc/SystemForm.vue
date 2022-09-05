@@ -79,12 +79,6 @@
                   name="Release"
                   rules="required"
                 >
-                  <!-- <v-text-field
-                    v-model="systemForm.release"
-                    label="Release*"
-                    type="text"
-                    :error-messages="errors"
-                  ></v-text-field> -->
                   <v-select
                     v-model="systemForm.release"
                     :items="releases"
@@ -270,6 +264,7 @@ export default Vue.extend({
       releaseLoading: false,
       releaseDisabled: false,
       systemForm: {
+        id: 0,
         machine: '',
         globalPrefix: '',
         release: '',
@@ -287,7 +282,8 @@ export default Vue.extend({
     ...mapGetters({
       machineList: 'getMachineList',
       releaseList: 'getReleasesList',
-      errorStatus: 'getErrorStatus'
+      errorStatus: 'getErrorStatus',
+      system: 'getSystem'
     }),
     submitEnabled: {
       get () {
@@ -296,7 +292,6 @@ export default Vue.extend({
         if (this.mode === 'update') return true
         if (this.mode === 'delete') return true
         return false
-        // return true
       }
     },
     formDisabled: {
@@ -313,7 +308,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'GetMachinesList', 'GetReleasesList', 'PostFullSystem'
+      'GetMachinesList', 'GetReleasesList', 'PostFullSystem', 'DeleteSystem'
     ]),
 
     async getMachineList () {
@@ -330,6 +325,29 @@ export default Vue.extend({
 
     close () {
       this.$emit('close-form')
+    },
+
+    mapObject () {
+      const machine = this.machines.find(x => x.text === this.system.machine)
+      this.systemForm.machine = machine
+
+      const release = this.releases.find(x => x.text === this.system.release)
+      this.systemForm.release = release
+
+      this.systemForm.globalPrefix = this.system.global_prefix
+      this.systemForm.url = this.system.url
+      this.systemForm.description = this.system.description
+      this.systemForm.owners = this.system.owners
+
+      const zoneNames = this.system.zone_names
+      const zonePrefixes = this.system.zone_prefixes
+
+      for (let i = 0; i < zonePrefixes.length; i++) {
+        this.zoneFields.push({
+          prefix: zonePrefixes[i],
+          name: zoneNames[i]
+        })
+      }
     },
 
     addZone () {
@@ -358,6 +376,16 @@ export default Vue.extend({
       })
 
       const fullSystemData = {}
+
+      if (this.mode !== 'create') {
+        fullSystemData.machine = this.system.machine
+        fullSystemData.global_prefix = this.system.global_prefix
+        // fullSystemData.release_id = this.systemForm.release.id
+        fullSystemData.url = this.system.url
+        fullSystemData.description = this.system.description
+        fullSystemData.owners = this.system.owners
+      }
+
       fullSystemData.machine = this.systemForm.machine.name
       fullSystemData.global_prefix = this.systemForm.globalPrefix
       fullSystemData.release_id = this.systemForm.release.id
@@ -376,8 +404,7 @@ export default Vue.extend({
           this.formSubmitted()
           break
         case 'delete':
-          this.formDisabled = false
-          // await delete model
+          await this.DeleteSystem(this.system.id)
           this.formSubmitted()
           break
         default:
@@ -435,6 +462,10 @@ export default Vue.extend({
       this.releases.push(item)
     })
     this.releaseLoading = false
+
+    if (this.mode === 'enquire') this.mapObject()
+    if (this.mode === 'update') this.mapObject()
+    if (this.mode === 'delete') this.mapObject()
   }
 })
 </script>

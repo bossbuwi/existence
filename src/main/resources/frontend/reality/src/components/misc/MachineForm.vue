@@ -33,6 +33,27 @@
                 cols="12"
                 sm="6"
                 md="4"
+                v-if="mode === 'update' || machineForm.newName !== ''"
+              >
+                <validation-provider
+                  v-slot="{ errors }"
+                  name="Name"
+                  rules="required"
+                >
+                  <v-text-field
+                    v-model="machineForm.newName"
+                    @input="machineForm.newName = machineForm.newName.toUpperCase()"
+                    label="New Name*"
+                    type="text"
+                    :error-messages="errors"
+                  ></v-text-field>
+                </validation-provider>
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+                v-if="mode !== 'update' && machineForm.newName === ''"
               >
                 <validation-provider
                   v-slot="{ errors }"
@@ -95,15 +116,19 @@ export default Vue.extend({
     return {
       submitLoading: false,
       machineForm: {
-        name: ''
+        id: 0,
+        name: '',
+        newName: ''
       }
     }
   },
 
   computed: {
     ...mapGetters({
-      errorStatus: 'getErrorStatus'
+      errorStatus: 'getErrorStatus',
+      machine: 'getMachine'
     }),
+
     submitEnabled: {
       get () {
         if (this.mode === 'complete') return false
@@ -111,7 +136,6 @@ export default Vue.extend({
         if (this.mode === 'update') return true
         if (this.mode === 'delete') return true
         return false
-        // return true
       }
     },
     formDisabled: {
@@ -128,17 +152,28 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'PostMachine'
+      'PostMachine', 'PutMachine', 'DeleteMachine'
     ]),
 
     close () {
       this.$emit('close-form')
     },
 
+    mapObject () {
+      this.machineForm.name = this.machine.name
+      this.machineForm.newName = this.machine.name
+    },
+
     async submit () {
       this.formLoading()
 
       const machineData = {}
+      if (this.mode !== 'create') {
+        machineData.id = this.machine.id
+        machineData.name = this.machine.name
+        machineData.new_name = this.machineForm.newName
+      }
+
       machineData.name = this.machineForm.name
 
       switch (this.mode) {
@@ -147,12 +182,11 @@ export default Vue.extend({
           this.formSubmitted()
           break
         case 'update':
-          // await put model
+          await this.PutMachine(machineData)
           this.formSubmitted()
           break
         case 'delete':
-          this.formDisabled = false
-          // await delete model
+          await this.DeleteMachine(machineData.id)
           this.formSubmitted()
           break
         default:
@@ -181,6 +215,12 @@ export default Vue.extend({
       this.submitLoading = false
       this.$emit('form-submit', 'error')
     }
+  },
+
+  mounted () {
+    if (this.mode === 'enquire') this.mapObject()
+    if (this.mode === 'update') this.mapObject()
+    if (this.mode === 'delete') this.mapObject()
   }
 })
 </script>

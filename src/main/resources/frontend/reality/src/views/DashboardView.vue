@@ -47,6 +47,7 @@
           transition="scale-transition"
         >
         </v-skeleton-loader>
+        <!-- <router-link to="/misc"> -->
         <custom-card-basic
           v-if="systemsLoaded"
           @refresh-data="getSystemCount"
@@ -54,8 +55,11 @@
           :cardName="systems.name"
           :cardContent="systemCount"
           :loading="systemReload"
+          link="misc"
+          tabNumber=1
         >
         </custom-card-basic>
+        <!-- </router-link> -->
       </v-col>
 
       <v-col
@@ -75,6 +79,8 @@
           :cardName="events.name"
           :cardContent="eventCount"
           :loading="eventReload"
+          link="events"
+          tabNumber=0
         >
         </custom-card-basic>
       </v-col>
@@ -96,6 +102,8 @@
           :cardName="users.name"
           :cardContent="userCount"
           :loading="userReload"
+          link="misc"
+          tabNumber=5
         >
         </custom-card-basic>
       </v-col>

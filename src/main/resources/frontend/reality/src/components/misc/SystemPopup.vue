@@ -84,7 +84,7 @@ export default Vue.extend({
   computed: {
     zones: {
       get () {
-        const zonesArr = this.systemItem.zone_names as string[]
+        const zonesArr = this.systemItem.zone_prefixes as string[]
         return zonesArr.join(', ')
       }
     }

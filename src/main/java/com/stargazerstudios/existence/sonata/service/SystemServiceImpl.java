@@ -2,6 +2,7 @@ package com.stargazerstudios.existence.sonata.service;
 
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
+import com.stargazerstudios.existence.conductor.erratum.database.DependentEntityException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
@@ -19,10 +20,12 @@ import com.stargazerstudios.existence.sonata.dto.ZoneDTO;
 import com.stargazerstudios.existence.sonata.entity.Machine;
 import com.stargazerstudios.existence.sonata.entity.Release;
 import com.stargazerstudios.existence.sonata.entity.System;
+import com.stargazerstudios.existence.sonata.entity.Zone;
 import com.stargazerstudios.existence.sonata.repository.MachineDAO;
 import com.stargazerstudios.existence.sonata.repository.ReleaseDAO;
 import com.stargazerstudios.existence.sonata.repository.SystemDAO;
 import com.stargazerstudios.existence.sonata.utils.SystemUtil;
+import com.stargazerstudios.existence.sonata.utils.ZoneUtil;
 import com.stargazerstudios.existence.sonata.wrapper.SystemWrapper;
 import com.stargazerstudios.existence.sonata.wrapper.ZoneWrapper;
 import org.hibernate.exception.ConstraintViolationException;
@@ -55,6 +58,9 @@ public class SystemServiceImpl implements SystemService {
     private SystemUtil systemUtil;
 
     @Autowired
+    private ZoneUtil zoneUtil;
+
+    @Autowired
     private StringUtil stringUtil;
 
     @Autowired
@@ -71,6 +77,7 @@ public class SystemServiceImpl implements SystemService {
                 systemList.add(systemDTO);
             }
         }
+
         return systemList;
     }
 
@@ -193,6 +200,13 @@ public class SystemServiceImpl implements SystemService {
             systemDAO.flush();
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
+            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
+            String constraint = ex.getConstraintName();
+
+            if (constraint.equals(ConsSonataConstraint.EVENT_DEPENDS_ON_SYSTEM)) {
+                throw new DependentEntityException("system", system.getGlobalPrefix());
+            }
+
             throw new EntityDeletionErrorException("system");
         }
 
@@ -218,4 +232,32 @@ public class SystemServiceImpl implements SystemService {
         systemDTO.setZones(zones);
         return systemDTO;
     }
+
+    @Override
+    public SystemDTO updateFullSystem(SystemWrapper wSystem)
+            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
+        if (!isAuthorized) throw new UserUnauthorizedException();
+
+        if (wSystem.getZones().length == 0) throw new InvalidCollectionException("zones");
+
+        SystemDTO systemDTO = updateSystem(wSystem);
+
+        Optional<System> systemData = systemDAO.findById(wSystem.getId());
+        System updatedSystem = systemData.get();
+
+
+
+
+//        for (ZoneWrapper zoneWrapper: wSystem.getZones()) {
+//            ZoneDTO zoneDTO = zoneService.updateZone(zoneWrapper);
+//            zones.add(zoneDTO);
+//        }
+//
+//        systemDTO.setZones(zones);
+
+        return systemDTO;
+    }
+
+
 }

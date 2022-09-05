@@ -21,9 +21,6 @@ public class System {
     @Column(name = "global_prefix")
     private String globalPrefix;
 
-//    @Column(name = "release")
-//    private String release;
-
     @Column(name = "description")
     private String description;
 
@@ -45,7 +42,7 @@ public class System {
     @JoinColumn(name = "machine_id")
     private Machine machine;
 
-    @OneToMany(mappedBy = "system")
+    @OneToMany(mappedBy = "system", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Zone> zones;
 
     @OneToMany(mappedBy = "system")

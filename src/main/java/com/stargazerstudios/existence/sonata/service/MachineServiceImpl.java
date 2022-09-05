@@ -1,12 +1,19 @@
 package com.stargazerstudios.existence.sonata.service;
 
+import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
+import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
+import com.stargazerstudios.existence.conductor.erratum.database.DependentEntityException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
+import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
 import com.stargazerstudios.existence.conductor.erratum.input.UnexpectedInputException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
+import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.sonata.constants.ConsSonataConstraint;
 import com.stargazerstudios.existence.sonata.dto.MachineDTO;
@@ -40,6 +47,9 @@ public class MachineServiceImpl implements MachineService {
 
     @Autowired
     private StringUtil stringUtil;
+
+    @Autowired
+    private AuthorityUtil authorityUtil;
 
     @Override
     public List<MachineDTO> getAllMachines() {
@@ -78,7 +88,7 @@ public class MachineServiceImpl implements MachineService {
         machine.setName(name);
 
         try {
-            machineDAO.save(machine);
+            machineDAO.saveAndFlush(machine);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
@@ -108,7 +118,7 @@ public class MachineServiceImpl implements MachineService {
         machine.setName(newName);
 
         try {
-            machineDAO.save(machine);
+            machineDAO.saveAndFlush(machine);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
@@ -125,7 +135,40 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
-    public MachineDTO deleteMachine(String name) {
-        return null;
+    public MachineDTO deleteMachine(long id)
+            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
+        if (!isAuthorized) throw new UserUnauthorizedException();
+
+        if (id <= 0) throw new InvalidInputException("id");
+
+        Optional<Machine> machineData = machineDAO.findById(id);
+        if (machineData.isEmpty()) throw new EntityNotFoundException("machine", "id", Long.toString(id));
+
+        Machine machine = machineData.get();
+
+        Machine bMachine = new Machine();
+        bMachine.setId(machine.getId());
+        bMachine.setName(machine.getName());
+        bMachine.setSystems(machine.getSystems());
+        bMachine.setDateAdded(machine.getDateAdded());
+        bMachine.setDateChanged(machine.getDateChanged());
+
+        try {
+            machineDAO.delete(machine);
+            machineDAO.flush();
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
+            String constraint = ex.getConstraintName();
+
+            if (constraint.equals(ConsSonataConstraint.SYSTEM_DEPENDS_ON_MACHINE)) {
+                throw new DependentEntityException("machine", machine.getName());
+            }
+
+            throw new EntityDeletionErrorException("machine");
+        }
+
+        return machineUtil.wrapMachine(bMachine);
     }
 }

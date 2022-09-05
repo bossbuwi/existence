@@ -6,6 +6,7 @@ import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorExceptio
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.validation.groups.PostFullValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
+import com.stargazerstudios.existence.conductor.validation.groups.PutFullValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import com.stargazerstudios.existence.sonata.dto.SystemDTO;
 import com.stargazerstudios.existence.sonata.service.SystemServiceImpl;
@@ -56,13 +57,20 @@ public class SystemController {
     @DeleteMapping("/systems/system/{id}")
     public ResponseEntity<SystemDTO> deleteSystem(@NotBlank @PathVariable("id") long id)
             throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
-        return new ResponseEntity<SystemDTO>(systemService.deleteSystem(id), HttpStatus.OK);
+        return new ResponseEntity<>(systemService.deleteSystem(id), HttpStatus.OK);
     }
 
     @PostMapping("/systems/system/full")
     public ResponseEntity<SystemDTO> createFullSystem(@Validated(PostFullValidation.class)
                                                       @RequestBody SystemWrapper wSystem)
             throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
-        return new ResponseEntity<SystemDTO>(systemService.createFullSystem(wSystem), HttpStatus.OK);
+        return new ResponseEntity<>(systemService.createFullSystem(wSystem), HttpStatus.OK);
+    }
+
+    @PutMapping("/systems/system/full")
+    public ResponseEntity<SystemDTO> updateFullSystem(@Validated(PutFullValidation.class)
+                                                      @RequestBody SystemWrapper wSystem)
+            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
+        return new ResponseEntity<>(systemService.updateFullSystem(wSystem), HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.sonata.service;
 
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
@@ -17,5 +18,5 @@ public interface MachineService {
             throws DatabaseErrorException;
     MachineDTO updateMachine(MachineWrapper machine)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException;
-    MachineDTO deleteMachine(String name);
+    MachineDTO deleteMachine(long id) throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException;
 }

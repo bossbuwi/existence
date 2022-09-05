@@ -17,6 +17,8 @@
           :key="machineTabKey"
           @open-form="openForm"
           @item-clicked="itemClicked"
+          @edit-item="editItem"
+          @delete-item="deleteItem"
         >
         </machine-list>
       </v-tab-item>
@@ -26,6 +28,8 @@
           :key="systemTabKey"
           @open-form="openForm"
           @item-clicked="itemClicked"
+          @edit-item="editItem"
+          @delete-item="deleteItem"
         >
         </system-list>
       </v-tab-item>
@@ -99,6 +103,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapActions } from 'vuex'
 import EmptyList from '@/components/EmptyList.vue'
 import SystemList from '@/components/misc/SystemList.vue'
 import SystemForm from '@/components/misc/SystemForm.vue'
@@ -119,6 +124,10 @@ export default Vue.extend({
       title: process.env.VUE_APP_NAME + ' — Miscellaneous'
     }
   },
+
+  props: [
+    'tabNumber'
+  ],
 
   data () {
     return {
@@ -151,6 +160,11 @@ export default Vue.extend({
   },
 
   methods: {
+    /* Vuex Methods */
+    ...mapActions([
+      'SetMachine', 'SetSystem'
+    ]),
+
     /* Tab Methods */
     recreateTabs (param: number) {
       switch (param) {
@@ -207,18 +221,44 @@ export default Vue.extend({
       this.formMode = 'create'
     },
 
-    async updateMode () {
-      this.newFormKey += 1
-      this.formTitle = 'Update System'
-      this.formColor = 'accent'
+    // eslint-disable-next-line
+    async updateMode (param: any) {
       this.formMode = 'update'
+      this.formColor = 'accent'
+      this.newFormKey += 1
+
+      switch (this.selectedTab) {
+        case 0:
+          this.editMachine(param)
+          break
+        case 1:
+          this.newSystem()
+          break
+        default:
+          break
+      }
+
+      this.newForm = true
     },
 
-    async deleteMode () {
-      this.newFormKey += 1
-      this.formTitle = 'Delete System'
-      this.formColor = 'warning'
+    // eslint-disable-next-line
+    async deleteMode (param: any) {
       this.formMode = 'delete'
+      this.formColor = 'warning'
+      this.newFormKey += 1
+
+      switch (this.selectedTab) {
+        case 0:
+          await this.deleteMachine(param)
+          break
+        case 1:
+          await this.deleteSystem(param)
+          break
+        default:
+          break
+      }
+
+      this.newForm = true
     },
 
     completeMode () {
@@ -247,8 +287,32 @@ export default Vue.extend({
       this.formTitle = 'New Machine'
     },
 
+    // eslint-disable-next-line
+    editMachine (param: any) {
+      this.formTitle = 'Update Machine'
+      this.SetMachine(param)
+    },
+
+    // eslint-disable-next-line
+    async deleteMachine (param: any) {
+      this.formTitle = 'Delete Machine'
+      await this.SetMachine(param)
+    },
+
     successMachine () {
-      this.formTitle = 'New machine created!'
+      switch (this.formMode) {
+        case 'create':
+          this.formTitle = 'New machine created!'
+          break
+        case 'update':
+          this.formTitle = 'Machine updated!'
+          break
+        case 'delete':
+          this.formTitle = 'Machine deleted!'
+          break
+        default:
+          break
+      }
       this.formColor = 'success'
       this.formMode = 'complete'
     },
@@ -261,8 +325,26 @@ export default Vue.extend({
       this.formTitle = 'New System'
     },
 
+    // eslint-disable-next-line
+    async deleteSystem (param: any) {
+      this.formTitle = 'Delete System'
+      await this.SetSystem(param)
+    },
+
     successSystem () {
-      this.formTitle = 'New system created!'
+      switch (this.formMode) {
+        case 'create':
+          this.formTitle = 'New system created!'
+          break
+        case 'update':
+          this.formTitle = 'System updated!'
+          break
+        case 'delete':
+          this.formTitle = 'System deleted!'
+          break
+        default:
+          break
+      }
       this.formColor = 'success'
       this.formMode = 'complete'
     },
@@ -314,14 +396,14 @@ export default Vue.extend({
       console.log(item)
     },
 
-    editItem () {
-      this.updateMode()
-      this.newForm = true
+    // eslint-disable-next-line
+    editItem (param: any) {
+      this.updateMode(param)
     },
 
-    deleteItem () {
-      this.deleteMode()
-      this.newForm = true
+    // eslint-disable-next-line
+    deleteItem (param: any) {
+      this.deleteMode(param)
     }
   }
 })
