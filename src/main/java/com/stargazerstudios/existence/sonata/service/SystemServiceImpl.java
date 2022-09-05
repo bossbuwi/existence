@@ -144,45 +144,54 @@ public class SystemServiceImpl implements SystemService {
         if (!isAuthorized) throw new UserUnauthorizedException();
 
         long id = wSystem.getId();
-        Optional<System> systemData = systemDAO.findById(id);
-        if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(id));
-        System system = systemData.get();
 
-        String machineName = stringUtil.trimToUpper(wSystem.getMachine());
-        Optional<Machine> machineData = machineDAO.findByName(machineName);
-        if (machineData.isEmpty()) throw new EntityNotFoundException("machine", "name", machineName);
-        Machine machine = machineData.get();
-        system.setMachine(machine);
+        String globalPrefix = null;
+        String strReleaseID = null;
+        String description = null;
+        String url = null;
+        String owners = null;
+        String machine = null;
 
-        long releaseId = wSystem.getRelease_id();
-        Optional<Release> releaseData = releaseDAO.findById(releaseId);
-        if (releaseData.isEmpty()) throw new EntityNotFoundException("release", "id", Long.toString(releaseId));
-
-        Release release = releaseData.get();
-        system.setRelease(release);
-        system.setGlobalPrefix(stringUtil.trimToUpper(wSystem.getGlobal_prefix()));
-        system.setDescription(wSystem.getDescription());
-        system.setUrl(wSystem.getUrl());
-        system.setOwners(wSystem.getOwners());
-
-        try {
-            systemDAO.saveAndFlush(system);
-        } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
-            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
-            String constraint = ex.getConstraintName();
-
-            if (constraint.equals(ConsSonataConstraint.UNIQUE_SYSTEM_PER_MACHINE)) {
-                throw new DuplicateEntityException("system", "machine", machineName);
-            }
-
-            throw new EntitySaveErrorException("system");
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new EntitySaveErrorException("system");
-        }
-
-        return systemUtil.wrapFullSystem(system);
+//        Optional<System> systemData = systemDAO.findById(id);
+//        if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(id));
+//        System system = systemData.get();
+//
+//        String machineName = stringUtil.trimToUpper(wSystem.getMachine());
+//        Optional<Machine> machineData = machineDAO.findByName(machineName);
+//        if (machineData.isEmpty()) throw new EntityNotFoundException("machine", "name", machineName);
+//        Machine machine = machineData.get();
+//        system.setMachine(machine);
+//
+//        long releaseId = wSystem.getRelease_id();
+//        Optional<Release> releaseData = releaseDAO.findById(releaseId);
+//        if (releaseData.isEmpty()) throw new EntityNotFoundException("release", "id", Long.toString(releaseId));
+//
+//        Release release = releaseData.get();
+//        system.setRelease(release);
+//        system.setGlobalPrefix(stringUtil.trimToUpper(wSystem.getGlobal_prefix()));
+//        system.setDescription(wSystem.getDescription());
+//        system.setUrl(wSystem.getUrl());
+//        system.setOwners(wSystem.getOwners());
+//
+//        try {
+//            systemDAO.saveAndFlush(system);
+//        } catch (DataIntegrityViolationException e) {
+//            e.printStackTrace();
+//            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
+//            String constraint = ex.getConstraintName();
+//
+//            if (constraint.equals(ConsSonataConstraint.UNIQUE_SYSTEM_PER_MACHINE)) {
+//                throw new DuplicateEntityException("system", "machine", machineName);
+//            }
+//
+//            throw new EntitySaveErrorException("system");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new EntitySaveErrorException("system");
+//        }
+//
+//        return systemUtil.wrapFullSystem(system);
+        return null;
     }
 
     @Override

@@ -17,16 +17,18 @@ public class SystemWrapper {
             PutValidation.class, PutFullValidation.class
     })
     private long id;
+
     @NotBlank(groups = {
             PostValidation.class, PutValidation.class,
             PostFullValidation.class, PutFullValidation.class
     })
     private String global_prefix;
+
     @Min(value = 1, groups = {
-            PostValidation.class, PutValidation.class,
-            PostFullValidation.class, PutFullValidation.class
+            PostValidation.class, PostFullValidation.class
     })
     private long release_id;
+
     private String description;
     private String url;
     private String owners;
