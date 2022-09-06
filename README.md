@@ -19,6 +19,7 @@ _The below steps must be done in order for first time project setup._
 **Tools Needed:**
 * Java IDE, preferably [IntelliJ IDEA](https://www.jetbrains.com/idea/). _Note that if other IDEs are used, there might be additional setup needed._
 * [PostgreSQL](https://www.postgresql.org/download/) installation, at least version 13. **pgAdmin** must be included in the installation.
+* [node.js](https://nodejs.org/en/) installation at version 16.17.0. Other versions may work but are not guaranteed.  This is required by the frontend.
 * A tool for testing REST APIs, preferably [Postman](https://www.postman.com/downloads/).
 * A simple but capable text editing tool, preferably [Visual Studio Code](https://code.visualstudio.com/download). _Note that if the IntelliJ IDEA used is the Ultimate version, this may not be needed._
 
@@ -35,7 +36,7 @@ _The below steps must be done in order for first time project setup._
     - Grantor: postgres
 6. Go to the _SQL_ tab. The statement shown should at least be close to the statement below.  
 ```  
-    CREATE DATABASE db_existence  
+    CREATE DATABASE db_dev  
     WITH  
     OWNER = postgres  
     ENCODING = 'UTF8'  
@@ -62,7 +63,7 @@ Program Arguments: --spring.profiles.active=dev
 Working directory: <sourcedir>
 ```
 8. On the _Modify Options_ dropdown, add the run option _Specify classes and packages_ under _Code Coverage_.
-9. Add the package _com.stargazerstudios.existence*_ on the list of _Packages and classes to include in Coverage Data_.
+9. Add the package _com.stargazerstudios.existence_ on the list of _Packages and classes to include in Coverage Data_.
 10. Use this newly created run configuration when starting the server for development work.
 
 **Setting Up Frontend Sources for Development**   
