@@ -28,7 +28,7 @@ _The below steps must be done in order for first time project setup._
 2. On the left-hand side, there is a list of servers. A default server usually named _Postgres_ is automatically created. Connect to it. Again, it will prompt you for the master password.
 3. Right-click the server's _Databases_ group, then _Create > Database.._
 4. Enter the following details below on the _General_ tab.
-    - Database: db_existence
+    - Database: db_dev
     - Owner: postgres (this is automatically created)
 5. Go to the _Security_ tab and add a _Privilege_ by clicking the "+" sign on the _Privileges_ group. Enter the following details for the privilege.
     - Grantee: postgres
@@ -44,7 +44,6 @@ _The below steps must be done in order for first time project setup._
     GRANT ALL ON DATABASE db_existence TO postgres;  
 ```
 7. Click _Save_ to finish the database creation. A new database, _db_existence_, should now be visible on the _Databases_ group.
-8. Repeat steps 1 to 7, this time, use _db_test_ for the database name. This will be the database used for development.
 
 **Setting Up Backend Sources for Development**
 1. Clone the project sources from Github.
@@ -76,13 +75,15 @@ Note the directory where the frontend sources are, this would be referred to as 
 _Note that this only applies to the dependencies used by the frontend (Vuejs).
 The dependencies used by the backend (Spring Boot) are automatically setup once the project is first loaded._
 
-1. Launch command prompt on sourcedir.
+1. Execute the section **Setting Up Database for Development** but name the database _db_test_ instead.
+2. Launch command prompt on sourcedir.
 2. Enter `mvnw clean package` and wait for the process to finish.
 It might take a while depending on the internet connection and speed of the machine.
 
 _Below is an easier alternative using IntelliJ._   
 _This setup has an added bonus of running the process in debug mode, giving the user access to more verbose logs._
-1. Go to _Run > Edit Configurations..._
+1. Execute the section **Setting Up Database for Development** but name the database _db_test_ instead.
+2. On IntelliJ, go to _Run > Edit Configurations..._
 2. Add a new Maven configuration with the following details:
 ```
 Name: clean package
@@ -116,5 +117,5 @@ _Note that for the Vuejs server to run properly, an instance of the Spring Boot 
 1. Open the file `.env.local` on _frontenddir_.
 2. Fill out the properties `VUE_APP_NAME` and `VUE_APP_SUBTITLE` depending on the installation requirements.
 3. Blank out the `VUE_DEV_SERVER` property and replace `VUE_DEFAULT_URL` property with the address and port to be used on the deployment server.
-4. Execute steps 1 and 2 on the **Setting Up Dependencies for the First Time** heading.
+4. Execute **Setting Up Dependencies for the First Time** heading. Note that if a database of name _db_test_ is existing already, delete it and create a new one.
 5. Go to `sourcedir/target` and copy the resulting JAR file and `libs` directory to the deployment server.
