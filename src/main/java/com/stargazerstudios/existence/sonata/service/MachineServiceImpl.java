@@ -57,7 +57,7 @@ public class MachineServiceImpl implements MachineService {
         List<MachineDTO> machineList = new ArrayList<>();
         if (!machines.isEmpty()) {
             for (Machine machine : machines) {
-                machineList.add(machineUtil.wrapMachine(machine));
+                machineList.add(machineUtil.outboundMachine(machine));
             }
         }
 
@@ -101,7 +101,7 @@ public class MachineServiceImpl implements MachineService {
             throw new EntitySaveErrorException("machine");
         }
 
-        return machineUtil.wrapMachine(machine);
+        return machineUtil.outboundMachine(machine);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class MachineServiceImpl implements MachineService {
             throw new EntitySaveErrorException("machine");
         }
 
-        return machineUtil.wrapMachine(machine);
+        return machineUtil.outboundMachine(machine);
     }
 
     @Override
@@ -169,6 +169,6 @@ public class MachineServiceImpl implements MachineService {
             throw new EntityDeletionErrorException("machine");
         }
 
-        return machineUtil.wrapMachine(bMachine);
+        return machineUtil.outboundMachine(bMachine);
     }
 }

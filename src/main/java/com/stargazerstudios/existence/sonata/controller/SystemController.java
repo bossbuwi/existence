@@ -50,7 +50,7 @@ public class SystemController {
     @PutMapping("/systems/system")
     public ResponseEntity<SystemDTO> updateSystem(@Validated(PutValidation.class)
                                                       @RequestBody SystemWrapper wSystem)
-            throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
+            throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException, UnknownInputException {
         return new ResponseEntity<>(systemService.updateSystem(wSystem), HttpStatus.OK);
     }
 

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ZoneUtil {
 
-    public ZoneDTO passZoneForTransfer(Zone zone) {
+    public ZoneDTO outboundZone(Zone zone) {
         ZoneDTO zoneDTO = new ZoneDTO();
         zoneDTO.setId(zone.getId());
         zoneDTO.setZonal_prefix(zone.getZonalPrefix());

@@ -19,8 +19,7 @@ public class SystemWrapper {
     private long id;
 
     @NotBlank(groups = {
-            PostValidation.class, PutValidation.class,
-            PostFullValidation.class, PutFullValidation.class
+            PostValidation.class, PostFullValidation.class
     })
     private String global_prefix;
 
@@ -30,16 +29,18 @@ public class SystemWrapper {
     private long release_id;
 
     private String description;
+
     private String url;
+
     private String owners;
+
     @NotBlank(groups = {
-            PostValidation.class, PutValidation.class,
-            PostFullValidation.class, PutFullValidation.class
+            PostValidation.class, PostFullValidation.class
     })
     private String machine;
 
     @NotEmpty(groups = {
-            PostFullValidation.class, PutFullValidation.class
+            PostFullValidation.class
     })
     private ZoneWrapper[] zones;
 }

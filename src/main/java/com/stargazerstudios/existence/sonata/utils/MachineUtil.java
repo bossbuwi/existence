@@ -10,7 +10,7 @@ import java.util.*;
 @Service
 public class MachineUtil {
 
-    public MachineDTO wrapMachine(Machine machine) {
+    public MachineDTO outboundMachine(Machine machine) {
         MachineDTO machineDTO = new MachineDTO();
         machineDTO.setId(machine.getId());
         machineDTO.setName(machine.getName());

@@ -16,7 +16,7 @@ public interface SystemService {
     SystemDTO createSystem(SystemWrapper wSystem)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException;
     SystemDTO updateSystem(SystemWrapper wSystem)
-            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException;
+            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, UnknownInputException;
     SystemDTO deleteSystem(long id)
             throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException;
     SystemDTO createFullSystem(SystemWrapper wSystem)

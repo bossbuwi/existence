@@ -20,7 +20,6 @@ import com.stargazerstudios.existence.sonata.dto.ZoneDTO;
 import com.stargazerstudios.existence.sonata.entity.Machine;
 import com.stargazerstudios.existence.sonata.entity.Release;
 import com.stargazerstudios.existence.sonata.entity.System;
-import com.stargazerstudios.existence.sonata.entity.Zone;
 import com.stargazerstudios.existence.sonata.repository.MachineDAO;
 import com.stargazerstudios.existence.sonata.repository.ReleaseDAO;
 import com.stargazerstudios.existence.sonata.repository.SystemDAO;
@@ -73,7 +72,7 @@ public class SystemServiceImpl implements SystemService {
 
         if (!systems.isEmpty()) {
             for (System system: systems) {
-                SystemDTO systemDTO = systemUtil.wrapSystem(system);
+                SystemDTO systemDTO = systemUtil.outboundSystem(system);
                 systemList.add(systemDTO);
             }
         }
@@ -134,64 +133,53 @@ public class SystemServiceImpl implements SystemService {
             throw new EntitySaveErrorException("system");
         }
 
-        return systemUtil.wrapFullSystem(system);
+        return systemUtil.outboundFullSystem(system);
     }
 
     @Override
     public SystemDTO updateSystem(SystemWrapper wSystem)
-            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, UnknownInputException {
+        // User must be at least an admin to update a system
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
-        long id = wSystem.getId();
+        // The process below checks if the system to be updated is existing on the database
+        // Get the id of the entity to be updated
+        long systemId = wSystem.getId();
+        // Check if a system with the id provided exists
+        Optional<System> systemData = systemDAO.findById(systemId);
+        if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(systemId));
+        System system = systemData.get();
 
-        String globalPrefix = null;
-        String strReleaseID = null;
-        String description = null;
-        String url = null;
-        String owners = null;
-        String machine = null;
+        // The process below checks if there are any valid changes to the system's release
+        // Get the id of the release
+        long releaseId = wSystem.getRelease_id();
+        // If the release id is not zero, check if a release with the provided id exists on the database
+        // If a release exists, set it as the system's new release.
+        if (releaseId > 0) {
+            Optional<Release> releaseData = releaseDAO.findById(releaseId);
+            if (releaseData.isEmpty()) throw new EntityNotFoundException("release", "id", Long.toString(systemId));
+            Release release = releaseData.get();
+            system.setRelease(release);
+        }
 
-//        Optional<System> systemData = systemDAO.findById(id);
-//        if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(id));
-//        System system = systemData.get();
-//
-//        String machineName = stringUtil.trimToUpper(wSystem.getMachine());
-//        Optional<Machine> machineData = machineDAO.findByName(machineName);
-//        if (machineData.isEmpty()) throw new EntityNotFoundException("machine", "name", machineName);
-//        Machine machine = machineData.get();
-//        system.setMachine(machine);
-//
-//        long releaseId = wSystem.getRelease_id();
-//        Optional<Release> releaseData = releaseDAO.findById(releaseId);
-//        if (releaseData.isEmpty()) throw new EntityNotFoundException("release", "id", Long.toString(releaseId));
-//
-//        Release release = releaseData.get();
-//        system.setRelease(release);
-//        system.setGlobalPrefix(stringUtil.trimToUpper(wSystem.getGlobal_prefix()));
-//        system.setDescription(wSystem.getDescription());
-//        system.setUrl(wSystem.getUrl());
-//        system.setOwners(wSystem.getOwners());
-//
-//        try {
-//            systemDAO.saveAndFlush(system);
-//        } catch (DataIntegrityViolationException e) {
-//            e.printStackTrace();
-//            ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
-//            String constraint = ex.getConstraintName();
-//
-//            if (constraint.equals(ConsSonataConstraint.UNIQUE_SYSTEM_PER_MACHINE)) {
-//                throw new DuplicateEntityException("system", "machine", machineName);
-//            }
-//
-//            throw new EntitySaveErrorException("system");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new EntitySaveErrorException("system");
-//        }
-//
-//        return systemUtil.wrapFullSystem(system);
-        return null;
+        // Get and process miscellaneous data
+        if (wSystem.getDescription() != null)
+            system.setDescription(wSystem.getDescription());
+        if (wSystem.getUrl() != null)
+            system.setUrl(wSystem.getUrl());
+        if (wSystem.getOwners() != null)
+            system.setOwners(wSystem.getOwners());
+
+        try {
+            systemDAO.saveAndFlush(system);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            throw new EntitySaveErrorException("system");
+        }
+
+        return systemUtil.outboundFullSystem(system);
     }
 
     @Override
@@ -219,7 +207,7 @@ public class SystemServiceImpl implements SystemService {
             throw new EntityDeletionErrorException("system");
         }
 
-        return systemUtil.wrapFullSystem(system);
+        return systemUtil.outboundFullSystem(system);
     }
 
     @Override
@@ -248,25 +236,16 @@ public class SystemServiceImpl implements SystemService {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
-        if (wSystem.getZones().length == 0) throw new InvalidCollectionException("zones");
-
         SystemDTO systemDTO = updateSystem(wSystem);
 
         Optional<System> systemData = systemDAO.findById(wSystem.getId());
         System updatedSystem = systemData.get();
 
-
-
-
-//        for (ZoneWrapper zoneWrapper: wSystem.getZones()) {
-//            ZoneDTO zoneDTO = zoneService.updateZone(zoneWrapper);
-//            zones.add(zoneDTO);
-//        }
-//
-//        systemDTO.setZones(zones);
+        // Get the zones from the system to be updated and create wrappers out of them
+        // Get the zones from the input and create wrappers out of them
+        // Compare if they are the same list of wrappers
+        // Process any differences, deleting or adding zones as required
 
         return systemDTO;
     }
-
-
 }

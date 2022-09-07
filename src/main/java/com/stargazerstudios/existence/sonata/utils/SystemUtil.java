@@ -20,26 +20,14 @@ public class SystemUtil {
     @Autowired
     private ZoneUtil zoneUtil;
 
-    public SystemDTO wrapFullSystem(System system) {
-        SystemDTO systemDTO = wrapSystem(system);
-//        systemDTO.setId(system.getId());
-//        systemDTO.setGlobal_prefix(system.getGlobalPrefix());
-//        systemDTO.setRelease(system.getRelease().getName());
-//        systemDTO.setDescription(system.getDescription());
-//        systemDTO.setUrl(system.getUrl());
-//        systemDTO.setOwners(system.getOwners());
-//        systemDTO.setCreation_date(system.getDateCreated());
-//        systemDTO.setLast_changed_date(system.getDateChanged());
-//
-//        Machine machine = system.getMachine();
-//        systemDTO.setMachine(machine.getName());
-//
+    public SystemDTO outboundFullSystem(System system) {
+        SystemDTO systemDTO = outboundSystem(system);
         Set<Zone> zoneSet = system.getZones();
 
         ArrayList<ZoneDTO> zones = new ArrayList<>();
         if (zoneSet != null && !zoneSet.isEmpty()) {
             for (Zone zone: zoneSet) {
-                zones.add(zoneUtil.passZoneForTransfer(zone));
+                zones.add(zoneUtil.outboundZone(zone));
             }
         }
         systemDTO.setZones(zones);
@@ -48,7 +36,7 @@ public class SystemUtil {
         return systemDTO;
     }
 
-    public SystemDTO wrapSystem(System system) {
+    public SystemDTO outboundSystem(System system) {
         SystemDTO systemDTO = new SystemDTO();
         systemDTO.setId(system.getId());
         systemDTO.setGlobal_prefix(system.getGlobalPrefix());

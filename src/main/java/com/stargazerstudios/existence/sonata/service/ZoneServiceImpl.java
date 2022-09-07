@@ -57,7 +57,7 @@ public class ZoneServiceImpl implements ZoneService{
         List<Zone> zones = zoneDAO.findAll();
         if (!zones.isEmpty()) {
             for (Zone zone: zones) {
-                ZoneDTO zoneDTO = zoneUtil.passZoneForTransfer(zone);
+                ZoneDTO zoneDTO = zoneUtil.outboundZone(zone);
                 zoneList.add(zoneDTO);
             }
         }
@@ -98,7 +98,7 @@ public class ZoneServiceImpl implements ZoneService{
             throw new EntitySaveErrorException("zone");
         }
 
-        return zoneUtil.passZoneForTransfer(zone);
+        return zoneUtil.outboundZone(zone);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class ZoneServiceImpl implements ZoneService{
                 e.printStackTrace();
             }
 
-            return zoneUtil.passZoneForTransfer(zone);
+            return zoneUtil.outboundZone(zone);
         }
     }
 }
