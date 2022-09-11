@@ -20,9 +20,11 @@ import com.stargazerstudios.existence.sonata.dto.ZoneDTO;
 import com.stargazerstudios.existence.sonata.entity.Machine;
 import com.stargazerstudios.existence.sonata.entity.Release;
 import com.stargazerstudios.existence.sonata.entity.System;
+import com.stargazerstudios.existence.sonata.entity.Zone;
 import com.stargazerstudios.existence.sonata.repository.MachineDAO;
 import com.stargazerstudios.existence.sonata.repository.ReleaseDAO;
 import com.stargazerstudios.existence.sonata.repository.SystemDAO;
+import com.stargazerstudios.existence.sonata.repository.ZoneDAO;
 import com.stargazerstudios.existence.sonata.utils.SystemUtil;
 import com.stargazerstudios.existence.sonata.utils.ZoneUtil;
 import com.stargazerstudios.existence.sonata.wrapper.SystemWrapper;
@@ -34,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +52,9 @@ public class SystemServiceImpl implements SystemService {
 
     @Autowired
     private ReleaseDAO releaseDAO;
+
+    @Autowired
+    private ZoneDAO zoneDAO;
 
     @Autowired
     private ZoneServiceImpl zoneService;
@@ -238,8 +244,66 @@ public class SystemServiceImpl implements SystemService {
 
         SystemDTO systemDTO = updateSystem(wSystem);
 
-        Optional<System> systemData = systemDAO.findById(wSystem.getId());
-        System updatedSystem = systemData.get();
+        // Check if the zones need to be updated
+        ZoneWrapper[] zoneIn = wSystem.getZones();
+        if (zoneIn != null && zoneIn.length > 0) {
+            Optional<System> systemData = systemDAO.findById(wSystem.getId());
+            if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(wSystem.getId()));
+            System updatedSystem = systemData.get();
+
+            ArrayList<Zone> zonesDB = new ArrayList<>(updatedSystem.getZones());
+            ArrayList<Zone> zonesIn = new ArrayList<>();
+            ArrayList<ZoneWrapper> out = new ArrayList<>();
+            ArrayList<Zone> zonesOut = new ArrayList<>();
+            int newZoneCounter = 0;
+
+            for (ZoneWrapper wrapper: zoneIn) {
+                Optional<Zone> zoneInData = zoneDAO.findZoneOnSystem(wrapper.getZonal_prefix(), updatedSystem.getGlobalPrefix());
+                if (zoneInData.isEmpty()) {
+                    ++newZoneCounter;
+                    out.add(wrapper);
+                } else {
+                    zonesIn.add(zoneInData.get());
+                }
+            }
+
+            zonesDB.removeAll(zonesIn);
+
+            // Check for possible scenarios
+            // if zonesDB is zero and newZone counter is also zero, there are no changes on the zones
+            // if zonesDB is zero and newZone counter is not zero, there are new zones
+            // if zonesDB is not zero and newZone counter is zero, there are deleted zones
+            // if zonesDB is not zero and newZone counter is not zero, there are new zones and deleted zones
+            if (zonesDB.size() == 0) {
+                if (newZoneCounter > 0) {
+                    for (ZoneWrapper item: out) {
+                        item.setSystem(updatedSystem.getGlobalPrefix());
+                        item.setMachine(updatedSystem.getMachine().getName());
+                        zoneService.createZone(item);
+                    }
+                }
+            } else {
+                if (newZoneCounter == 0) {
+                    ArrayList<Zone> zonesForDeletion = zonesDB;
+                    zonesDB = new ArrayList<>(updatedSystem.getZones());
+                    zonesDB.removeAll(zonesForDeletion);
+
+                    for (Zone zone : zonesForDeletion) {
+                        try {
+                            zoneService.deleteZone(zone);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    updatedSystem.setZones(new HashSet<>(zonesDB));
+
+
+                }
+            }
+
+            String test = "test";
+        }
 
         // Get the zones from the system to be updated and create wrappers out of them
         // Get the zones from the input and create wrappers out of them

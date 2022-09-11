@@ -113,6 +113,7 @@ public class ZoneServiceImpl implements ZoneService{
 
         Optional<Zone> zoneData = zoneDAO.findById(id);
 
+        // TODO Read below rant.
         // If the zone is not found on the system, it needs to be created.
         // This raises a problem, however.
         // If there are 2 zones with name A1 and A2 and the user renamed A1 to A3, A3 would be created.
@@ -132,5 +133,19 @@ public class ZoneServiceImpl implements ZoneService{
 
             return zoneUtil.outboundZone(zone);
         }
+    }
+
+    @Override
+    public ZoneDTO deleteZone(ZoneWrapper wZone) {
+
+        return null;
+    }
+
+    @Override
+    public ZoneDTO deleteZone(Zone zone) {
+        // TODO This needs to be finished because updateFullSystem is dependent on it.
+        // This is just an internal method. It must not be exposed on any endpoint.
+        // Several complications can arise from this, especially because zones cannot be deleted if events are using them
+        return null;
     }
 }
