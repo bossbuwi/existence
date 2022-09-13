@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,7 +87,17 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public List<SystemDTO> getFullSystems() {
-        return null;
+        List<System> systems = systemDAO.findAll();
+        List<SystemDTO> systemList = new ArrayList<>();
+
+        if (!systems.isEmpty()) {
+            for (System system: systems) {
+                SystemDTO systemDTO = systemUtil.outboundFullSystem(system);
+                systemList.add(systemDTO);
+            }
+        }
+
+        return systemList;
     }
 
     @Override
@@ -248,53 +257,48 @@ public class SystemServiceImpl implements SystemService {
         if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(wSystem.getId()));
         System updatedSystem = systemData.get();
 
-        // Check if the zones need to be updated
-        // TODO No, this needs to be reworked
-        // zones key must always be included in the JSON
-        // it doesn't matter if the zones are to be updated or not
         ZoneWrapper[] zoneIn = wSystem.getZones();
-        if (zoneIn != null && zoneIn.length > 0) {
+        if (zoneIn == null && zoneIn.length == 0) throw new InvalidCollectionException("zones");
 
-            ArrayList<Zone> zonesDB = new ArrayList<>(updatedSystem.getZones());
-            ArrayList<Zone> zonesIn = new ArrayList<>();
-            ArrayList<ZoneWrapper> out = new ArrayList<>();
-            int newZoneCounter = 0;
+        ArrayList<Zone> zonesDB = new ArrayList<>(updatedSystem.getZones());
+        ArrayList<Zone> zonesIn = new ArrayList<>();
+        ArrayList<ZoneWrapper> out = new ArrayList<>();
+        int newZoneCounter = 0;
 
-            for (ZoneWrapper wrapper: zoneIn) {
-                Optional<Zone> zoneInData = zoneDAO.findZoneOnSystem(wrapper.getZonal_prefix(), updatedSystem.getGlobalPrefix());
-                if (zoneInData.isEmpty()) {
-                    ++newZoneCounter;
-                    out.add(wrapper);
-                } else {
-                    zonesIn.add(zoneInData.get());
+        for (ZoneWrapper wrapper: zoneIn) {
+            Optional<Zone> zoneInData = zoneDAO.findZoneOnSystem(wrapper.getZonal_prefix(), updatedSystem.getGlobalPrefix());
+            if (zoneInData.isEmpty()) {
+                ++newZoneCounter;
+                out.add(wrapper);
+            } else {
+                zonesIn.add(zoneInData.get());
+            }
+        }
+
+        zonesDB.removeAll(zonesIn);
+
+        // If zonesDB's size is greater than zero after the removal, there are zones that need to be deleted.
+        if (zonesDB.size() > 0) {
+            ArrayList<Zone> zonesForDeletion = zonesDB;
+            zonesDB = new ArrayList<>(updatedSystem.getZones());
+            zonesDB.removeAll(zonesForDeletion);
+
+            for (Zone zone : zonesForDeletion) {
+                try {
+                    updatedSystem.getZones().remove(zone);
+                    systemDAO.saveAndFlush(updatedSystem);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
+        }
 
-            zonesDB.removeAll(zonesIn);
-
-            // If zonesDB's size is greater than zero after the removal, there are zones that need to be deleted.
-            if (zonesDB.size() > 0) {
-                ArrayList<Zone> zonesForDeletion = zonesDB;
-                zonesDB = new ArrayList<>(updatedSystem.getZones());
-                zonesDB.removeAll(zonesForDeletion);
-
-                for (Zone zone : zonesForDeletion) {
-                    try {
-                        updatedSystem.getZones().remove(zone);
-                        systemDAO.saveAndFlush(updatedSystem);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            // If newZoneCounter is greater than zero, there are new zones to be added.
-            if (newZoneCounter > 0) {
-                for (ZoneWrapper item: out) {
-                    item.setSystem(updatedSystem.getGlobalPrefix());
-                    item.setMachine(updatedSystem.getMachine().getName());
-                    zoneService.createZone(item);
-                }
+        // If newZoneCounter is greater than zero, there are new zones to be added.
+        if (newZoneCounter > 0) {
+            for (ZoneWrapper item: out) {
+                item.setSystem(updatedSystem.getGlobalPrefix());
+                item.setMachine(updatedSystem.getMachine().getName());
+                zoneService.createZone(item);
             }
         }
 

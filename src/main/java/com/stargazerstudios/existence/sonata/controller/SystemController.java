@@ -34,6 +34,11 @@ public class SystemController {
         return new ResponseEntity<>(systemService.getSystems(), HttpStatus.OK);
     }
 
+    @GetMapping("/con/systems/index/full")
+    public ResponseEntity<List<SystemDTO>> getFullSystems() {
+        return new ResponseEntity<>(systemService.getFullSystems(), HttpStatus.OK);
+    }
+
     @GetMapping("/con/systems/count")
     public ResponseEntity<Long> getSystemCount() {
         return new ResponseEntity<>(systemService.countSystems(), HttpStatus.OK);
