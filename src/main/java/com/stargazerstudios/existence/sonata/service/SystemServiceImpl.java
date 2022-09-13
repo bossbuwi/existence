@@ -242,19 +242,25 @@ public class SystemServiceImpl implements SystemService {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
-        SystemDTO systemDTO = updateSystem(wSystem);
+        updateSystem(wSystem);
+
+        Optional<System> systemData = systemDAO.findById(wSystem.getId());
+        if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(wSystem.getId()));
+        System updatedSystem = systemData.get();
 
         // Check if the zones need to be updated
+        // TODO No, this needs to be reworked
+        // zones key must always be included in the JSON
+        // it doesn't matter if the zones are to be updated or not
         ZoneWrapper[] zoneIn = wSystem.getZones();
         if (zoneIn != null && zoneIn.length > 0) {
-            Optional<System> systemData = systemDAO.findById(wSystem.getId());
-            if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(wSystem.getId()));
-            System updatedSystem = systemData.get();
+//            Optional<System> systemData = systemDAO.findById(wSystem.getId());
+//            if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(wSystem.getId()));
+//            System updatedSystem = systemData.get();
 
             ArrayList<Zone> zonesDB = new ArrayList<>(updatedSystem.getZones());
             ArrayList<Zone> zonesIn = new ArrayList<>();
             ArrayList<ZoneWrapper> out = new ArrayList<>();
-            ArrayList<Zone> zonesOut = new ArrayList<>();
             int newZoneCounter = 0;
 
             for (ZoneWrapper wrapper: zoneIn) {
@@ -269,47 +275,36 @@ public class SystemServiceImpl implements SystemService {
 
             zonesDB.removeAll(zonesIn);
 
-            // Check for possible scenarios
-            // if zonesDB is zero and newZone counter is also zero, there are no changes on the zones
-            // if zonesDB is zero and newZone counter is not zero, there are new zones
-            // if zonesDB is not zero and newZone counter is zero, there are deleted zones
-            // if zonesDB is not zero and newZone counter is not zero, there are new zones and deleted zones
-            if (zonesDB.size() == 0) {
-                if (newZoneCounter > 0) {
-                    for (ZoneWrapper item: out) {
-                        item.setSystem(updatedSystem.getGlobalPrefix());
-                        item.setMachine(updatedSystem.getMachine().getName());
-                        zoneService.createZone(item);
+            // If zonesDB's size is greater than zero after the removal, there are zones that need to be deleted.
+            if (zonesDB.size() > 0) {
+                ArrayList<Zone> zonesForDeletion = zonesDB;
+                zonesDB = new ArrayList<>(updatedSystem.getZones());
+                zonesDB.removeAll(zonesForDeletion);
+
+                for (Zone zone : zonesForDeletion) {
+                    try {
+                        updatedSystem.getZones().remove(zone);
+                        systemDAO.saveAndFlush(updatedSystem);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                }
-            } else {
-                if (newZoneCounter == 0) {
-                    ArrayList<Zone> zonesForDeletion = zonesDB;
-                    zonesDB = new ArrayList<>(updatedSystem.getZones());
-                    zonesDB.removeAll(zonesForDeletion);
-
-                    for (Zone zone : zonesForDeletion) {
-                        try {
-                            zoneService.deleteZone(zone);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    updatedSystem.setZones(new HashSet<>(zonesDB));
-
-
                 }
             }
 
-            String test = "test";
+            // If newZoneCounter is greater than zero, there are new zones to be added.
+            if (newZoneCounter > 0) {
+                for (ZoneWrapper item: out) {
+                    item.setSystem(updatedSystem.getGlobalPrefix());
+                    item.setMachine(updatedSystem.getMachine().getName());
+                    zoneService.createZone(item);
+                }
+            }
         }
 
-        // Get the zones from the system to be updated and create wrappers out of them
-        // Get the zones from the input and create wrappers out of them
-        // Compare if they are the same list of wrappers
-        // Process any differences, deleting or adding zones as required
+        Optional<System> finalData = systemDAO.findById(wSystem.getId());
+        if (finalData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(wSystem.getId()));
+        System finalSystem = finalData.get();
 
-        return systemDTO;
+        return systemUtil.outboundFullSystem(finalSystem);
     }
 }

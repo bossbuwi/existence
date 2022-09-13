@@ -15,6 +15,5 @@ public interface ZoneService {
             throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
     ZoneDTO updateZone(ZoneWrapper wZone)
             throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
-    ZoneDTO deleteZone(ZoneWrapper wZone);
-    ZoneDTO deleteZone(Zone zone);
+    ZoneDTO deleteZone(long id) throws EntityErrorException;
 }

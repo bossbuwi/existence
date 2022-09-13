@@ -114,10 +114,8 @@ public class ZoneServiceImpl implements ZoneService{
         Optional<Zone> zoneData = zoneDAO.findById(id);
 
         // TODO Read below rant.
-        // If the zone is not found on the system, it needs to be created.
-        // This raises a problem, however.
-        // If there are 2 zones with name A1 and A2 and the user renamed A1 to A3, A3 would be created.
-        // However, A1 stills exists. In reality, it needs to be deleted because it was changed to A3.
+        // This method only updates the zone details and not the zone parents.
+        // To update the system where the zone is attached, the method to be used is updateFullSystem
         if (zoneData.isEmpty()) {
             return createZone(wZone);
         } else {
@@ -136,16 +134,19 @@ public class ZoneServiceImpl implements ZoneService{
     }
 
     @Override
-    public ZoneDTO deleteZone(ZoneWrapper wZone) {
+    public ZoneDTO deleteZone(long id)
+            throws EntityErrorException {
+        Optional<Zone> zoneData = zoneDAO.findById(id);
+        if (zoneData.isEmpty()) throw new EntityNotFoundException("zone", "id", Long.toString(id));
+        Zone zone = zoneData.get();
 
-        return null;
-    }
+        try {
+            zoneDAO.deleteById(id);
+            zoneDAO.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    @Override
-    public ZoneDTO deleteZone(Zone zone) {
-        // TODO This needs to be finished because updateFullSystem is dependent on it.
-        // This is just an internal method. It must not be exposed on any endpoint.
-        // Several complications can arise from this, especially because zones cannot be deleted if events are using them
-        return null;
+        return zoneUtil.outboundZone(zone);
     }
 }
