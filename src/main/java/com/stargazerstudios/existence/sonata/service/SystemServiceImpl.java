@@ -254,9 +254,6 @@ public class SystemServiceImpl implements SystemService {
         // it doesn't matter if the zones are to be updated or not
         ZoneWrapper[] zoneIn = wSystem.getZones();
         if (zoneIn != null && zoneIn.length > 0) {
-//            Optional<System> systemData = systemDAO.findById(wSystem.getId());
-//            if (systemData.isEmpty()) throw new EntityNotFoundException("system", "id", Long.toString(wSystem.getId()));
-//            System updatedSystem = systemData.get();
 
             ArrayList<Zone> zonesDB = new ArrayList<>(updatedSystem.getZones());
             ArrayList<Zone> zonesIn = new ArrayList<>();
