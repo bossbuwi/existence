@@ -6,14 +6,20 @@ const getDefaultReleaseState = () => {
   return {
     releases: [
 
-    ]
+    ],
+    release: {
+      id: 0 as number,
+      name: '' as string,
+      system_count: 0 as number
+    }
   }
 }
 
 const state = getDefaultReleaseState()
 
 const getters = {
-  getReleasesList: (state: any) => state.releases
+  getReleasesList: (state: any) => state.releases,
+  getRelease: (state: any) => state.release
 }
 
 const actions = {
@@ -25,6 +31,26 @@ const actions = {
         commit('addReleaseToList', element)
       })
     })
+  },
+
+  async PostRelease ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
+    const token = rootGetters.getToken
+    await axios.post('sonata/releases/release', form, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    }).then((result) => {
+      console.log(result.data)
+    }).catch((error) => {
+      console.log(error.response.data)
+      commit('clearError')
+      commit('setError', error.response.data)
+    })
+  },
+
+  SetRelease ({ commit }: { commit: Commit }, args: any) {
+    commit('resetReleaseState')
+    commit('setRelease', args)
   }
 }
 
@@ -35,6 +61,10 @@ const mutations = {
 
   addReleaseToList (state: any, release: any) {
     state.releases.push(release)
+  },
+
+  setRelease (state: any, release: any) {
+    state.release = release
   }
 }
 

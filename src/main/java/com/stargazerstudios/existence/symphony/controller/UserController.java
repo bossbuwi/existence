@@ -37,6 +37,7 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.getAllUsers(), HttpStatus.OK);
     }
 
+    // TODO: Rework this. GET request should use params and not an HTTP body.
     @GetMapping("/users/user")
     public ResponseEntity<UserDTO> getUser(@Validated(GetValidation.class)
                                                @RequestBody AuthWrapper user)

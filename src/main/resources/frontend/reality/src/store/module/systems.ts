@@ -84,9 +84,9 @@ const actions = {
     })
   },
 
-  async PutSystem ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
+  async PutFullSystem ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
     const token = rootGetters.getToken
-    await axios.put('sonata/systems/system/', form, {
+    await axios.put('sonata/systems/system/full', form, {
       headers: {
         Authorization: 'Bearer ' + token
       }

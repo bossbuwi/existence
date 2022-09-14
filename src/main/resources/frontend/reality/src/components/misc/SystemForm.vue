@@ -308,7 +308,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'GetMachinesList', 'GetReleasesList', 'PostFullSystem', 'DeleteSystem'
+      'GetMachinesList', 'GetReleasesList', 'PostFullSystem', 'PutFullSystem', 'DeleteSystem'
     ]),
 
     async getMachineList () {
@@ -329,10 +329,10 @@ export default Vue.extend({
 
     mapObject () {
       const machine = this.machines.find(x => x.text === this.system.machine)
-      this.systemForm.machine = machine
+      this.systemForm.machine = machine.value
 
       const release = this.releases.find(x => x.text === this.system.release)
-      this.systemForm.release = release
+      this.systemForm.release = release.value
 
       this.systemForm.globalPrefix = this.system.global_prefix
       this.systemForm.url = this.system.url
@@ -378,9 +378,9 @@ export default Vue.extend({
       const fullSystemData = {}
 
       if (this.mode !== 'create') {
+        fullSystemData.id = this.system.id
         fullSystemData.machine = this.system.machine
         fullSystemData.global_prefix = this.system.global_prefix
-        // fullSystemData.release_id = this.systemForm.release.id
         fullSystemData.url = this.system.url
         fullSystemData.description = this.system.description
         fullSystemData.owners = this.system.owners
@@ -400,7 +400,7 @@ export default Vue.extend({
           this.formSubmitted()
           break
         case 'update':
-          // await put model
+          await this.PutFullSystem(fullSystemData)
           this.formSubmitted()
           break
         case 'delete':

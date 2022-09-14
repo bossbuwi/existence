@@ -35,19 +35,37 @@
       </v-tab-item>
 
       <v-tab-item>
+        <!-- Zones -->
         <empty-list></empty-list>
       </v-tab-item>
 
       <v-tab-item>
+        <!-- Releases -->
+        <release-list
+          :key="releaseTabKey"
+          @open-form="openForm"
+          @item-clicked="itemClicked"
+          @edit-item="editItem"
+          @delete-item="deleteItem"
+        >
+        </release-list>
+      </v-tab-item>
+
+      <v-tab-item>
+        <!-- Rules -->
         <empty-list></empty-list>
       </v-tab-item>
 
       <v-tab-item>
-        <empty-list></empty-list>
-      </v-tab-item>
-
-      <v-tab-item>
-        <empty-list></empty-list>
+        <!-- Users -->
+        <user-list
+          :key="userTabKey"
+          @open-form="openForm"
+          @item-clicked="itemClicked"
+          @edit-item="editItem"
+          @delete-item="deleteItem"
+        >
+        </user-list>
       </v-tab-item>
     </v-tabs>
     <!-- New Form -->
@@ -75,6 +93,15 @@
         @form-submit="formSubmitted"
       >
       </system-form>
+      <release-form
+        v-if="selectedTab == 3"
+        :mode="formMode"
+        :titleBarColor="formColor"
+        :title="formTitle"
+        @close-form="closeForm"
+        @form-submit="formSubmitted"
+      >
+      </release-form>
     </v-dialog>
 
     <!-- Item Details Popup -->
@@ -97,6 +124,13 @@
         @close-popup="closePopup"
       >
       </system-popup>
+
+      <release-popup
+        v-if="selectedTab == 3"
+        :releaseItem="selectedRelease"
+        @close-popup="closePopup"
+      >
+      </release-popup>
     </v-dialog>
   </v-container>
 </template>
@@ -111,12 +145,16 @@ import SystemPopup from '@/components/misc/SystemPopup.vue'
 import MachineList from '@/components/misc/MachineList.vue'
 import MachineForm from '@/components/misc/MachineForm.vue'
 import MachinePopup from '@/components/misc/MachinePopup.vue'
+import ReleaseList from '@/components/misc/ReleaseList.vue'
+import ReleaseForm from '@/components/misc/ReleaseForm.vue'
+import ReleasePopup from '@/components/misc/ReleasePopup.vue'
+import UserList from '@/components/misc/UserList.vue'
 
 export default Vue.extend({
   name: 'MiscView',
 
   components: {
-    EmptyList, SystemList, SystemForm, SystemPopup, MachineList, MachineForm, MachinePopup
+    EmptyList, SystemList, SystemForm, SystemPopup, MachineList, MachineForm, MachinePopup, ReleaseList, ReleaseForm, ReleasePopup, UserList
   },
 
   metaInfo () {
@@ -135,6 +173,8 @@ export default Vue.extend({
       preload: false,
       machineTabKey: 0,
       systemTabKey: 0,
+      releaseTabKey: 0,
+      userTabKey: 0,
       formTitle: '',
       formColor: '',
       formMode: '',
@@ -155,6 +195,11 @@ export default Vue.extend({
         machine: '',
         zones: '',
         owners: ''
+      },
+      selectedRelease: {
+        id: 0,
+        name: '',
+        system_count: 0
       }
     }
   },
@@ -162,7 +207,7 @@ export default Vue.extend({
   methods: {
     /* Vuex Methods */
     ...mapActions([
-      'SetMachine', 'SetSystem'
+      'SetMachine', 'SetSystem', 'SetRelease'
     ]),
 
     /* Tab Methods */
@@ -177,6 +222,7 @@ export default Vue.extend({
         case 2:
           break
         case 3:
+          this.releaseTabKey += 1
           break
         case 4:
           break
@@ -193,6 +239,9 @@ export default Vue.extend({
           break
         case 1:
           this.newSystem()
+          break
+        case 3:
+          this.newRelease()
           break
         default:
           break
@@ -232,7 +281,10 @@ export default Vue.extend({
           this.editMachine(param)
           break
         case 1:
-          this.newSystem()
+          this.editSystem(param)
+          break
+        case 3:
+          this.editRelease(param)
           break
         default:
           break
@@ -268,6 +320,9 @@ export default Vue.extend({
           break
         case 1:
           this.successSystem()
+          break
+        case 3:
+          this.successRelease()
           break
         default:
           break
@@ -326,6 +381,12 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line
+    editSystem (param: any) {
+      this.formTitle = 'Update System'
+      this.SetSystem(param)
+    },
+
+    // eslint-disable-next-line
     async deleteSystem (param: any) {
       this.formTitle = 'Delete System'
       await this.SetSystem(param)
@@ -341,6 +402,37 @@ export default Vue.extend({
           break
         case 'delete':
           this.formTitle = 'System deleted!'
+          break
+        default:
+          break
+      }
+      this.formColor = 'success'
+      this.formMode = 'complete'
+    },
+
+    newRelease () {
+      this.newFormKey += 1
+      this.newForm = true
+      this.formMode = 'create'
+      this.formColor = 'primary'
+      this.formTitle = 'New Release'
+    },
+
+    editRelease (param: any) {
+      this.formTitle = 'Update Release'
+      this.SetRelease(param)
+    },
+
+    successRelease () {
+      switch (this.formMode) {
+        case 'create':
+          this.formTitle = 'New release created!'
+          break
+        case 'update':
+          this.formTitle = 'Release updated!'
+          break
+        case 'delete':
+          this.formTitle = 'Release deleted!'
           break
         default:
           break
@@ -370,6 +462,13 @@ export default Vue.extend({
       this.selectedSystem = args
     },
 
+    // eslint-disable-next-line
+    releasePopup (args: any) {
+      this.itemPopup = true
+      this.itemPopupKey += 1
+      this.selectedRelease = args
+    },
+
     /* Click Methods */
     // eslint-disable-next-line
     itemClicked (args: any) {
@@ -383,17 +482,13 @@ export default Vue.extend({
         case 2:
           break
         case 3:
+          this.releasePopup(args)
           break
         case 4:
           break
         default:
           break
       }
-    },
-
-    // eslint-disable-next-line
-    itemRightClicked (event: any, { item }: { item: any}) {
-      console.log(item)
     },
 
     // eslint-disable-next-line

@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -43,13 +44,16 @@ public class System {
     private Machine machine;
 
     @OneToMany(mappedBy = "system", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Zone> zones;
+    @OrderBy("id")
+    private Set<Zone> zones  = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "system")
-    private Set<Event> events;
+    @OrderBy("id")
+    private Set<Event> events  = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "system")
-    private Set<Coblog> coblogs;
+    @OrderBy("id")
+    private Set<Coblog> coblogs  = new LinkedHashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "release_id")

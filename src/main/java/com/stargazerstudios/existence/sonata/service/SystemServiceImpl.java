@@ -153,7 +153,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public SystemDTO updateSystem(SystemWrapper wSystem)
-            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, UnknownInputException {
+            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
         // User must be at least an admin to update a system
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
@@ -258,7 +258,7 @@ public class SystemServiceImpl implements SystemService {
         System updatedSystem = systemData.get();
 
         ZoneWrapper[] zoneIn = wSystem.getZones();
-        if (zoneIn == null && zoneIn.length == 0) throw new InvalidCollectionException("zones");
+        if (zoneIn == null) throw new InvalidCollectionException("zones");
 
         ArrayList<Zone> zonesDB = new ArrayList<>(updatedSystem.getZones());
         ArrayList<Zone> zonesIn = new ArrayList<>();

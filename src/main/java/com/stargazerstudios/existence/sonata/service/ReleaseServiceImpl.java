@@ -65,7 +65,7 @@ public class ReleaseServiceImpl implements ReleaseService {
     @Override
     public ReleaseDTO createRelease(ReleaseWrapper wRelease)
             throws AuthorizationErrorException, DatabaseErrorException {
-        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
         String name = stringUtil.trimToUpper(wRelease.getName());
@@ -87,5 +87,15 @@ public class ReleaseServiceImpl implements ReleaseService {
         }
 
         return releaseUtil.wrapRelease(release);
+    }
+
+    @Override
+    public ReleaseDTO updateRelease(ReleaseWrapper releaseWrapper) {
+        return null;
+    }
+
+    @Override
+    public ReleaseDTO deleteRelease(long id) {
+        return null;
     }
 }
