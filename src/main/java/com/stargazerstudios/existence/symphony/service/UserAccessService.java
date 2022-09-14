@@ -12,8 +12,8 @@ import java.util.List;
 public interface UserAccessService {
     Long countUsers();
     List<UserDTO> getAllUsers();
-    UserDTO getUser(AuthWrapper user)
-            throws EntityErrorException;
+    UserDTO getUser(String username)
+            throws EntityErrorException, UnknownInputException;
     UserDTO getDetailedUser(long id) throws EntityErrorException;
     UserDTO createUser(AuthWrapper user)
             throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException;

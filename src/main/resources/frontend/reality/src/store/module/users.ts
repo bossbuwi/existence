@@ -13,7 +13,7 @@ const getDefaultUserState = () => {
     details: {
 
     },
-    user: {
+    userItem: {
       id: 0 as number,
       username: '' as string,
       roles: [] as string[]
@@ -26,7 +26,7 @@ const state = getDefaultUserState()
 const getters = {
   getUserCount: (state: any) => state.users.count,
   getUserDetails: (state: any) => state.details,
-  getUser: (state: any) => state.user,
+  getUser: (state: any) => state.userItem,
   getUserList: (state: any) => state.list
 }
 
@@ -80,6 +80,11 @@ const actions = {
       console.log(error.response.data)
     })
   },
+
+  SetUserItem ({ commit }: { commit: Commit }, args: any) {
+    commit('resetUserState')
+    commit('setUserItem', args)
+  }
 }
 
 const mutations = {
@@ -95,7 +100,7 @@ const mutations = {
     state.details = details
   },
 
-  setUser (state: any, user: any) {
+  setUserItem (state: any, user: any) {
     state.user = user
   },
 

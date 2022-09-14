@@ -6,7 +6,7 @@
       >
         Users List
         <v-spacer></v-spacer>
-        <v-btn
+        <!-- <v-btn
           v-if="newBtnShown"
           color="primary"
           @click.stop="newMachine"
@@ -15,7 +15,7 @@
             mdi-playlist-plus
           </v-icon>
           New Machine
-        </v-btn>
+        </v-btn> -->
       </v-card-actions>
       <v-divider class="mx-8 mt-4"></v-divider>
       <v-card-text>

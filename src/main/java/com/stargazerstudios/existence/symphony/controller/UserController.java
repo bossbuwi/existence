@@ -25,7 +25,7 @@ public class UserController {
     @Autowired
     private UserAccessService userAccessService;
 
-    /* Unguarded Enpoints */
+    /* Unguarded Endpoints */
     @GetMapping("/con/users/count")
     public ResponseEntity<Long> countUsers() {
         return new ResponseEntity<>(userAccessService.countUsers(), HttpStatus.OK);
@@ -37,12 +37,10 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.getAllUsers(), HttpStatus.OK);
     }
 
-    // TODO: Rework this. GET request should use params and not an HTTP body.
     @GetMapping("/users/user")
-    public ResponseEntity<UserDTO> getUser(@Validated(GetValidation.class)
-                                               @RequestBody AuthWrapper user)
-            throws EntityErrorException {
-        return new ResponseEntity<>(userAccessService.getUser(user), HttpStatus.OK);
+    public ResponseEntity<UserDTO> getUser(@RequestParam String username)
+            throws EntityErrorException, UnknownInputException {
+        return new ResponseEntity<>(userAccessService.getUser(username), HttpStatus.OK);
     }
 
     @GetMapping("/users/user/{id}/details")

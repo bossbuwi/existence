@@ -102,6 +102,15 @@
         @form-submit="formSubmitted"
       >
       </release-form>
+      <user-form
+        v-if="selectedTab == 5"
+        :mode="formMode"
+        :titleBarColor="formColor"
+        :title="formTitle"
+        @close-form="closeForm"
+        @form-submit="formSubmitted"
+      >
+      </user-form>
     </v-dialog>
 
     <!-- Item Details Popup -->
@@ -131,6 +140,13 @@
         @close-popup="closePopup"
       >
       </release-popup>
+
+      <user-popup
+        v-if="selectedTab == 5"
+        :userItem="selectedUser"
+        @close-popup="closePopup"
+      >
+      </user-popup>
     </v-dialog>
   </v-container>
 </template>
@@ -149,12 +165,14 @@ import ReleaseList from '@/components/misc/ReleaseList.vue'
 import ReleaseForm from '@/components/misc/ReleaseForm.vue'
 import ReleasePopup from '@/components/misc/ReleasePopup.vue'
 import UserList from '@/components/misc/UserList.vue'
+import UserForm from '@/components/misc/UserForm.vue'
+import UserPopup from '@/components/misc/UserPopup.vue'
 
 export default Vue.extend({
   name: 'MiscView',
 
   components: {
-    EmptyList, SystemList, SystemForm, SystemPopup, MachineList, MachineForm, MachinePopup, ReleaseList, ReleaseForm, ReleasePopup, UserList
+    EmptyList, SystemList, SystemForm, SystemPopup, MachineList, MachineForm, MachinePopup, ReleaseList, ReleaseForm, ReleasePopup, UserList, UserForm, UserPopup
   },
 
   metaInfo () {
@@ -200,6 +218,10 @@ export default Vue.extend({
         id: 0,
         name: '',
         system_count: 0
+      },
+      selectedUser: {
+        username: '',
+        roles: []
       }
     }
   },
@@ -207,7 +229,7 @@ export default Vue.extend({
   methods: {
     /* Vuex Methods */
     ...mapActions([
-      'SetMachine', 'SetSystem', 'SetRelease'
+      'SetMachine', 'SetSystem', 'SetRelease', 'SetUserItem'
     ]),
 
     /* Tab Methods */
@@ -225,6 +247,9 @@ export default Vue.extend({
           this.releaseTabKey += 1
           break
         case 4:
+          break
+        case 5:
+          this.userTabKey += 1
           break
         default:
           break
@@ -285,6 +310,9 @@ export default Vue.extend({
           break
         case 3:
           this.editRelease(param)
+          break
+        case 5:
+          this.editUser(param)
           break
         default:
           break
@@ -441,6 +469,11 @@ export default Vue.extend({
       this.formMode = 'complete'
     },
 
+    editUser (param: any) {
+      this.formTitle = 'Update User'
+      this.SetUserItem(param)
+    },
+
     /* Popup Methods */
     closePopup () {
       this.itemPopup = false
@@ -469,6 +502,13 @@ export default Vue.extend({
       this.selectedRelease = args
     },
 
+    // eslint-disable-next-line
+    userPopup (args: any) {
+      this.itemPopup = true
+      this.itemPopupKey += 1
+      this.selectedUser = args
+    },
+
     /* Click Methods */
     // eslint-disable-next-line
     itemClicked (args: any) {
@@ -485,6 +525,9 @@ export default Vue.extend({
           this.releasePopup(args)
           break
         case 4:
+          break
+        case 5:
+          this.userPopup(args)
           break
         default:
           break
