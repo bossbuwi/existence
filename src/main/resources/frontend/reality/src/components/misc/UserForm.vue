@@ -138,6 +138,7 @@ export default Vue.extend({
     },
 
     mapObject () {
+      console.log(this.user)
       this.userForm.username = this.user.username
     },
 
@@ -207,7 +208,7 @@ export default Vue.extend({
         text: element.name,
         value: element
       }
-      if (item.text !== 'ROLE_BANNED') this.roles.push(item)
+      this.roles.push(item)
     })
   }
 })

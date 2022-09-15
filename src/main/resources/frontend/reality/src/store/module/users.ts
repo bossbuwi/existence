@@ -101,7 +101,7 @@ const mutations = {
   },
 
   setUserItem (state: any, user: any) {
-    state.user = user
+    state.userItem = user
   },
 
   addUserToList (state: any, user: any) {
