@@ -37,10 +37,10 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.getAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/users/user")
-    public ResponseEntity<UserDTO> getUser(@RequestParam String username)
+    @GetMapping("/users/user/{id}")
+    public ResponseEntity<UserDTO> getUser(@NotBlank @PathVariable("id") long id)
             throws EntityErrorException, UnknownInputException {
-        return new ResponseEntity<>(userAccessService.getUser(username), HttpStatus.OK);
+        return new ResponseEntity<>(userAccessService.getUser(id), HttpStatus.OK);
     }
 
     @GetMapping("/users/user/{id}/details")
@@ -64,6 +64,8 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.updateUserPassword(user), HttpStatus.OK);
     }
 
+    // TODO: Add and remove roles must be a single endpoint
+    // This is a bad design and needs to be reworked.
     @PutMapping("/users/user/add-roles")
     public ResponseEntity<UserDTO> addRoles(@Validated(PutRelationValidation.class)
                                                 @RequestBody AuthWrapper user)

@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserAccessService {
     Long countUsers();
     List<UserDTO> getAllUsers();
-    UserDTO getUser(String username)
+    UserDTO getUser(long id)
             throws EntityErrorException, UnknownInputException;
     UserDTO getDetailedUser(long id) throws EntityErrorException;
     UserDTO createUser(AuthWrapper user)

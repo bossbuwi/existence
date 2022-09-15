@@ -76,13 +76,10 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO getUser(String username)
+    public UserDTO getUser(long id)
             throws EntityErrorException, UnknownInputException {
-        String out = stringUtil.checkInputTrim(username);
-        if (out.equals(EnumUtilOutput.EMPTY.getValue())) throw new InvalidInputException("username");
-
-        Optional<User> userData = userDAO.findByUsername(out);
-        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
+        Optional<User> userData = userDAO.findById(id);
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "id", Long.toString(id));
 
         User user = userData.get();
         return userUtil.wrapUser(user);

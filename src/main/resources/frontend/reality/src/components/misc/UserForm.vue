@@ -17,80 +17,59 @@
     </v-toolbar>
     <v-card-text>
       <v-container>
-        <validation-observer
-          ref="observer"
-          v-slot="{ invalid }"
+        <v-form
+          id="userForm"
+          :disabled="formDisabled"
         >
-          <v-form
-            id="userForm"
-            :disabled="formDisabled"
-          >
-            <v-row>
-              <span class="text-h6">General Details</span>
-            </v-row>
-            <v-row>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-                v-if="mode === 'update' || userForm.newName !== ''"
-              >
-                <validation-provider
-                  v-slot="{ errors }"
-                  name="Name"
-                  rules="required"
-                >
-                  <v-text-field
-                    v-model="userForm.newName"
-                    @input="userForm.newName = userForm.newName.toUpperCase()"
-                    label="New Name*"
-                    type="text"
-                    :error-messages="errors"
-                  ></v-text-field>
-                </validation-provider>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-                v-if="mode !== 'update' && userForm.newName === ''"
-              >
-                <validation-provider
-                  v-slot="{ errors }"
-                  name="Name"
-                  rules="required"
-                >
-                  <v-text-field
-                    v-model="userForm.name"
-                    @input="userForm.name = userForm.name.toUpperCase()"
-                    label="Name*"
-                    type="text"
-                    :error-messages="errors"
-                  ></v-text-field>
-                </validation-provider>
-              </v-col>
-            </v-row>
-          </v-form>
-          <v-row class="my-4">
-            <small v-if="!formDisabled">*indicates required field</small>
+          <v-row>
+            <span class="text-h6">General Details</span>
           </v-row>
-          <v-row
-            class="my-4"
-          >
-            <v-spacer></v-spacer>
-            <v-btn
-              type="submit"
-              v-if="submitEnabled"
-              color="primary"
-              :loading="submitLoading"
-              :disabled="invalid"
-              depressed
-              @click="submit"
+          <v-row>
+            <v-col
+              cols="12"
+              sm="6"
+              md="4"
             >
-              Submit
-            </v-btn>
+              <v-text-field
+                v-model="userForm.username"
+                label="Username"
+                type="text"
+                disabled
+              ></v-text-field>
+            </v-col>
           </v-row>
-        </validation-observer>
+          <v-row>
+            <v-col>
+              <v-select
+                v-model="userForm.roles"
+                :items="roles"
+                :loading="rolesLoading"
+                :disabled="rolesDisabled"
+                label="Roles*"
+                multiple
+                required
+              ></v-select>
+            </v-col>
+          </v-row>
+        </v-form>
+        <v-row class="my-4">
+          <small v-if="!formDisabled">*indicates required field</small>
+        </v-row>
+        <v-row
+          class="my-4"
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            type="submit"
+            v-if="submitEnabled"
+            color="primary"
+            :loading="submitLoading"
+            depressed
+            @click="submit"
+          >
+            Submit
+          </v-btn>
+        </v-row>
       </v-container>
     </v-card-text>
   </v-card>
@@ -99,14 +78,9 @@
 <script>
 import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
-import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default Vue.extend({
   name: 'UserForm',
-
-  components: {
-    ValidationObserver, ValidationProvider
-  },
 
   props: [
     'mode', 'title', 'titleBarColor'
@@ -115,18 +89,22 @@ export default Vue.extend({
   data () {
     return {
       submitLoading: false,
+      rolesLoading: false,
+      rolesDisabled: false,
       userForm: {
         id: 0,
         username: '',
-        newName: ''
-      }
+        roles: []
+      },
+      roles: []
     }
   },
 
   computed: {
     ...mapGetters({
       errorStatus: 'getErrorStatus',
-      machine: 'getMachine'
+      roleList: 'getRoles',
+      user: 'getUser'
     }),
 
     submitEnabled: {
@@ -152,7 +130,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'PostMachine', 'PutMachine', 'DeleteMachine'
+      'GetRoles'
     ]),
 
     close () {
@@ -160,8 +138,7 @@ export default Vue.extend({
     },
 
     mapObject () {
-      this.userForm.name = this.machine.name
-      this.userForm.newName = this.machine.name
+      this.userForm.username = this.user.username
     },
 
     async submit () {
@@ -217,10 +194,21 @@ export default Vue.extend({
     }
   },
 
-  mounted () {
+  async mounted () {
     if (this.mode === 'enquire') this.mapObject()
     if (this.mode === 'update') this.mapObject()
     if (this.mode === 'delete') this.mapObject()
+
+    await this.GetRoles()
+
+    const rolesArr = this.roleList
+    rolesArr.forEach((element) => {
+      const item = {
+        text: element.name,
+        value: element
+      }
+      if (item.text !== 'ROLE_BANNED') this.roles.push(item)
+    })
   }
 })
 </script>
