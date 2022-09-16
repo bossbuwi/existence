@@ -138,8 +138,14 @@ export default Vue.extend({
     },
 
     mapObject () {
-      console.log(this.user)
       this.userForm.username = this.user.username
+      const selectedRoles = []
+      const rolesArr = this.user.roles
+      rolesArr.forEach(element => {
+        const roleItem = this.roles.find(x => x.value.name === element)
+        selectedRoles.push(roleItem.value)
+      })
+      this.userForm.roles = selectedRoles
     },
 
     async submit () {
@@ -196,10 +202,6 @@ export default Vue.extend({
   },
 
   async mounted () {
-    if (this.mode === 'enquire') this.mapObject()
-    if (this.mode === 'update') this.mapObject()
-    if (this.mode === 'delete') this.mapObject()
-
     await this.GetRoles()
 
     const rolesArr = this.roleList
@@ -210,6 +212,10 @@ export default Vue.extend({
       }
       this.roles.push(item)
     })
+
+    if (this.mode === 'enquire') this.mapObject()
+    if (this.mode === 'update') this.mapObject()
+    if (this.mode === 'delete') this.mapObject()
   }
 })
 </script>
