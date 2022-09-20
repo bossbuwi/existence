@@ -39,7 +39,7 @@ public class UserController {
 
     @GetMapping("/users/user/{id}")
     public ResponseEntity<UserDTO> getUser(@NotBlank @PathVariable("id") long id)
-            throws EntityErrorException, UnknownInputException {
+            throws EntityErrorException {
         return new ResponseEntity<>(userAccessService.getUser(id), HttpStatus.OK);
     }
 
@@ -64,8 +64,13 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.updateUserPassword(user), HttpStatus.OK);
     }
 
-    // TODO: Add and remove roles must be a single endpoint
-    // This is a bad design and needs to be reworked.
+    @PutMapping("/users/user/modify-roles")
+    public ResponseEntity<UserDTO> modifyRoles(@Validated(PutRelationValidation.class)
+                                               @RequestBody AuthWrapper user)
+            throws AuthorizationErrorException, DatabaseErrorException,
+                UnknownInputException, EntityErrorException {
+        return new ResponseEntity<>(userAccessService.modifyRoles(user), HttpStatus.OK);
+    }
     @PutMapping("/users/user/add-roles")
     public ResponseEntity<UserDTO> addRoles(@Validated(PutRelationValidation.class)
                                                 @RequestBody AuthWrapper user)
@@ -101,8 +106,7 @@ public class UserController {
     @DeleteMapping("/users/user")
     public ResponseEntity<UserDTO> deleteUser(@Validated(DeleteValidation.class)
                                                   @RequestBody AuthWrapper user)
-            throws AuthorizationErrorException, DatabaseErrorException,
-                UnknownInputException, EntityErrorException {
+            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.deleteUser(user), HttpStatus.OK);
     }
 }

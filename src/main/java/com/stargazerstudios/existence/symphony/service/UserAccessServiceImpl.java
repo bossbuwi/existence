@@ -77,7 +77,7 @@ public class UserAccessServiceImpl implements UserAccessService{
 
     @Override
     public UserDTO getUser(long id)
-            throws EntityErrorException, UnknownInputException {
+            throws EntityErrorException {
         Optional<User> userData = userDAO.findById(id);
         if (userData.isEmpty()) throw new EntityNotFoundException("user", "id", Long.toString(id));
 
@@ -162,7 +162,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         user.setPassword(hashPassword);
 
         try {
-            userDAO.save(user);
+            userDAO.saveAndFlush(user);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
@@ -180,8 +180,7 @@ public class UserAccessServiceImpl implements UserAccessService{
 
     @Override
     public UserDTO deleteUser(AuthWrapper wUser)
-            throws UnknownInputException, AuthorizationErrorException,
-                EntityErrorException, DatabaseErrorException{
+            throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException{
         boolean isSuperUserOrHigher = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
         if (!isSuperUserOrHigher) throw new UserUnauthorizedException();
 
@@ -205,6 +204,21 @@ public class UserAccessServiceImpl implements UserAccessService{
             throw new EntityDeletionErrorException("user");
         }
         return userUtil.wrapUser(user);
+    }
+
+    @Override
+    public UserDTO modifyRoles(AuthWrapper wUser)
+            throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException {
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        if (!isAuthorized) throw new UserUnauthorizedException();
+
+        String username = wUser.getUsername();
+        String authUsername = authorityUtil.getAuthUsername();
+        if (username.equals(authUsername)) throw new UserUnauthorizedException();
+
+        // TODO: Check if the addRoles() and removeRoles() can be used together.
+        // I'm guessing that they cannot but it won't hurt to try, right?
+        return null;
     }
 
     @Override
