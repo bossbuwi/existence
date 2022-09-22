@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.stargazerstudios</groupId>
 	<artifactId>existence</artifactId>
-	<version>0.2beta</version>
+	<version>1.0cassiopeia</version>
 	<name>Existence</name>
 	<description>Existence is data in its purest form.</description>
 	<properties>
@@ -160,7 +160,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
-					<!-- This copies the dependecies on a separate lib folder. -->
+					<!-- This copies the dependencies on a separate lib folder. -->
 					<execution>
 						<id>copy-dependencies</id>
 						<phase>prepare-package</phase>

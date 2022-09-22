@@ -6,6 +6,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -29,5 +30,6 @@ public class Machine {
     private Timestamp dateChanged;
 
     @OneToMany(mappedBy = "machine")
-    private Set<System> systems;
+    @OrderBy("id")
+    private Set<System> systems  = new LinkedHashSet<>();
 }

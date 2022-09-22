@@ -8,7 +8,6 @@ import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundExc
 import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.sonata.constants.ConsSonataConstraint;
@@ -58,7 +57,7 @@ public class ZoneServiceImpl implements ZoneService{
         List<Zone> zones = zoneDAO.findAll();
         if (!zones.isEmpty()) {
             for (Zone zone: zones) {
-                ZoneDTO zoneDTO = zoneUtil.wrapZone(zone);
+                ZoneDTO zoneDTO = zoneUtil.outboundZone(zone);
                 zoneList.add(zoneDTO);
             }
         }
@@ -68,7 +67,7 @@ public class ZoneServiceImpl implements ZoneService{
 
     @Override
     public ZoneDTO createZone(ZoneWrapper wZone)
-            throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException {
+            throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -86,7 +85,7 @@ public class ZoneServiceImpl implements ZoneService{
         zone.setSystem(systemData.get());
 
         try {
-            zoneDAO.save(zone);
+            zoneDAO.saveAndFlush(zone);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
@@ -99,11 +98,55 @@ public class ZoneServiceImpl implements ZoneService{
             throw new EntitySaveErrorException("zone");
         }
 
-        return zoneUtil.wrapZone(zone);
+        return zoneUtil.outboundZone(zone);
     }
 
     @Override
-    public ZoneDTO updateZone(ZoneWrapper wZone) {
-        return null;
+    public ZoneDTO updateZone(ZoneWrapper wZone)
+            throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException {
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
+        if (!isAuthorized) throw new UserUnauthorizedException();
+
+        long id = wZone.getId();
+        String zonalPrefix = stringUtil.trimToUpper(wZone.getZonal_prefix());
+        String zoneName = stringUtil.trimToUpper(wZone.getZone_name());
+
+        Optional<Zone> zoneData = zoneDAO.findById(id);
+
+        // TODO Read below rant.
+        // This method only updates the zone details and not the zone parents.
+        // To update the system where the zone is attached, the method to be used is updateFullSystem
+        if (zoneData.isEmpty()) {
+            return createZone(wZone);
+        } else {
+            Zone zone = zoneData.get();
+            zone.setZoneName(zoneName);
+            zone.setZonalPrefix(zonalPrefix);
+
+            try {
+                zoneDAO.saveAndFlush(zone);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return zoneUtil.outboundZone(zone);
+        }
+    }
+
+    @Override
+    public ZoneDTO deleteZone(long id)
+            throws EntityErrorException {
+        Optional<Zone> zoneData = zoneDAO.findById(id);
+        if (zoneData.isEmpty()) throw new EntityNotFoundException("zone", "id", Long.toString(id));
+        Zone zone = zoneData.get();
+
+        try {
+            zoneDAO.deleteById(id);
+            zoneDAO.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return zoneUtil.outboundZone(zone);
     }
 }

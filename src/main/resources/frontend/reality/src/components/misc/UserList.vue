@@ -4,28 +4,28 @@
       <v-card-actions
         class="text-h5 font-weight-black"
       >
-        Systems List
+        Users List
         <v-spacer></v-spacer>
-        <v-btn
+        <!-- <v-btn
           v-if="newBtnShown"
           color="primary"
-          @click.stop="newSystem"
+          @click.stop="newMachine"
         >
           <v-icon left>
             mdi-playlist-plus
           </v-icon>
-          New System
-        </v-btn>
+          New Machine
+        </v-btn> -->
       </v-card-actions>
       <v-divider class="mx-8 mt-4"></v-divider>
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="systemsList"
+          :items="userList"
           :items-per-page="5"
           item-key="id"
           :loading="loading"
-          sort-by="global_prefix"
+          sort-by="id"
           loading-text="Fetching data, please wait."
           @click:row="itemClicked"
           @contextmenu:row.prevent="itemRightClicked"
@@ -68,7 +68,7 @@ import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 
 export default Vue.extend({
-  name: 'SystemList',
+  name: 'UserList',
 
   data () {
     return {
@@ -78,37 +78,28 @@ export default Vue.extend({
       loading: false,
       headers: [
         {
-          text: 'System Prefix',
+          text: 'Record ID',
           align: 'start',
           sortable: true,
-          value: 'global_prefix'
+          value: 'id'
         },
         {
-          text: 'Machine',
+          text: 'Username',
           align: 'start',
           sortable: true,
-          value: 'machine'
+          value: 'username'
         },
         {
-          text: 'Zones',
+          text: 'Roles',
           align: 'start',
           sortable: false,
-          value: 'zone_prefixes'
-        },
-        {
-          text: 'Release',
-          align: 'start',
-          sortable: true,
-          value: 'release'
+          value: 'roles'
         }
       ],
-      selectedSystem: {
-        global_prefix: '',
-        release: '',
-        url: '',
-        machine: '',
-        zones: '',
-        owners: ''
+      selectedUser: {
+        name: '',
+        systems: [],
+        system_count: ''
       },
       showMenu: false,
       x: 0,
@@ -118,7 +109,7 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters({
-      systemsList: 'getSystemsList',
+      userList: 'getUserList',
       user: 'getUserState',
       isAuth: 'isAuthenticated'
     })
@@ -126,33 +117,33 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'GetSystemsList'
+      'GetUserList'
     ]),
 
-    async fetchSystems () {
+    async fetchUsers () {
       try {
         this.loading = true
-        await this.GetSystemsList()
+        await this.GetUserList()
         this.loading = false
       } catch (error) {
 
       }
     },
 
-    newSystem () {
+    newMachine () {
       this.$emit('open-form')
     },
 
     // eslint-disable-next-line
     itemClicked (args: any, { item }: { item: any }) {
-      this.selectedSystem = item
-      this.$emit('item-clicked', this.selectedSystem)
+      this.selectedUser = item
+      this.$emit('item-clicked', this.selectedUser)
     },
 
     // eslint-disable-next-line
     itemRightClicked (event: any, { item }: { item: any}) {
       this.showMenu = false
-      this.selectedSystem = item
+      this.selectedUser = item
       this.x = event.clientX
       this.y = event.clientY
       this.$nextTick(() => {
@@ -161,11 +152,11 @@ export default Vue.extend({
     },
 
     editItem () {
-      this.$emit('edit-item', this.selectedSystem)
+      this.$emit('edit-item', this.selectedUser)
     },
 
     deleteItem () {
-      this.$emit('delete-item', this.selectedSystem)
+      this.$emit('delete-item', this.selectedUser)
     }
   },
 
@@ -186,7 +177,7 @@ export default Vue.extend({
       this.newBtnShown = false
     }
 
-    await this.fetchSystems()
+    await this.fetchUsers()
   }
 })
 </script>

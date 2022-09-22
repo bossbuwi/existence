@@ -17,6 +17,6 @@ public class Release {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "machine")
+    @OneToMany(mappedBy = "release")
     private Set<System> systems;
 }

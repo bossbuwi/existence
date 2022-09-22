@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.sonata.controller;
 
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @CrossOrigin
@@ -48,5 +50,11 @@ public class MachineController {
                                                         @RequestBody MachineWrapper wMachine)
             throws DatabaseErrorException, UnknownInputException, EntityErrorException {
         return new ResponseEntity<>(machineService.updateMachine(wMachine), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/machines/machine/{id}")
+    public ResponseEntity<MachineDTO> deleteMachine(@NotBlank @PathVariable("id") long id)
+            throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException {
+        return new ResponseEntity<>(machineService.deleteMachine(id), HttpStatus.OK);
     }
 }

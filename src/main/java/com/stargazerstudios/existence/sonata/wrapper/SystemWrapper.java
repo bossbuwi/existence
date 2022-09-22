@@ -2,6 +2,7 @@ package com.stargazerstudios.existence.sonata.wrapper;
 
 import com.stargazerstudios.existence.conductor.validation.groups.PostFullValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
+import com.stargazerstudios.existence.conductor.validation.groups.PutFullValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import lombok.*;
 
@@ -12,24 +13,34 @@ import javax.validation.constraints.NotEmpty;
 @Getter @Setter @NoArgsConstructor
 public class SystemWrapper {
 
-    @Min(value = 1, groups = PutValidation.class)
+    @Min(value = 1, groups = {
+            PutValidation.class, PutFullValidation.class
+    })
     private long id;
+
     @NotBlank(groups = {
-            PostValidation.class, PutValidation.class, PostFullValidation.class
+            PostValidation.class, PostFullValidation.class
     })
     private String global_prefix;
+
     @Min(value = 1, groups = {
-            PostValidation.class, PutValidation.class, PostFullValidation.class
+            PostValidation.class, PostFullValidation.class
     })
     private long release_id;
+
     private String description;
+
     private String url;
+
     private String owners;
+
     @NotBlank(groups = {
-            PostValidation.class, PutValidation.class, PostFullValidation.class
+            PostValidation.class, PostFullValidation.class
     })
     private String machine;
 
-    @NotEmpty(groups = PostFullValidation.class)
+    @NotEmpty(groups = {
+            PostFullValidation.class
+    })
     private ZoneWrapper[] zones;
 }

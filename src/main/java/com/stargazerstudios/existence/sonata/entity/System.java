@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -20,9 +21,6 @@ public class System {
 
     @Column(name = "global_prefix")
     private String globalPrefix;
-
-//    @Column(name = "release")
-//    private String release;
 
     @Column(name = "description")
     private String description;
@@ -45,14 +43,17 @@ public class System {
     @JoinColumn(name = "machine_id")
     private Machine machine;
 
-    @OneToMany(mappedBy = "system")
-    private Set<Zone> zones;
+    @OneToMany(mappedBy = "system", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private Set<Zone> zones  = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "system")
-    private Set<Event> events;
+    @OrderBy("id")
+    private Set<Event> events  = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "system")
-    private Set<Coblog> coblogs;
+    @OrderBy("id")
+    private Set<Coblog> coblogs  = new LinkedHashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "release_id")

@@ -12,4 +12,6 @@ public interface ReleaseService {
     ReleaseDTO getRelease(String name);
     ReleaseDTO getRelease(long id);
     ReleaseDTO createRelease(ReleaseWrapper releaseWrapper) throws DatabaseErrorException, AuthorizationErrorException;
+    ReleaseDTO updateRelease(ReleaseWrapper releaseWrapper);
+    ReleaseDTO deleteRelease(long id);
 }

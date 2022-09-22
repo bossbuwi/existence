@@ -37,7 +37,8 @@ const routes: Array<RouteConfig> = [
   {
     path: '/misc',
     name: 'misc',
-    component: MiscView
+    component: MiscView,
+    props: true
   },
   {
     path: '/calendar',

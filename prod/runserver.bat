@@ -17,7 +17,7 @@ echo Setting Java version to 17.
 cd C:\Program Files\Java\jdk-17\bin
 
 echo Launching server in a new window.
-start "Existence 1.0" java -jar "%home%\existence-0.0.1-SNAPSHOT.jar" --spring.profiles.active=%env% --spring.config.location=%home%\config\
+start "Existence 1.0" java -jar "%home%\existence-1.0cassiopeia.jar" --spring.profiles.active=%env% --spring.config.location=%home%\config\ --logging.file.name=%home%\log\%env%\existence.log
 
 echo Logs may be found at %home%\logs
 cd %home%

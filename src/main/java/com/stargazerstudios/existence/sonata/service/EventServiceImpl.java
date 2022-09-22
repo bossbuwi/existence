@@ -260,6 +260,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDTO updateEvent(EventWrapper wEvent)
             throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+        // TODO This method is too bloated. It is a PUT method but requires the user to send back all of the existing
+        //  property that the entity have.
+        //  A better and more efficient approach would be if the user is allowed to send only the properties that needs
+        //  to be updated. This needs a rework, but is of low priority.
         long id = wEvent.getId();
 
         String globalPrefixIn = null;

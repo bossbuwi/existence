@@ -10,7 +10,21 @@ const getDefaultSystemState = () => {
     },
     list: [
 
-    ]
+    ],
+    system: {
+      id: 0 as number,
+      global_prefix: '' as string,
+      release: '' as string,
+      description: '' as string,
+      url: '' as string,
+      owners: '' as string,
+      machine: '' as string,
+      zones: [] as string[],
+      zone_names: [] as string[],
+      zone_prefixes: [] as string[],
+      creation_date: '' as string,
+      last_changed_date: '' as string
+    }
   }
 }
 
@@ -18,7 +32,8 @@ const state = getDefaultSystemState()
 
 const getters = {
   getSystemCount: (state: any) => state.systems.count,
-  getSystemsList: (state: any) => state.list
+  getSystemsList: (state: any) => state.list,
+  getSystem: (state: any) => state.system
 }
 
 const actions = {
@@ -61,13 +76,48 @@ const actions = {
         Authorization: 'Bearer ' + token
       }
     }).then((result) => {
-
+      console.log(result.data)
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')
       commit('setError', error.response.data)
     })
   },
+
+  async PutFullSystem ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
+    const token = rootGetters.getToken
+    await axios.put('sonata/systems/system/full', form, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    }).then((result) => {
+      console.log(result.data)
+    }).catch((error) => {
+      console.log(error.response.data)
+      commit('clearError')
+      commit('setError', error.response.data)
+    })
+  },
+
+  async DeleteSystem ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, id: any) {
+    const token = rootGetters.getToken
+    await axios.delete('sonata/systems/system/' + id, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    }).then((result) => {
+      console.log(result.data)
+    }).catch((error) => {
+      console.log(error.response.data)
+      commit('clearError')
+      commit('setError', error.response.data)
+    })
+  },
+
+  SetSystem ({ commit }: { commit: Commit }, args: any) {
+    commit('resetSystemState')
+    commit('setSystem', args)
+  }
 }
 
 const mutations = {
@@ -81,6 +131,10 @@ const mutations = {
 
   addSystemToList (state: any, system: System) {
     state.list.push(system)
+  },
+
+  setSystem (state: any, system: any) {
+    state.system = system
   }
 }
 

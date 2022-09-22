@@ -76,11 +76,10 @@ public class UserAccessServiceImpl implements UserAccessService{
     }
 
     @Override
-    public UserDTO getUser(AuthWrapper wUser) throws EntityErrorException {
-        String username = wUser.getUsername();
-
-        Optional<User> userData = userDAO.findByUsername(username);
-        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
+    public UserDTO getUser(long id)
+            throws EntityErrorException {
+        Optional<User> userData = userDAO.findById(id);
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "id", Long.toString(id));
 
         User user = userData.get();
         return userUtil.wrapUser(user);
@@ -163,7 +162,7 @@ public class UserAccessServiceImpl implements UserAccessService{
         user.setPassword(hashPassword);
 
         try {
-            userDAO.save(user);
+            userDAO.saveAndFlush(user);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             ConstraintViolationException ex = (ConstraintViolationException) e.getCause();
@@ -181,8 +180,7 @@ public class UserAccessServiceImpl implements UserAccessService{
 
     @Override
     public UserDTO deleteUser(AuthWrapper wUser)
-            throws UnknownInputException, AuthorizationErrorException,
-                EntityErrorException, DatabaseErrorException{
+            throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException{
         boolean isSuperUserOrHigher = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
         if (!isSuperUserOrHigher) throw new UserUnauthorizedException();
 
@@ -205,6 +203,53 @@ public class UserAccessServiceImpl implements UserAccessService{
             e.printStackTrace();
             throw new EntityDeletionErrorException("user");
         }
+        return userUtil.wrapUser(user);
+    }
+
+    @Override
+    public UserDTO modifyRoles(AuthWrapper wUser)
+            throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException {
+        boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
+        if (!isAuthorized) throw new UserUnauthorizedException();
+
+        String username = wUser.getUsername();
+        String authUsername = authorityUtil.getAuthUsername();
+        if (username.equals(authUsername)) throw new UserUnauthorizedException();
+
+        String[] rolesIn = wUser.getRoles();
+        Set<String> rolesQuery = new HashSet<>();
+        for (String role: rolesIn) {
+            if (!stringUtil.checkInputTrim(role).equals(EnumUtilOutput.EMPTY.getValue())) {
+                rolesQuery.add(role);
+            } else {
+                throw new InvalidInputException("roles");
+            }
+        }
+
+        Optional<User> userData = userDAO.findByUsername(username);
+        if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
+        User user = userData.get();
+
+        long userRank = authorityUtil.getHighestRank(user);
+        long authRank = authorityUtil.getHighestRank();
+        if (authorityUtil.hasHigherRank(userRank, authRank)) throw new UserUnauthorizedException();
+
+        List<Role> rolesDb = roleDAO.findRolesBySet(rolesQuery);
+        if (rolesDb.size() != rolesQuery.size()) throw new InvalidInputException("roles");
+
+        long inputRank = authorityUtil.getHighestRank(rolesDb);
+        if (authorityUtil.hasHigherRank(inputRank, authRank)) throw new UserUnauthorizedException();
+
+        Set<Role> roles = new HashSet<>(rolesDb);
+        user.setRoles(roles);
+
+        try {
+            userDAO.saveAndFlush(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new EntitySaveErrorException("user");
+        }
+
         return userUtil.wrapUser(user);
     }
 

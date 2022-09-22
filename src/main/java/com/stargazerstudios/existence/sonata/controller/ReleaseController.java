@@ -3,6 +3,7 @@ package com.stargazerstudios.existence.sonata.controller;
 import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
+import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import com.stargazerstudios.existence.sonata.dto.ReleaseDTO;
 import com.stargazerstudios.existence.sonata.service.ReleaseServiceImpl;
 import com.stargazerstudios.existence.sonata.wrapper.ReleaseWrapper;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @CrossOrigin
@@ -34,5 +36,17 @@ public class ReleaseController {
                                                         @RequestBody ReleaseWrapper release)
             throws AuthorizationErrorException, DatabaseErrorException {
         return new ResponseEntity<>(releaseService.createRelease(release), HttpStatus.OK);
+    }
+
+    // TODO: Update and delete release entity both on frontend and backend.
+    @PutMapping("/releases/release")
+    public ResponseEntity<ReleaseDTO> updateRelease(@Validated(PutValidation.class)
+                                                    @RequestBody ReleaseWrapper release) {
+        return new ResponseEntity<>(releaseService.updateRelease(release), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/releases/release/{id}")
+    public ResponseEntity<ReleaseDTO> deleteRelease(@NotBlank @PathVariable("id") long id) {
+        return new ResponseEntity<>(releaseService.deleteRelease(id), HttpStatus.OK);
     }
 }

@@ -25,7 +25,7 @@ public class UserController {
     @Autowired
     private UserAccessService userAccessService;
 
-    /* Unguarded Enpoints */
+    /* Unguarded Endpoints */
     @GetMapping("/con/users/count")
     public ResponseEntity<Long> countUsers() {
         return new ResponseEntity<>(userAccessService.countUsers(), HttpStatus.OK);
@@ -37,11 +37,10 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.getAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/users/user")
-    public ResponseEntity<UserDTO> getUser(@Validated(GetValidation.class)
-                                               @RequestBody AuthWrapper user)
+    @GetMapping("/users/user/{id}")
+    public ResponseEntity<UserDTO> getUser(@NotBlank @PathVariable("id") long id)
             throws EntityErrorException {
-        return new ResponseEntity<>(userAccessService.getUser(user), HttpStatus.OK);
+        return new ResponseEntity<>(userAccessService.getUser(id), HttpStatus.OK);
     }
 
     @GetMapping("/users/user/{id}/details")
@@ -65,6 +64,13 @@ public class UserController {
         return new ResponseEntity<>(userAccessService.updateUserPassword(user), HttpStatus.OK);
     }
 
+    @PutMapping("/users/user/modify-roles")
+    public ResponseEntity<UserDTO> modifyRoles(@Validated(PutRelationValidation.class)
+                                               @RequestBody AuthWrapper user)
+            throws AuthorizationErrorException, DatabaseErrorException,
+                UnknownInputException, EntityErrorException {
+        return new ResponseEntity<>(userAccessService.modifyRoles(user), HttpStatus.OK);
+    }
     @PutMapping("/users/user/add-roles")
     public ResponseEntity<UserDTO> addRoles(@Validated(PutRelationValidation.class)
                                                 @RequestBody AuthWrapper user)
@@ -100,8 +106,7 @@ public class UserController {
     @DeleteMapping("/users/user")
     public ResponseEntity<UserDTO> deleteUser(@Validated(DeleteValidation.class)
                                                   @RequestBody AuthWrapper user)
-            throws AuthorizationErrorException, DatabaseErrorException,
-                UnknownInputException, EntityErrorException {
+            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException {
         return new ResponseEntity<>(userAccessService.deleteUser(user), HttpStatus.OK);
     }
 }

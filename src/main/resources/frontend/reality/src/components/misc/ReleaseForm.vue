@@ -22,7 +22,7 @@
           v-slot="{ invalid }"
         >
           <v-form
-            id="machineForm"
+            id="releaseForm"
             :disabled="formDisabled"
           >
             <v-row>
@@ -33,7 +33,7 @@
                 cols="12"
                 sm="6"
                 md="4"
-                v-if="mode === 'update' || machineForm.newName !== ''"
+                v-if="mode === 'update' || releaseForm.newName !== ''"
               >
                 <validation-provider
                   v-slot="{ errors }"
@@ -41,8 +41,8 @@
                   rules="required"
                 >
                   <v-text-field
-                    v-model="machineForm.newName"
-                    @input="machineForm.newName = machineForm.newName.toUpperCase()"
+                    v-model="releaseForm.newName"
+                    @input="releaseForm.newName = releaseForm.newName.toUpperCase()"
                     label="New Name*"
                     type="text"
                     :error-messages="errors"
@@ -53,7 +53,7 @@
                 cols="12"
                 sm="6"
                 md="4"
-                v-if="mode !== 'update' && machineForm.newName === ''"
+                v-if="mode !== 'update' && releaseForm.newName === ''"
               >
                 <validation-provider
                   v-slot="{ errors }"
@@ -61,8 +61,8 @@
                   rules="required"
                 >
                   <v-text-field
-                    v-model="machineForm.name"
-                    @input="machineForm.name = machineForm.name.toUpperCase()"
+                    v-model="releaseForm.name"
+                    @input="releaseForm.name = releaseForm.name.toUpperCase()"
                     label="Name*"
                     type="text"
                     :error-messages="errors"
@@ -102,7 +102,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default Vue.extend({
-  name: 'MachineForm',
+  name: 'ReleaseForm',
 
   components: {
     ValidationObserver, ValidationProvider
@@ -115,7 +115,7 @@ export default Vue.extend({
   data () {
     return {
       submitLoading: false,
-      machineForm: {
+      releaseForm: {
         id: 0,
         name: '',
         newName: ''
@@ -126,7 +126,7 @@ export default Vue.extend({
   computed: {
     ...mapGetters({
       errorStatus: 'getErrorStatus',
-      machine: 'getMachine'
+      release: 'getRelease'
     }),
 
     submitEnabled: {
@@ -152,7 +152,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'PostMachine', 'PutMachine', 'DeleteMachine'
+      'PostRelease', 'PutMachine', 'DeleteMachine'
     ]),
 
     close () {
@@ -160,33 +160,33 @@ export default Vue.extend({
     },
 
     mapObject () {
-      this.machineForm.name = this.machine.name
-      this.machineForm.newName = this.machine.name
+      this.releaseForm.name = this.release.name
+      this.releaseForm.newName = this.release.name
     },
 
     async submit () {
       this.formLoading()
 
-      const machineData = {}
+      const releaseData = {}
       if (this.mode !== 'create') {
-        machineData.id = this.machine.id
-        machineData.name = this.machine.name
-        machineData.new_name = this.machineForm.newName
+        releaseData.id = this.release.id
+        releaseData.name = this.release.name
+        releaseData.new_name = this.releaseForm.newName
       }
 
-      machineData.name = this.machineForm.name
+      releaseData.name = this.releaseForm.name
 
       switch (this.mode) {
         case 'create':
-          await this.PostMachine(machineData)
+          await this.PostRelease(releaseData)
           this.formSubmitted()
           break
         case 'update':
-          await this.PutMachine(machineData)
+          // await this.PutMachine(releaseData)
           this.formSubmitted()
           break
         case 'delete':
-          await this.DeleteMachine(machineData.id)
+          // await this.DeleteMachine(releaseData.id)
           this.formSubmitted()
           break
         default:

@@ -112,10 +112,17 @@ export default Vue.extend({
 
   methods: {
     ...mapActions(['Login', 'Logout']),
+
     async submitForm () {
       this.loading = true
       await this.Login(this.user)
-      this.$router.go(0)
+      if (this.isAuth) {
+        this.$router.go(0)
+      } else {
+        this.user.username = ''
+        this.user.password = ''
+        this.loading = false
+      }
     },
 
     logout () {

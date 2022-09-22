@@ -4,28 +4,28 @@
       <v-card-actions
         class="text-h5 font-weight-black"
       >
-        Systems List
+        Releases List
         <v-spacer></v-spacer>
         <v-btn
           v-if="newBtnShown"
           color="primary"
-          @click.stop="newSystem"
+          @click.stop="newRelease"
         >
           <v-icon left>
             mdi-playlist-plus
           </v-icon>
-          New System
+          New Release
         </v-btn>
       </v-card-actions>
       <v-divider class="mx-8 mt-4"></v-divider>
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="systemsList"
+          :items="releaseList"
           :items-per-page="5"
           item-key="id"
           :loading="loading"
-          sort-by="global_prefix"
+          sort-by="id"
           loading-text="Fetching data, please wait."
           @click:row="itemClicked"
           @contextmenu:row.prevent="itemRightClicked"
@@ -68,7 +68,7 @@ import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 
 export default Vue.extend({
-  name: 'SystemList',
+  name: 'ReleaseList',
 
   data () {
     return {
@@ -78,37 +78,28 @@ export default Vue.extend({
       loading: false,
       headers: [
         {
-          text: 'System Prefix',
+          text: 'Record ID',
           align: 'start',
           sortable: true,
-          value: 'global_prefix'
+          value: 'id'
         },
         {
-          text: 'Machine',
+          text: 'Name',
           align: 'start',
           sortable: true,
-          value: 'machine'
+          value: 'name'
         },
         {
-          text: 'Zones',
+          text: 'No. of Systems',
           align: 'start',
           sortable: false,
-          value: 'zone_prefixes'
-        },
-        {
-          text: 'Release',
-          align: 'start',
-          sortable: true,
-          value: 'release'
+          value: 'system_count'
         }
       ],
-      selectedSystem: {
-        global_prefix: '',
-        release: '',
-        url: '',
-        machine: '',
-        zones: '',
-        owners: ''
+      selectedRelease: {
+        name: '',
+        systems: [],
+        system_count: ''
       },
       showMenu: false,
       x: 0,
@@ -118,7 +109,7 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters({
-      systemsList: 'getSystemsList',
+      releaseList: 'getReleasesList',
       user: 'getUserState',
       isAuth: 'isAuthenticated'
     })
@@ -126,33 +117,33 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'GetSystemsList'
+      'GetReleasesList'
     ]),
 
-    async fetchSystems () {
+    async fetchReleases () {
       try {
         this.loading = true
-        await this.GetSystemsList()
+        await this.GetReleasesList()
         this.loading = false
       } catch (error) {
 
       }
     },
 
-    newSystem () {
+    newRelease () {
       this.$emit('open-form')
     },
 
     // eslint-disable-next-line
     itemClicked (args: any, { item }: { item: any }) {
-      this.selectedSystem = item
-      this.$emit('item-clicked', this.selectedSystem)
+      this.selectedRelease = item
+      this.$emit('item-clicked', this.selectedRelease)
     },
 
     // eslint-disable-next-line
     itemRightClicked (event: any, { item }: { item: any}) {
       this.showMenu = false
-      this.selectedSystem = item
+      this.selectedRelease = item
       this.x = event.clientX
       this.y = event.clientY
       this.$nextTick(() => {
@@ -161,11 +152,11 @@ export default Vue.extend({
     },
 
     editItem () {
-      this.$emit('edit-item', this.selectedSystem)
+      this.$emit('edit-item', this.selectedRelease)
     },
 
     deleteItem () {
-      this.$emit('delete-item', this.selectedSystem)
+      this.$emit('delete-item', this.selectedRelease)
     }
   },
 
@@ -186,7 +177,7 @@ export default Vue.extend({
       this.newBtnShown = false
     }
 
-    await this.fetchSystems()
+    await this.fetchReleases()
   }
 })
 </script>

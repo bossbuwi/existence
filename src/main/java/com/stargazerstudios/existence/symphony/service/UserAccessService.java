@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserAccessService {
     Long countUsers();
     List<UserDTO> getAllUsers();
-    UserDTO getUser(AuthWrapper user)
+    UserDTO getUser(long id)
             throws EntityErrorException;
     UserDTO getDetailedUser(long id) throws EntityErrorException;
     UserDTO createUser(AuthWrapper user)
@@ -20,7 +20,9 @@ public interface UserAccessService {
     UserDTO updateUserPassword(AuthWrapper user)
             throws UnknownInputException, AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
     UserDTO deleteUser(AuthWrapper user)
-            throws UnknownInputException, AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
+            throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException;
+    UserDTO modifyRoles(AuthWrapper user)
+            throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException;
     UserDTO addRoles(AuthWrapper user)
             throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException;
     UserDTO removeRoles(AuthWrapper user)
