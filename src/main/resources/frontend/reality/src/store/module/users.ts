@@ -81,6 +81,21 @@ const actions = {
     })
   },
 
+  async PutUserRoles ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
+    const token = rootGetters.getToken
+    await axios.put('symphony/users/user/modify-roles', form, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    }).then((result) => {
+      console.log(result.data)
+    }).catch((error) => {
+      console.log(error.response.data)
+      commit('clearError')
+      commit('setError', error.response.data)
+    })
+  },
+
   SetUserItem ({ commit }: { commit: Commit }, args: any) {
     commit('resetUserState')
     commit('setUserItem', args)

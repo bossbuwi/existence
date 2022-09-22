@@ -130,7 +130,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'GetRoles'
+      'GetRoles', 'PutUserRoles'
     ]),
 
     close () {
@@ -151,27 +151,27 @@ export default Vue.extend({
     async submit () {
       this.formLoading()
 
-      const machineData = {}
-      if (this.mode !== 'create') {
-        machineData.id = this.machine.id
-        machineData.name = this.machine.name
-        machineData.new_name = this.userForm.newName
-      }
+      const userData = {}
+      const roleArr = []
 
-      machineData.name = this.userForm.name
+      this.userForm.roles.forEach(element => {
+        roleArr.push(element.name)
+      })
+
+      if (this.mode !== 'create') {
+        userData.id = this.userForm.id
+        userData.username = this.userForm.username
+        userData.roles = roleArr
+      }
 
       switch (this.mode) {
         case 'create':
-          await this.PostMachine(machineData)
-          this.formSubmitted()
           break
         case 'update':
-          await this.PutMachine(machineData)
+          await this.PutUserRoles(userData)
           this.formSubmitted()
           break
         case 'delete':
-          await this.DeleteMachine(machineData.id)
-          this.formSubmitted()
           break
         default:
           break

@@ -32,7 +32,7 @@
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>
-                <v-list-item-content>
+                <v-list-item-content v-if="userDetails.events_added > 0">
                   <v-list-item-title>No. of events logged</v-list-item-title>
                   <v-list-item-subtitle>{{ userDetails.events_added }}</v-list-item-subtitle>
                 </v-list-item-content>

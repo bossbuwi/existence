@@ -10,7 +10,7 @@
       <v-tab>Zones</v-tab>
       <v-tab>Releases</v-tab>
       <v-tab>Rules</v-tab>
-      <v-tab>Users</v-tab>
+      <v-tab v-if="isAuth">Users</v-tab>
 
       <v-tab-item :eager="preload">
         <machine-list
@@ -56,7 +56,7 @@
         <empty-list></empty-list>
       </v-tab-item>
 
-      <v-tab-item>
+      <v-tab-item v-if="isAuth">
         <!-- Users -->
         <user-list
           :key="userTabKey"
@@ -153,7 +153,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import EmptyList from '@/components/EmptyList.vue'
 import SystemList from '@/components/misc/SystemList.vue'
 import SystemForm from '@/components/misc/SystemForm.vue'
@@ -224,6 +224,15 @@ export default Vue.extend({
         roles: []
       }
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      isAuth: 'isAuthenticated',
+      getUser: 'getUserState',
+      frontendFeatures: 'getFrontendList',
+      disabledSwitchableFeatures: 'getDisabledSwitchableList'
+    })
   },
 
   methods: {
@@ -352,6 +361,9 @@ export default Vue.extend({
         case 3:
           this.successRelease()
           break
+        case 5:
+          this.succesUser()
+          break
         default:
           break
       }
@@ -474,6 +486,24 @@ export default Vue.extend({
       this.SetUserItem(param)
     },
 
+    succesUser () {
+      switch (this.formMode) {
+        case 'create':
+          this.formTitle = 'New user created!'
+          break
+        case 'update':
+          this.formTitle = 'User updated!'
+          break
+        case 'delete':
+          this.formTitle = 'User deleted!'
+          break
+        default:
+          break
+      }
+      this.formColor = 'success'
+      this.formMode = 'complete'
+    },
+
     /* Popup Methods */
     closePopup () {
       this.itemPopup = false
@@ -543,6 +573,10 @@ export default Vue.extend({
     deleteItem (param: any) {
       this.deleteMode(param)
     }
+  },
+
+  async mounted () {
+    console.log(this.isAuth)
   }
 })
 </script>

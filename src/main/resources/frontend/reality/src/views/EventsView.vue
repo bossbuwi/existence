@@ -66,7 +66,6 @@
     <v-dialog
       v-model="dialog"
       persistent
-      eager
       fullscreen
     >
       <event-form

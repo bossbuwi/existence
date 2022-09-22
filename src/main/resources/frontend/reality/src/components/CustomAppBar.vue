@@ -7,6 +7,15 @@
   >
     <v-toolbar-title>{{ appTitle }}</v-toolbar-title>
     <v-spacer></v-spacer>
+    <v-btn
+      fab
+      x-small
+      @click.prevent="changeTheme()"
+    >
+      <v-icon dark>
+        {{ themeIcon }}
+      </v-icon>
+    </v-btn>
     <v-menu
       transition="scroll-y-transition"
       :close-on-content-click="false"
@@ -38,7 +47,21 @@ export default Vue.extend({
 
   data () {
     return {
-      appTitle: process.env.VUE_APP_NAME
+      appTitle: process.env.VUE_APP_NAME,
+      themeIcon: 'mdi-moon-waning-crescent',
+      isDark: false
+    }
+  },
+
+  methods: {
+    changeTheme () {
+      if (this.$vuetify.theme.dark) {
+        this.themeIcon = 'mdi-moon-waning-crescent'
+        this.$vuetify.theme.dark = false
+      } else if (!this.$vuetify.theme.dark) {
+        this.themeIcon = 'mdi-weather-sunny'
+        this.$vuetify.theme.dark = true
+      }
     }
   }
 })

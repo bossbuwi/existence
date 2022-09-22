@@ -23,6 +23,8 @@ import java.util.*;
 @Component
 public class Initializer {
 
+    public static boolean HAS_ERRORS = false;
+
     @Autowired
     private UserDAO userDAO;
 
@@ -44,23 +46,22 @@ public class Initializer {
      */
     @EventListener(ApplicationReadyEvent.class)
     private void postStartUp() {
-        checkRoles();
-        checkJwtKey();
-        checkDefaultAdmin();
-        checkDefaultUser();
+        HAS_ERRORS = checkRoles() || checkJwtKey() || checkDefaultOwner() || checkDefaultUser();
     }
 
     /**
-     * Checks if the default admin account has been set up. If no admin account is found, it automatically creates
+     * Checks if the default owner account has been set up.
+     * If no owner account is found, it automatically creates
      * one and grants it maximum authority.
+     * @return boolean true if the method encountered an error.
      */
-    private void checkDefaultAdmin() {
-        Optional<User> adminData = userDAO.findByUsername(EnumAuthorization.DEFAULT_OWNER.getValue());
-        if (adminData.isEmpty()) {
-            User admin = new User();
-            admin.setUsername(EnumAuthorization.DEFAULT_OWNER.getValue());
+    private boolean checkDefaultOwner() {
+        Optional<User> ownerData = userDAO.findByUsername(EnumAuthorization.DEFAULT_OWNER.getValue());
+        if (ownerData.isEmpty()) {
+            User owner = new User();
+            owner.setUsername(EnumAuthorization.DEFAULT_OWNER.getValue());
             String hashPword = passwordEncoder.encode(EnumAuthorization.DEFAULT_OWNER.getValue());
-            admin.setPassword(hashPword);
+            owner.setPassword(hashPword);
 
             Set<String> roleNames = new HashSet<>(Arrays.asList(
                     EnumAuthorization.OWNER.getValue(),
@@ -77,17 +78,26 @@ public class Initializer {
             }
 
             Set<Role> roles = new HashSet<>(dbRoles);
-            admin.setRoles(roles);
+            owner.setRoles(roles);
 
             try {
-                userDAO.save(admin);
+                userDAO.save(owner);
             } catch (Exception e) {
                 e.printStackTrace();
+                return true;
             }
         }
+
+        return false;
     }
 
-    private void checkDefaultUser() {
+    /**
+     * Checks if the default user account has been set up.
+     * If no user account is found, it automatically creates
+     * one and grants it standard authority.
+     * @return boolean true if the method encountered an error.
+     */
+    private boolean checkDefaultUser() {
         Optional<User> userData = userDAO.findByUsername(EnumAuthorization.DEFAULT_USER.getValue());
         if (userData.isEmpty()) {
             User user = new User();
@@ -106,28 +116,36 @@ public class Initializer {
                 userDAO.save(user);
             } catch (Exception e) {
                 e.printStackTrace();
+                return true;
             }
         }
+
+        return false;
     }
 
     /**
      * Checks if the property "jwt.secret" has been defined on the application.properties file.
      * If not, this throws an error that is readable on the system logs.
+     * @return boolean true if the method encountered an error.
      */
-    private void checkJwtKey() {
+    private boolean checkJwtKey() {
         try {
             if (stringUtil.checkInput(jwtKey).equals(EnumUtilOutput.EMPTY.getValue()))
                 throw new InvalidPropertyErrorException("jwt.secret");
         } catch (InvalidPropertyErrorException e) {
             e.printStackTrace();
+            return true;
         }
+
+        return false;
     }
 
     /**
      * Checks the integrity of the roles saved in the database. If it finds a discrepancy, it throws an error
      * that is readable on the system logs.
+     * @return boolean true if the method encountered an error.
      */
-    private void checkRoles() {
+    private boolean checkRoles() {
         Set<String> roleNames = new HashSet<>();
         for (EnumAuthorization auth: EnumAuthorization.values()) {
             if (!auth.equals(EnumAuthorization.DEFAULT_OWNER) && !auth.equals(EnumAuthorization.DEFAULT_USER)) {
@@ -159,6 +177,9 @@ public class Initializer {
             }
         } catch (DatabaseErrorException e) {
             e.printStackTrace();
+            return true;
         }
+
+        return false;
     }
 }
