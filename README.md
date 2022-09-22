@@ -116,6 +116,11 @@ _Note that for the Vuejs server to run properly, an instance of the Spring Boot 
 **Deploying For Production**
 1. Open the file `.env.local` on _frontenddir_.
 2. Fill out the properties `VUE_APP_NAME` and `VUE_APP_SUBTITLE` depending on the installation requirements.
-3. Blank out the `VUE_DEV_SERVER` property and replace `VUE_DEFAULT_URL` property with the address and port to be used on the deployment server.
-4. Execute **Setting Up Dependencies for the First Time** heading. Note that if a database of name _db_test_ is existing already, delete it and create a new one.
-5. Go to `sourcedir/target` and copy the resulting JAR file and `libs` directory to the deployment server.
+3. Blank out the `VUE_DEV_SERVER` property and replace `VUE_DEFAULT_URL` property with the IP address and port to be used on the deployment server.
+4. Execute **Setting Up Dependencies for the First Time** heading. Note that if a database of name _db_test_ is already existing, delete it and create a new one.
+This will result in a `target` folder being created on the source directory.
+5. Copy the resulting *.jar file and the `libs` folder on the production machine. From now on, this directory will be known as _proddir_
+6. Create a folder named `config` on the _proddir_. Copy the properties files from `prod\properties` (both prod and test) into this folder.
+7. Create two new databases named `db_existence` and `db_test`. If this is an initial deployment and either of the databases are already existing, delete them and create new ones.
+8. Copy all other files located on folder `prod` into the _proddir_.
+9. Run a command prompt window as administrator and navigate to the _proddir_. Run the `runserver.bat` on the command prompt window and follow the prompts. The application is now ready to use!
