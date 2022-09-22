@@ -29,8 +29,12 @@ const actions = {
       user = result.data
       const dateNow = new Date()
       user.created = dateNow
+      commit('setUser', user)
+    }).catch((error) => {
+      console.log(error.response.data)
+      commit('clearError')
+      commit('setError', error.response.data)
     })
-    commit('setUser', user)
   },
 
   async Logout ({ commit }: { commit: Commit }) {
