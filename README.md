@@ -5,7 +5,7 @@
 **Framework:** [Spring Boot](https://spring.io/projects/spring-boot) version 2.6.7  
 **Status:** Active - Ongoing  
 **Last Release Date:** 24 September 2022  
-**Latest Version:** v2.0cassiopeia  
+**Latest Version:** v1.0cassiopeia  
 **Author:** [bossbuwi](https://github.com/bossbuwi)
 
 _This project contains sources from the late project [reality](https://github.com/bossbuwi/reality),
