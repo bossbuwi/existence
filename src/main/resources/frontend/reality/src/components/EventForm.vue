@@ -427,7 +427,7 @@ export default Vue.extend({
 
       this.zonesLoading = true
       const system = this.eventForm.system
-      const zonesArr = system.zone_names
+      const zonesArr = system.zone_prefixes
       zonesArr.forEach((element) => {
         const item = {
           text: element,
