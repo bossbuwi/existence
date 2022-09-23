@@ -4,7 +4,7 @@ public class AboutExistence {
     public static String APP_NAME = "Existence";
     public static String APP_DESCRIPTION = "Data in its purest form.";
     public static String NAMED_RELEASE = "cassiopeia";
-    public static String VERSION_NUMBER = "1.0";
+    public static String VERSION_NUMBER = "1.1";
     public static String SOURCE_REPOSITORY = "https://github.com/bossbuwi/existence";
     public static String RELEASE_DATE = "24-September-2022";
 
@@ -14,14 +14,14 @@ public class AboutExistence {
     }
 
     public static class BackendStack {
-        public static String DATABASE = "PostgreSQL 14";
-        public static String FRAMEWORK = "Spring Boot 2.6.7";
+        public static String DATABASE = "PostgreSQL 14.5";
+        public static String FRAMEWORK = "Spring Boot 2.7.3";
         public static String LANGUAGE = "Java 17";
     }
 
     public static class FrontendStack {
-        public static String FRAMEWORK = "Vue.js 2.6.14";
+        public static String FRAMEWORK = "Vue.js 2.7.10";
         public static String LANGUAGE = "Typescript 4.5.5";
-        public static String THEME = "Vuetify 2.6.6";
+        public static String THEME = "Vuetify 2.6.10";
     }
 }

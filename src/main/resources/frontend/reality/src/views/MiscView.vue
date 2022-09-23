@@ -458,6 +458,7 @@ export default Vue.extend({
       this.formTitle = 'New Release'
     },
 
+    // eslint-disable-next-line
     editRelease (param: any) {
       this.formTitle = 'Update Release'
       this.SetRelease(param)
@@ -481,6 +482,7 @@ export default Vue.extend({
       this.formMode = 'complete'
     },
 
+    // eslint-disable-next-line
     editUser (param: any) {
       this.formTitle = 'Update User'
       this.SetUserItem(param)

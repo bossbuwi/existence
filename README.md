@@ -2,10 +2,10 @@
 
 ### Project Details
 
-**Framework:** [Spring Boot](https://spring.io/projects/spring-boot) version 2.6.7  
+**Framework:** [Spring Boot](https://spring.io/projects/spring-boot) version 2.7.3, [VueJS](https://vuejs.org/) version 2.7.10  
 **Status:** Active - Ongoing  
 **Last Release Date:** 24 September 2022  
-**Latest Version:** v1.0cassiopeia  
+**Latest Version:** v1.1cassiopeia  
 **Author:** [bossbuwi](https://github.com/bossbuwi)
 
 _This project contains sources from the late project [reality](https://github.com/bossbuwi/reality),
