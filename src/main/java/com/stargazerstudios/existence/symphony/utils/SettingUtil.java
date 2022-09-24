@@ -37,4 +37,15 @@ public class SettingUtil {
         if (settingData.isEmpty()) return EnumUtilOutput.INVALID.getValue();
         return settingData.get().getValue();
     }
+
+    public boolean isFeatureActive(String key) {
+        Optional<Setting> settingData = settingDAO.findSettingByKey(key);
+
+        if (settingData.isPresent()) {
+            Setting setting = settingData.get();
+            return setting.getValue().equals("Y");
+        }
+
+        return false;
+    }
 }
