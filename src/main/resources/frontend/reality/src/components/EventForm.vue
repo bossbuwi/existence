@@ -506,8 +506,10 @@ export default Vue.extend({
     this.typesLoading = true
 
     await Promise.all([
-      this.getSystemsList(),
-      this.getEventTypesList()
+      // this.getSystemsList(),
+      // this.getEventTypesList()
+      this.GetSystemsList(),
+      this.GetEventTypesList()
     ])
 
     const systemArr = this.systemsList
