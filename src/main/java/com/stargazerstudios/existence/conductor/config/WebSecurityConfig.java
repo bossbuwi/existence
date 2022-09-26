@@ -46,6 +46,7 @@ public class WebSecurityConfig {
                 .antMatchers(WebSecurityURI.Unguarded.URI_FRONTEND_JS).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_BALLAD_UNGUARDED).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_CONCERTO_UNGUARDED).permitAll()
+                .antMatchers(WebSecurityURI.Unguarded.URI_ELIGIUS_UNGUARDED).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_REQUIEM_UNGUARDED).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_SONATA_UNGUARDED).permitAll()
                 .antMatchers(WebSecurityURI.Unguarded.URI_SYMPHONY_UNGUARDED).permitAll()

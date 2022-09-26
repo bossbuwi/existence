@@ -1,4 +1,4 @@
-package com.stargazerstudios.existence.sonata.specs;
+package com.stargazerstudios.existence.eligius.specs;
 
 import com.stargazerstudios.existence.sonata.entity.Event;
 import org.springframework.data.jpa.domain.Specification;

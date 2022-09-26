@@ -10,7 +10,6 @@ import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.service.EventServiceImpl;
 import com.stargazerstudios.existence.sonata.service.SheetImportServiceImpl;
 import com.stargazerstudios.existence.sonata.utils.EventExporterUtil;
-import com.stargazerstudios.existence.sonata.wrapper.EventFilterWrapper;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +37,7 @@ public class EventController {
     private SheetImportServiceImpl importService;
 
     /* Unguarded Endpoints */
+
     @GetMapping("/con/events/index")
     public ResponseEntity<List<EventDTO>> getAllEvents() {
         return new ResponseEntity<>(eventService.getAllEvents(), HttpStatus.OK);
@@ -65,12 +65,8 @@ public class EventController {
         return new ResponseEntity<>(eventService.getEventCount(), HttpStatus.OK);
     }
 
-    @GetMapping("/con/events/filter")
-    public ResponseEntity<List<EventDTO>> filterEvents(@RequestBody EventFilterWrapper event) {
-        return new ResponseEntity<>(eventService.filterEvents(event), HttpStatus.OK);
-    }
-
     /* Guarded Endpoints */
+
     @PostMapping("/events/event")
     public ResponseEntity<EventDTO> createEvent(@Validated(PostValidation.class)
                                                     @RequestBody EventWrapper event)

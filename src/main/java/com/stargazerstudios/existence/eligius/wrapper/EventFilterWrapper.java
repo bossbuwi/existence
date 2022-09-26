@@ -1,4 +1,4 @@
-package com.stargazerstudios.existence.sonata.wrapper;
+package com.stargazerstudios.existence.eligius.wrapper;
 
 import lombok.*;
 
