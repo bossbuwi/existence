@@ -81,8 +81,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'DismissError', 'SetDate', 'Logout',
-      'GetFrontendList', 'GetDisabledSwitchableFeatures'
+      'DismissError', 'SetDate', 'Logout', 'GetFrontendList'
     ]),
 
     dismissError () {
@@ -91,10 +90,6 @@ export default Vue.extend({
 
     async getFrontendList () {
       await this.GetFrontendList()
-    },
-
-    async getDisabledSwitchableFeatures () {
-      await this.GetDisabledSwitchableFeatures()
     }
   },
 
@@ -107,8 +102,7 @@ export default Vue.extend({
     }
 
     await Promise.all([
-      this.getFrontendList(),
-      this.getDisabledSwitchableFeatures()
+      this.getFrontendList()
     ])
 
     this.isFetching = false

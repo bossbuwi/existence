@@ -145,6 +145,12 @@ const actions = {
         console.log('Is it real, or is it not?')
         break;
     }
+  },
+
+  SetDisabledSwitchableFeatures ({ commit }: { commit: Commit }, list: any) {
+    list.forEach((element: any) => {
+      commit('addDisabledSwitchable', element)
+    })
   }
 }
 

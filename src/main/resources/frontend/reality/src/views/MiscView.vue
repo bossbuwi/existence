@@ -575,10 +575,6 @@ export default Vue.extend({
     deleteItem (param: any) {
       this.deleteMode(param)
     }
-  },
-
-  async mounted () {
-    console.log(this.isAuth)
   }
 })
 </script>
