@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SearchService {
     List<EventDTO> filterEvents(EventFilterWrapper eventFilterWrapper);
+    List<EventDTO> searchEvents(String keyword);
 }

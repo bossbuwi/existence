@@ -406,13 +406,13 @@ public class EventServiceImpl implements EventService {
         }
 
         if (wEvent.getJira_case() != null) event.setJiraCase(wEvent.getJira_case());
-        if (wEvent.getFeatures_on() != null) event.setJiraCase(wEvent.getFeatures_on());
-        if (wEvent.getFeatures_off() != null) event.setJiraCase(wEvent.getFeatures_off());
-        if (wEvent.getCompiled_sources() != null) event.setJiraCase(wEvent.getCompiled_sources());
-        if (wEvent.getApi_used() != null) event.setJiraCase(wEvent.getApi_used());
+        if (wEvent.getFeatures_on() != null) event.setFeaturesOn(wEvent.getFeatures_on());
+        if (wEvent.getFeatures_off() != null) event.setFeaturesOff(wEvent.getFeatures_off());
+        if (wEvent.getCompiled_sources() != null) event.setCompiledSources(wEvent.getCompiled_sources());
+        if (wEvent.getApi_used() != null) event.setApiUsed(wEvent.getApi_used());
 
         try {
-            eventDAO.save(event);
+            eventDAO.saveAndFlush(event);
         } catch (Exception e) {
             e.printStackTrace();
             throw new EntitySaveErrorException("event");
@@ -433,6 +433,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventData.get();
         try {
             eventDAO.delete(event);
+            eventDAO.flush();
         } catch (Exception e) {
             e.printStackTrace();
             throw new EntityDeletionErrorException("event");

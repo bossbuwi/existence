@@ -24,4 +24,9 @@ public class SearchController {
     public ResponseEntity<List<EventDTO>> filterEvents(@RequestBody EventFilterWrapper eventFilterWrapper) {
         return new ResponseEntity<>(searchService.filterEvents(eventFilterWrapper), HttpStatus.OK);
     }
+
+    @GetMapping("/con/search/events")
+    public ResponseEntity<List<EventDTO>> searchEvents(@RequestParam String keyword) {
+        return new ResponseEntity<>(searchService.searchEvents(keyword), HttpStatus.OK);
+    }
 }

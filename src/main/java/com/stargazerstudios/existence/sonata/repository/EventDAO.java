@@ -21,4 +21,6 @@ public interface EventDAO extends JpaRepository<Event, Long>, JpaSpecificationEx
     Optional<Event> findFirstByOrderByDateCreatedDesc();
     long countByCreatedBy(String username);
     Optional<Event> findFirstByCreatedByOrderByDateCreatedDesc(String username);
+    @Query(value = "SELECT * FROM sonata_events WHERE tsv @@ websearch_to_tsquery(?1)", nativeQuery = true)
+    List<Event> search(String keyword);
 }

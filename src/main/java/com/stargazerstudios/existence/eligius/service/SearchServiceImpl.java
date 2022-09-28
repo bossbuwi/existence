@@ -50,4 +50,15 @@ public class SearchServiceImpl implements SearchService {
 
         return eventDTOs;
     }
+
+    @Override
+    public List<EventDTO> searchEvents(String keyword) {
+        List<Event> events = eventDAO.search(keyword);
+        List<EventDTO> eventDTOs = new ArrayList<>();
+        for (Event event: events) {
+            eventDTOs.add(eventUtil.wrapEvent(event));
+        }
+
+        return eventDTOs;
+    }
 }
