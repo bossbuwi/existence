@@ -17,6 +17,7 @@ import components from './module/components'
 import settings from './module/settings'
 import releases from './module/releases'
 import roles from './module/roles'
+import search from './module/search'
 
 Vue.use(Vuex)
 const ls = new SecureLS({ isCompression: false })
@@ -72,7 +73,8 @@ export default new Vuex.Store({
     components,
     settings,
     releases,
-    roles
+    roles,
+    search
   },
 
   plugins: [createPersistedState({

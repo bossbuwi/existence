@@ -243,7 +243,7 @@ public class EventServiceImpl implements EventService {
         event.setApiUsed(wEvent.getApi_used());
 
         try {
-            eventDAO.save(event);
+            eventDAO.saveAndFlush(event);
         } catch (Exception e) {
             e.printStackTrace();
             throw new EntitySaveErrorException("event");

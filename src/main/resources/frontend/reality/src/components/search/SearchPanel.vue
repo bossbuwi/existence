@@ -1,4 +1,5 @@
 <template>
+  <v-container fluid>
     <v-card>
       <v-card-title>
         Search
@@ -14,6 +15,7 @@
             <v-row align="center">
               <v-col cols="10">
                 <v-text-field
+                  v-model="searchForm.keyword"
                   label="Search for something.."
                   clearable
                 ></v-text-field>
@@ -21,6 +23,7 @@
               <v-col cols="1">
                 <v-btn
                   color="primary"
+                  @click.stop="search"
                 >
                   <v-icon left>
                     mdi-magnify
@@ -38,7 +41,7 @@
           text
           @click="show = !show"
         >
-          Advanced
+          Filters
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn
@@ -167,17 +170,33 @@
         </div>
       </v-scroll-x-reverse-transition>
     </v-card>
+  </v-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { mapActions, mapGetters } from 'vuex'
 
 export default Vue.extend({
   name: 'SearchPanel',
 
   data () {
     return {
-      show: false
+      show: false,
+      searchForm: {
+        keyword: ''
+      }
+    }
+  },
+
+  methods: {
+    ...mapActions([
+      'GetSearchEvents'
+    ]),
+
+    async search () {
+      console.log(this.searchForm.keyword)
+      await this.GetSearchEvents(this.searchForm.keyword)
     }
   }
 })

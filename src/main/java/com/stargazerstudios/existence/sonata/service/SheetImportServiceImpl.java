@@ -22,7 +22,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 @Service
-@Transactional(rollbackFor = Exception.class)
+//@Transactional(rollbackFor = Exception.class)
 public class SheetImportServiceImpl implements SheetImportService {
 
     @Autowired

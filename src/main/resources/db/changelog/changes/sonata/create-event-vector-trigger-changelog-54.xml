@@ -12,7 +12,7 @@
             endDelimiter="\nGO"
             splitStatements="true"
             stripComments="true">CREATE TRIGGER tsvectorupdate
-                BEFORE INSERT OR UPDATE
+                AFTER INSERT OR UPDATE
                 ON sonata_events
                 FOR EACH ROW
             EXECUTE PROCEDURE
