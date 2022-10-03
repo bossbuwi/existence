@@ -11,4 +11,5 @@
     <include file="db/changelog/changes/sonata/create-event-index-changelog-52.xml"/>
     <include file="db/changelog/changes/sonata/create-event-vector-function-changelog-53.xml"/>
     <include file="db/changelog/changes/sonata/create-event-vector-trigger-changelog-54.xml"/>
+<!--    <include file="db/changelog/changes/sonata/create-event-vector-function-manual-changelog-55.xml"/>-->
 </databaseChangeLog>
