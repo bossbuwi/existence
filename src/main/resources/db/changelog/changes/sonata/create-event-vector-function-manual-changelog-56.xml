@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet author="v2.0-draco" id="20221004-056">
+        <sql
+            dbms="postgresql"
+            endDelimiter="\nGO"
+            splitStatements="true"
+            stripComments="true">CREATE OR REPLACE FUNCTION tsvector_manual_update_events()
+            RETURNS bigint
+            LANGUAGE plpgsql
+            AS
+
+            $$
+            DECLARE
+                curs1 CURSOR FOR SELECT * FROM sonata_events WHERE tsv IS NULL;
+                newtsv tsvector;
+                sel_row sonata_events%rowtype;
+
+            BEGIN
+                FETCH curs1 INTO sel_row;
+
+                IF FOUND THEN
+                    newtsv :=
+                        setweight(to_tsvector('pg_catalog.simple', sel_row.api_used), 'A') ||
+                        setweight(to_tsvector('pg_catalog.simple', sel_row.compiled_sources), 'B') ||
+                        setweight(to_tsvector('pg_catalog.simple', sel_row.features_on), 'C') ||
+                        setweight(to_tsvector('pg_catalog.simple', sel_row.features_off), 'C') ||
+                        setweight(to_tsvector('pg_catalog.simple', sel_row.jira_case), 'D');
+
+                        UPDATE sonata_events
+                        SET tsv = newtsv
+                        WHERE CURRENT OF curs1;
+
+                        return 1;
+                END IF;
+
+                return 0;
+            END
+            $$
+        </sql>
+        <comment>Create a function to update the tsv columns of certain rows.</comment>
+    </changeSet>
+</databaseChangeLog>

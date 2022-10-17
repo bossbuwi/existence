@@ -4,6 +4,8 @@ import com.stargazerstudios.existence.sonata.entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -23,4 +25,6 @@ public interface EventDAO extends JpaRepository<Event, Long>, JpaSpecificationEx
     Optional<Event> findFirstByCreatedByOrderByDateCreatedDesc(String username);
     @Query(value = "SELECT * FROM sonata_events WHERE tsv @@ websearch_to_tsquery(?1)", nativeQuery = true)
     List<Event> search(String keyword);
+    @Procedure("tsvector_manual_update_events")
+    void generateTSVData(@Param("item_id") long id);
 }

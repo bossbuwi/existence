@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet author="v2.0-cassiopeia" id="20221004-055">
+        <comment>Create table to hold the ids of recently imported events.</comment>
+        <createTable tableName="sonata_event_imports">
+            <column name="id_start" type="BIGINT"/>
+            <column name="id_end" type="BIGINT"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="sonata_event_imports"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

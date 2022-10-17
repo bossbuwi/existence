@@ -470,4 +470,10 @@ public class EventServiceImpl implements EventService {
         Optional<Event> eventData = eventDAO.findFirstByCreatedByOrderByDateCreatedDesc(username);
         return eventData.map(event -> eventUtil.wrapEvent(event)).orElse(null);
     }
+
+    @Override
+    public void generateTSVData(long id) throws UnknownInputException {
+        if (id <= 0) throw new InvalidInputException("id");
+        eventDAO.generateTSVData(id);
+    }
 }

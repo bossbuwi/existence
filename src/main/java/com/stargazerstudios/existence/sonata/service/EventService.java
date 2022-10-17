@@ -26,4 +26,5 @@ public interface EventService {
     void exportEvents(HttpServletResponse response) throws IOException;
     Long getNumberOfEventsByUser(long id) throws EntityErrorException;
     EventDTO getLatestEventByUser(String username) throws EntityErrorException;
+    void generateTSVData(long id) throws UnknownInputException;
 }
