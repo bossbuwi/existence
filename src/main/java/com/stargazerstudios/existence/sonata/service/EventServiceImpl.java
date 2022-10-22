@@ -422,7 +422,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDTO deleteEvent(long id)
+    public boolean deleteEvent(long id)
             throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
@@ -438,7 +438,8 @@ public class EventServiceImpl implements EventService {
             e.printStackTrace();
             throw new EntityDeletionErrorException("event");
         }
-        return eventUtil.wrapEvent(event);
+//        return eventUtil.wrapEvent(event);
+        return true;
     }
 
     @Override

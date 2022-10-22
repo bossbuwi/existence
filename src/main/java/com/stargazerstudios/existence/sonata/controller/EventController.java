@@ -82,7 +82,7 @@ public class EventController {
     }
 
     @DeleteMapping("/events/event/{id}")
-    public ResponseEntity<EventDTO> deleteEvent(@NotBlank @PathVariable("id") long id)
+    public ResponseEntity<Boolean> deleteEvent(@NotBlank @PathVariable("id") long id)
             throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
         return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.OK);
     }

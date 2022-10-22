@@ -256,7 +256,7 @@ export default Vue.extend({
           this.formTitle = 'Event #' + this.event.id + ' updated!'
           break
         case 'delete':
-          this.formTitle = 'Event #' + this.event.id + ' deleted!'
+          this.formTitle = 'Event deleted!'
           break
         default:
           break
