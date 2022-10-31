@@ -7,6 +7,7 @@ import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorExcept
 import com.stargazerstudios.existence.conductor.erratum.system.FatalErrorException;
 import com.stargazerstudios.existence.conductor.erratum.system.InvalidPropertyErrorException;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
+import com.stargazerstudios.existence.eligius.service.FileProcessorServiceImpl;
 import com.stargazerstudios.existence.symphony.entity.Role;
 import com.stargazerstudios.existence.symphony.entity.User;
 import com.stargazerstudios.existence.symphony.repository.RoleDAO;
@@ -37,6 +38,9 @@ public class Initializer {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private FileProcessorServiceImpl fileProcessorService;
+
     @Value("${jwt.secret}")
     private String jwtKey;
 
@@ -46,7 +50,8 @@ public class Initializer {
      */
     @EventListener(ApplicationReadyEvent.class)
     private void postStartUp() {
-        HAS_ERRORS = checkRoles() || checkJwtKey() || checkDefaultOwner() || checkDefaultUser();
+        HAS_ERRORS = checkRoles() || checkJwtKey() || checkDefaultOwner()
+                || checkDefaultUser() || validateFileImportDirectory();
     }
 
     /**
@@ -180,6 +185,16 @@ public class Initializer {
             return true;
         }
 
+        return false;
+    }
+
+    private boolean validateFileImportDirectory() {
+        try {
+            fileProcessorService.deleteAll();
+            fileProcessorService.init();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return false;
     }
 }

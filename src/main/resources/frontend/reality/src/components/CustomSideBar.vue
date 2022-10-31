@@ -48,6 +48,7 @@ export default Vue.extend({
       { title: 'Coblogs', icon: 'mdi-list-status', route: '/coblogs', feature: 'RQM001' },
       { title: 'Misc', icon: 'mdi-briefcase-variant-outline', route: '/misc' },
       { title: 'Search', icon: 'mdi-magnify', route: '/search', feature: 'ELS001' },
+      { title: 'Backup & Restore', icon: 'mdi-cloud-upload-outline', route: '/backup-restore', online: 'yes', feature: 'ELS002' },
       { title: 'User Profile', icon: 'mdi-account-outline', route: '/user', online: 'yes' },
       { title: 'Settings', icon: 'mdi-cog-outline', route: '/settings', online: 'yes', restricted: 'yes' },
       { title: 'About', icon: 'mdi-application-brackets-outline', route: '/about' }

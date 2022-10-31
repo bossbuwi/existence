@@ -10,6 +10,7 @@ import CalendarView from '../views/CalendarView.vue'
 import EventsView from '../views/EventsView.vue'
 import CoblogView from '../views/CoblogView.vue'
 import ReportsView from '../views/SearchView.vue'
+import BackupRestoreView from '../views/BackupRestoreView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
 import SettingsView from '../views/SettingsView.vue'
 import AboutView from '../views/AboutView.vue'
@@ -63,6 +64,20 @@ const routes: Array<RouteConfig> = [
     component: ReportsView,
     beforeEnter: (to, from, next) => {
       const feature = 'ELS001'
+      const filteredArr = disabledFeatures.filter((x: any) => x.key === feature)
+      if (filteredArr.length === 0) {
+        next()
+      } else {
+        next('/')
+      }
+    }
+  },
+  {
+    path: '/backup-restore',
+    name: 'backup-restore',
+    component: BackupRestoreView,
+    beforeEnter: (to, from, next) => {
+      const feature = 'ELS002'
       const filteredArr = disabledFeatures.filter((x: any) => x.key === feature)
       if (filteredArr.length === 0) {
         next()
