@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.eligius.controller;
 
+import com.stargazerstudios.existence.eligius.dto.FileResponseDTO;
 import com.stargazerstudios.existence.eligius.service.FileProcessorServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ public class RestoreController {
     private FileProcessorServiceImpl fileProcessorService;
 
     @PostMapping("/files/upload")
-    public ResponseEntity<Boolean> uploadFile(@RequestParam("file")MultipartFile file) {
+    public ResponseEntity<FileResponseDTO> uploadFile(@RequestParam("file") MultipartFile file) {
         return new ResponseEntity<>(fileProcessorService.save(file), HttpStatus.OK);
     }
 }

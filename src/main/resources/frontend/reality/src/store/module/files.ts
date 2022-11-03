@@ -4,14 +4,16 @@ import { Commit } from 'vuex'
 
 const getDefaultFileState = () => {
   return {
-    success: false
+    success: false,
+    file: {}
   }
 }
 
 const state = getDefaultFileState()
 
 const getters = {
-  isSuccess: (state: any) => state.success
+  isSuccess: (state: any) => state.success,
+  getFile: (state: any) => state.file
 }
 
 const actions = {
@@ -29,7 +31,27 @@ const actions = {
       }
     }).then((result) => {
       console.log(result.data)
+      commit('setFile', result.data)
       commit('updateFileState', true)
+    }).catch((error) => {
+      console.log(error.response.data)
+      commit('clearError')
+      commit('setError', error.response.data)
+    })
+  },
+
+  async PostRestoreEvents ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, param: any) {
+    const token = rootGetters.getToken
+
+    await axios.post('sonata/events/import', null, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+      params: {
+        filename: param
+      }
+    }).then((result) => {
+      console.log(result.data)
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')
@@ -45,6 +67,10 @@ const mutations = {
 
   updateFileState (state: any, isSuccess: boolean) {
     state.success = isSuccess
+  },
+
+  setFile (state: any, file: any) {
+    state.file = file
   }
 }
 

@@ -1,4 +1,4 @@
-package com.stargazerstudios.existence.sonata.service;
+package com.stargazerstudios.existence.eligius.service;
 
 import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
 import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
@@ -9,6 +9,6 @@ import java.io.IOException;
 import java.util.List;
 
 public interface SheetImportService {
-    List<EventDTO> importSpreadSheet()
+    List<EventDTO> importSpreadSheet(String filename)
             throws IOException, DatabaseErrorException, UnknownInputException, EntityErrorException;
 }

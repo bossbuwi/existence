@@ -1,8 +1,9 @@
 package com.stargazerstudios.existence.eligius.service;
 
 import com.stargazerstudios.existence.eligius.config.FileStorageProperties;
+import com.stargazerstudios.existence.eligius.dto.FileResponseDTO;
+import com.stargazerstudios.existence.eligius.utils.FileResponseUtil;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
@@ -23,6 +24,9 @@ public class FileProcessorServiceImpl implements FileProcessorService {
     @Autowired
     private FileStorageProperties fileStorageProperties;
 
+    @Autowired
+    private FileResponseUtil fileResponseUtil;
+
     @Override
     public void init() {
         final Path root = Paths.get(fileStorageProperties.getUploadPath());
@@ -34,7 +38,7 @@ public class FileProcessorServiceImpl implements FileProcessorService {
     }
 
     @Override
-    public boolean save(MultipartFile multipartFile) {
+    public FileResponseDTO save(MultipartFile multipartFile) {
         // TODO: This should return a custom DTO.
         final Path root = Paths.get(fileStorageProperties.getUploadPath());
         try {
@@ -48,14 +52,14 @@ public class FileProcessorServiceImpl implements FileProcessorService {
                         + extension;
                 Path newPath = root.resolve(newFileName);
                 Files.copy(multipartFile.getInputStream(), newPath, StandardCopyOption.REPLACE_EXISTING);
+                return fileResponseUtil.getFileDetails(newPath);
             } else {
-                return false;
+                return null;
             }
         } catch (Exception e) {
             // TODO: This must throw a custom error.
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
-        return true;
     }
 
     @Override

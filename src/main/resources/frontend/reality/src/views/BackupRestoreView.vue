@@ -66,6 +66,7 @@
             <v-radio-group
               label="Select which records to restore:"
               dense
+              v-model="recordType"
             >
               <v-radio
                 v-for="item in contents"
@@ -78,6 +79,7 @@
             <v-divider class="mb-4 mx-8"></v-divider>
             <v-btn
               class="mr-4"
+              @click="restoreRecords"
             >
               OK
             </v-btn>
@@ -106,6 +108,11 @@ export default Vue.extend({
     return {
       isLoading: false,
       file: null,
+      // recordType: {
+      //   label: '',
+      //   value: 0
+      // },
+      recordType: 0,
       contents: [
         { label: 'Machines (not implemented yet)', value: 1 },
         { label: 'Systems (not implemented yet)', value: 2 },
@@ -120,13 +127,14 @@ export default Vue.extend({
       isAuth: 'isAuthenticated',
       user: 'getUserState',
       switchableList: 'getSwitchableList',
-      uploadComplete: 'isSuccess'
+      uploadComplete: 'isSuccess',
+      fileUpload: 'getFile'
     })
   },
 
   methods: {
     ...mapActions([
-      'GetSwitchableList', 'PostFileUpload'
+      'GetSwitchableList', 'PostFileUpload', 'PostRestoreEvents'
     ]),
 
     async submitFile () {
@@ -134,6 +142,29 @@ export default Vue.extend({
       await this.PostFileUpload(this.file)
       console.log(this.uploadComplete)
       this.isLoading = false
+    },
+
+    async restoreRecords () {
+      console.log(this.recordType)
+      switch (this.recordType) {
+        case 0:
+          console.log('This should really never be selected.')
+          break
+        case 1:
+          console.log('Not implemented yet.')
+          break
+        case 2:
+          console.log('Not implemented yet.')
+          break
+        case 3:
+          await this.PostRestoreEvents(this.fileUpload.filename)
+          break
+        case 4:
+          console.log('Not implemented yet.')
+          break
+        default:
+          break
+      }
     }
   }
 })

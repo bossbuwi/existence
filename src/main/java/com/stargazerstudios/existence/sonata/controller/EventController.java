@@ -8,7 +8,7 @@ import com.stargazerstudios.existence.conductor.validation.groups.PostValidation
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.service.EventServiceImpl;
-import com.stargazerstudios.existence.sonata.service.SheetImportServiceImpl;
+import com.stargazerstudios.existence.eligius.service.SheetImportServiceImpl;
 import com.stargazerstudios.existence.sonata.utils.EventExporterUtil;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,8 +93,8 @@ public class EventController {
     }
 
     @PostMapping("/events/import")
-    public ResponseEntity<List<EventDTO>> importEventsFromWorkbook()
+    public ResponseEntity<List<EventDTO>> importEventsFromWorkbook(@RequestParam("filename") String filename)
             throws DatabaseErrorException, UnknownInputException, IOException, EntityErrorException {
-        return new ResponseEntity<>(importService.importSpreadSheet(), HttpStatus.OK);
+        return new ResponseEntity<>(importService.importSpreadSheet(filename), HttpStatus.OK);
     }
 }
