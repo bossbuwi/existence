@@ -88,7 +88,6 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable */
 import Vue from 'vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import RestoreStepOne from '@/components/backupandrestore/RestoreStepOne.vue'
@@ -133,129 +132,20 @@ export default Vue.extend({
           break
         case 3:
           if (this.ongoingBackupAndRestore) this.previousEnabled = false
+          break
         default:
           break
       }
     },
 
-  previousChapter () {
-    this.chapter -= 1
-    this.nextEnabled = true
-  },
+    previousChapter () {
+      this.chapter -= 1
+      this.nextEnabled = true
+    },
 
-  stepperComplete () {
-    console.log('complete')
-  },
-
-  //   ...mapMutations([
-  //     'resetCoblogState'
-  //   ]),
-
-  //   stepperComplete () {
-  //     this.dateStatus = true
-  //     if (this.verifyDates()) {
-  //       this.$emit('stepper-complete')
-  //     }
-  //   },
-
-  //   cancelStepper () {
-  //     this.resetCoblogState()
-  //     this.$emit('stepper-cancel')
-  //   },
-
-  //   submitSystem () {
-  //     this.systemStatus = true
-  //     if (this.verifySystem()) {
-  //       this.chapter = 3
-  //     }
-  //   },
-
-  //   verifySystem () {
-  //     if (this.chapter !== 2) {
-  //       this.systemHasError = false
-  //       this.systemErrorText = ''
-  //       return true
-  //     }
-  //     if (this.chapter === 2 && this.systemStatus === true) {
-  //       if (this.cobSystem.id > 0) {
-  //         this.systemHasError = false
-  //         this.systemErrorText = ''
-  //         return true
-  //       } else {
-  //         this.systemHasError = true
-  //         this.systemErrorText = 'Please select a sytem.'
-  //         return false
-  //       }
-  //     }
-  //     if (this.chapter === 2 && this.systemStatus === false) {
-  //       this.systemHasError = false
-  //       this.systemErrorText = ''
-  //       return true
-  //     }
-  //   },
-
-  //   verifyDates () {
-  //     if (this.chapter !== 3) {
-  //       this.dateHasError = false
-  //       this.dateErrorText = ''
-  //       return true
-  //     }
-  //     if (this.chapter === 3 && this.dateStatus === true) {
-  //       if (this.runday === '' && this.nextRunday === '') {
-  //         this.dateHasError = true
-  //         this.dateErrorText = 'Please pick the run day and the next run day.'
-  //         return false
-  //       }
-  //       if (this.runday === '') {
-  //         this.dateHasError = true
-  //         this.dateErrorText = 'Please pick the run day.'
-  //         return false
-  //       }
-  //       if (this.nextRunday === '') {
-  //         this.dateHasError = true
-  //         this.dateErrorText = 'Please pick the next run day.'
-  //         return false
-  //       }
-  //       if (this.runday > this.nextRunday || this.runday === this.nextRunday) {
-  //         this.dateHasError = true
-  //         this.dateErrorText = 'The next run day must be later than the run day.'
-  //         return false
-  //       } else {
-  //         this.dateHasError = false
-  //         this.dateErrorText = ''
-  //         return true
-  //       }
-  //     }
-  //     if (this.chapter === 3 && this.dateStatus !== true) {
-  //       this.dateHasError = false
-  //       this.dateErrorText = ''
-  //       return true
-  //     }
-  //   },
-
-  //   finishStepper () {
-  //     this.dateStatus = true
-  //   },
-
-  //   previousChapter () {
-  //     switch (this.chapter) {
-  //       case 1:
-  //         this.cancelStepper()
-  //         break
-  //       case 2:
-  //         this.systemStatus = false
-  //         this.systemHasError = false
-  //         this.systemErrorText = ''
-  //         this.chapter = 1
-  //         break
-  //       case 3:
-  //         this.dateStatus = false
-  //         this.chapter = 2
-  //         break
-  //       default:
-  //         break
-  //     }
-  //   }
+    stepperComplete () {
+      console.log('complete')
+    }
   }
 })
 </script>

@@ -5,8 +5,9 @@ import { Commit } from 'vuex'
 const getDefaultFileState = () => {
   return {
     success: false,
-    ongoingBR: false
-    file: {}
+    ongoingBR: false,
+    file: {},
+    restoredItems: []
   }
 }
 
@@ -15,7 +16,8 @@ const state = getDefaultFileState()
 const getters = {
   isSuccess: (state: any) => state.success,
   isOngoing: (state: any) => state.ongoingBR,
-  getFile: (state: any) => state.file
+  getFile: (state: any) => state.file,
+  getRestoredItems: (state: any) => state.restoredItems
 }
 
 const actions = {
@@ -55,6 +57,7 @@ const actions = {
       }
     }).then((result) => {
       console.log(result.data)
+      commit('setRestoredItems', result.data)
       commit('updateProgress', false)
     }).catch((error) => {
       console.log(error.response.data)
@@ -79,6 +82,21 @@ const mutations = {
 
   setFile (state: any, file: any) {
     state.file = file
+
+    switch (file.extension) {
+      case 'xlsx':
+        state.file.type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        break
+      case 'xls':
+        state.file.type = 'application/vnd.ms-excel'
+        break
+      default:
+        break
+    }
+  },
+
+  setRestoredItems (state: any, items: any) {
+    state.restoredItems = items
   }
 }
 

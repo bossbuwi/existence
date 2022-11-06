@@ -26,7 +26,35 @@
     >
       Upload complete!
     </v-alert>
-    <span v-if="uploadComplete">File details in a card must be here.</span>
+    <v-card v-if="uploadComplete">
+      <v-card-title>File Details</v-card-title>
+      <v-card-text>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>Name</v-list-item-title>
+            <v-list-item-subtitle>{{ fileUpload.filename }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>Extension</v-list-item-title>
+            <v-list-item-subtitle>{{ fileUpload.extension }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>MIME Type</v-list-item-title>
+            <v-list-item-subtitle>{{ fileUpload.type }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>Size (in bytes)</v-list-item-title>
+            <v-list-item-subtitle>{{ fileUpload.size }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 

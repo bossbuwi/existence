@@ -39,6 +39,23 @@
         indeterminate
       ></v-progress-linear>
     </v-alert>
+    <v-card v-if="success">
+      <v-card-title>Details</v-card-title>
+      <v-card-text>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>Record type</v-list-item-title>
+            <v-list-item-subtitle>Event</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>Number of records restored</v-list-item-title>
+            <v-list-item-subtitle>{{ restoredItems.length }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 
@@ -69,7 +86,8 @@ export default Vue.extend({
   computed: {
     ...mapGetters({
       uploadComplete: 'isSuccess',
-      fileUpload: 'getFile'
+      fileUpload: 'getFile',
+      restoredItems: 'getRestoredItems'
     })
   },
 
