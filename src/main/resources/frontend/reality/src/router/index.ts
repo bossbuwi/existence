@@ -79,11 +79,16 @@ const routes: Array<RouteConfig> = [
     beforeEnter: (to, from, next) => {
       const feature = 'ELS002'
       const filteredArr = disabledFeatures.filter((x: any) => x.key === feature)
-      if (filteredArr.length === 0) {
-        next()
-      } else {
+      if (!isAuth) {
         next('/')
+      } else {
+        if (filteredArr.length === 0) {
+          next()
+        } else {
+          next('/')
+        }
       }
+
     }
   },
   {

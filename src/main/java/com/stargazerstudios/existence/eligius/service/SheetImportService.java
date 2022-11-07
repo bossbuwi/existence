@@ -9,6 +9,6 @@ import java.io.IOException;
 import java.util.List;
 
 public interface SheetImportService {
-    List<EventDTO> importSpreadSheet(String filename)
+    List<EventDTO> importEventsFromSpreadsheet(String filename)
             throws IOException, DatabaseErrorException, UnknownInputException, EntityErrorException;
 }

@@ -9,8 +9,10 @@
         accept=".xlsx,.xls"
         chips
         v-model="file"
+        @change="fileChanged"
       ></v-file-input>
       <v-btn
+        :disabled="buttonDisabled"
         :loading="isLoading"
         @click="submitFile"
       >
@@ -68,13 +70,14 @@ export default Vue.extend({
   data () {
     return {
       isLoading: false,
+      buttonDisabled: true,
       file: null
     }
   },
 
   computed: {
     ...mapGetters({
-      uploadComplete: 'isSuccess',
+      uploadComplete: 'uploadComplete',
       fileUpload: 'getFile'
     })
   },
@@ -84,9 +87,19 @@ export default Vue.extend({
       'PostFileUpload'
     ]),
 
+    fileChanged () {
+      if (this.file === null) {
+        this.buttonDisabled = true
+      } else {
+        this.buttonDisabled = false
+      }
+    },
+
     async submitFile () {
       this.isLoading = true
+      this.$emit('process-ongoing')
       await this.PostFileUpload(this.file)
+      this.$emit('process-done')
     }
   }
 })

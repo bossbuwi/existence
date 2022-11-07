@@ -4,8 +4,7 @@ import { Commit } from 'vuex'
 
 const getDefaultFileState = () => {
   return {
-    success: false,
-    ongoingBR: false,
+    uploadComplete: false,
     file: {},
     restoredItems: []
   }
@@ -14,8 +13,7 @@ const getDefaultFileState = () => {
 const state = getDefaultFileState()
 
 const getters = {
-  isSuccess: (state: any) => state.success,
-  isOngoing: (state: any) => state.ongoingBR,
+  uploadComplete: (state: any) => state.uploadComplete,
   getFile: (state: any) => state.file,
   getRestoredItems: (state: any) => state.restoredItems
 }
@@ -23,7 +21,7 @@ const getters = {
 const actions = {
   async PostFileUpload ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
     const token = rootGetters.getToken
-    commit('updateFileState', false)
+    commit('updateUploadStatus', false)
 
     const formData = new FormData()
     formData.append('file', form)
@@ -36,7 +34,7 @@ const actions = {
     }).then((result) => {
       console.log(result.data)
       commit('setFile', result.data)
-      commit('updateFileState', true)
+      commit('updateUploadStatus', true)
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')
@@ -44,11 +42,10 @@ const actions = {
     })
   },
 
-  async PostRestoreEvents ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, param: any) {
-    commit('updateProgress', true)
+  async PostImportEvents ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, param: any) {
     const token = rootGetters.getToken
 
-    await axios.post('sonata/events/import', null, {
+    await axios.post('eligius/files/restore/event', null, {
       headers: {
         Authorization: 'Bearer ' + token
       },
@@ -58,7 +55,6 @@ const actions = {
     }).then((result) => {
       console.log(result.data)
       commit('setRestoredItems', result.data)
-      commit('updateProgress', false)
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')
@@ -72,12 +68,8 @@ const mutations = {
     Object.assign(state, getDefaultFileState())
   },
 
-  updateFileState (state: any, isSuccess: boolean) {
-    state.success = isSuccess
-  },
-
-  updateProgress (state: any, isOngoing: boolean) {
-    state.ongoingBR = isOngoing
+  updateUploadStatus (state: any, uploadComplete: boolean) {
+    state.uploadComplete = uploadComplete
   },
 
   setFile (state: any, file: any) {

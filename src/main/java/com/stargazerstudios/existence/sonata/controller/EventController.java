@@ -92,9 +92,9 @@ public class EventController {
         eventService.exportEvents(response);
     }
 
-    @PostMapping("/events/import")
-    public ResponseEntity<List<EventDTO>> importEventsFromWorkbook(@RequestParam("filename") String filename)
-            throws DatabaseErrorException, UnknownInputException, IOException, EntityErrorException {
-        return new ResponseEntity<>(importService.importSpreadSheet(filename), HttpStatus.OK);
-    }
+//    @PostMapping("/events/import")
+//    public ResponseEntity<List<EventDTO>> importEventsFromWorkbook(@RequestParam("filename") String filename)
+//            throws DatabaseErrorException, UnknownInputException, IOException, EntityErrorException {
+//        return new ResponseEntity<>(importService.importSpreadSheet(filename), HttpStatus.OK);
+//    }
 }

@@ -4,6 +4,7 @@
       <v-radio-group
         v-model="recordType"
         label="Select which records to restore:"
+        @change="optionSelected"
       >
         <v-radio
           v-for="item in contents"
@@ -18,12 +19,10 @@
       ></v-divider>
       <v-btn
         class="mr-4"
-        @click="restoreRecords"
+        :disabled="buttonDisabled"
+        @click="importRecords"
       >
-        OK
-      </v-btn>
-      <v-btn>
-        Cancel
+        Select
       </v-btn>
     </form>
     <v-alert
@@ -72,6 +71,7 @@ export default Vue.extend({
       inputEnabled: true,
       restoring: false,
       success: false,
+      buttonDisabled: true,
       alertType: '',
       alertMessage: '',
       contents: [
@@ -93,26 +93,31 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'PostRestoreEvents'
+      'PostImportEvents'
     ]),
 
-    startRestore () {
+    optionSelected () {
+      this.buttonDisabled = false
+    },
+
+    startImport () {
       this.inputEnabled = false
       this.restoring = true
       this.alertType = 'info'
       this.alertMessage = 'Restoring records..'
-      // this action needs to disable or hide the buttons on the corresponding stepper chapter
+      this.$emit('process-ongoing')
     },
 
-    endRestore () {
+    endImport () {
       this.restoring = false
       this.success = true
       this.alertType = 'success'
       this.alertMessage = 'Records restored!'
+      this.$emit('process-done')
     },
 
-    async restoreRecords () {
-      this.startRestore()
+    async importRecords () {
+      this.startImport()
       switch (this.recordType) {
         case 0:
           console.log('This should really never be selected.')
@@ -124,9 +129,8 @@ export default Vue.extend({
           console.log('Not implemented yet.')
           break
         case 3:
-          await this.PostRestoreEvents(this.fileUpload.filename)
-          // comment out the line below to freeze the app on the restoring part
-          this.endRestore()
+          await this.PostImportEvents(this.fileUpload.filename)
+          this.endImport()
           break
         case 4:
           console.log('Not implemented yet.')

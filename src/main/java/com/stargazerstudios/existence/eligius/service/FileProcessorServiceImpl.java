@@ -1,5 +1,7 @@
 package com.stargazerstudios.existence.eligius.service;
 
+import com.stargazerstudios.existence.conductor.erratum.file.FileUploadException;
+import com.stargazerstudios.existence.conductor.erratum.root.FileProcessingException;
 import com.stargazerstudios.existence.eligius.config.FileStorageProperties;
 import com.stargazerstudios.existence.eligius.dto.FileResponseDTO;
 import com.stargazerstudios.existence.eligius.utils.FileResponseUtil;
@@ -38,8 +40,7 @@ public class FileProcessorServiceImpl implements FileProcessorService {
     }
 
     @Override
-    public FileResponseDTO save(MultipartFile multipartFile) {
-        // TODO: This should return a custom DTO.
+    public FileResponseDTO save(MultipartFile multipartFile) throws FileProcessingException {
         final Path root = Paths.get(fileStorageProperties.getUploadPath());
         try {
             Path originalPath = root.resolve(Objects.requireNonNull(multipartFile.getOriginalFilename()));
@@ -54,11 +55,11 @@ public class FileProcessorServiceImpl implements FileProcessorService {
                 Files.copy(multipartFile.getInputStream(), newPath, StandardCopyOption.REPLACE_EXISTING);
                 return fileResponseUtil.getFileDetails(newPath);
             } else {
-                return null;
+                throw new FileUploadException();
             }
         } catch (Exception e) {
-            // TODO: This must throw a custom error.
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+            e.printStackTrace();
+            throw new FileUploadException();
         }
     }
 

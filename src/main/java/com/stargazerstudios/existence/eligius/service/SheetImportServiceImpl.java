@@ -16,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,20 +25,17 @@ import java.time.ZoneId;
 import java.util.*;
 
 @Service
-//@Transactional(rollbackFor = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class SheetImportServiceImpl implements SheetImportService {
 
     @Autowired
     private EventServiceImpl eventService;
 
-//    @Value("${file.import.path}")
-//    private String importPath;
-
     @Autowired
     private FileStorageProperties fileStorageProperties;
 
     @Override
-    public List<EventDTO> importSpreadSheet(String filename)
+    public List<EventDTO> importEventsFromSpreadsheet(String filename)
             throws IOException, DatabaseErrorException, UnknownInputException, EntityErrorException {
         final String importPath = fileStorageProperties.getUploadPath() + "/" + filename;
         List<EventDTO> eventList = new ArrayList<>();
