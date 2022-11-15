@@ -9,6 +9,9 @@
     <include file="db/changelog/changes/symphony/insert-into-settings-table-changelog-34.xml"/>
     <include file="db/changelog/changes/sonata/update-events-table-changelog-51.xml"/>
     <include file="db/changelog/changes/symphony/insert-into-settings-table-changelog-35.xml"/>
+    <include file="db/changelog/changes/symphony/delete-from-settings-table-changelog-36.xml"/>
+    <include file="db/changelog/changes/symphony/update-settings-table-changelog-36.xml"/>
+    <include file="db/changelog/changes/symphony/update-settings-table-changelog-37.xml"/>
 <!--    <include file="db/changelog/changes/sonata/create-event-index-changelog-52.xml"/>-->
 <!--    <include file="db/changelog/changes/sonata/create-event-vector-function-changelog-53.xml"/>-->
 <!--    <include file="db/changelog/changes/sonata/create-event-vector-trigger-changelog-54.xml"/>-->

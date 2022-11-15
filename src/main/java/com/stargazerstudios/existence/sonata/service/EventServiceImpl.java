@@ -3,15 +3,15 @@ package com.stargazerstudios.existence.sonata.service;
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.entity.EntityRelationErrorException;
+import com.stargazerstudios.existence.conductor.erratum.entity.EntityRelationException;
 import com.stargazerstudios.existence.conductor.erratum.input.EmptyInputException;
 import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
@@ -148,7 +148,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDTO createEvent(EventWrapper wEvent)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+            throws UnknownInputException, EntityException, DatabaseException {
         String startDateIn = stringUtil.trimToUpper(wEvent.getStart_date());
         String endDateIn = stringUtil.trimToUpper(wEvent.getEnd_date());
         String globalPrefix = stringUtil.trimToUpper(wEvent.getGlobal_prefix());
@@ -193,7 +193,7 @@ public class EventServiceImpl implements EventService {
             throw new EntityNotFoundException("system", "global_prefix", globalPrefix, "machine", "name", machine);
         System system = systemData.get();
         if (system.getZones().size() == 0)
-            throw new EntityRelationErrorException("System: " + globalPrefix + " on machine: " + machine +
+            throw new EntityRelationException("System: " + globalPrefix + " on machine: " + machine +
                     " does not have zones.");
         List<Zone> zoneDb = new ArrayList<>(system.getZones());
         Set<Zone> zones = new HashSet<>();
@@ -213,7 +213,7 @@ public class EventServiceImpl implements EventService {
         List<EventType> exclusives = eventTypeDb.stream()
                 .filter(EventType::isExclusive)
                 .toList();
-        if (exclusives.size() > 1) throw new EntityErrorException("Only one exclusive event type may be used.");
+        if (exclusives.size() > 1) throw new EntityException("Only one exclusive event type may be used.");
         Set<EventType> eventTypes = new HashSet<>(eventTypeDb);
 
         Event event = new Event();
@@ -246,7 +246,7 @@ public class EventServiceImpl implements EventService {
             eventDAO.saveAndFlush(event);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("event");
+            throw new EntitySaveException("event");
         }
 
         return eventUtil.wrapEvent(event);
@@ -254,7 +254,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDTO updateEvent(EventWrapper wEvent)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+            throws UnknownInputException, EntityException, DatabaseException, AuthorizationException {
         // TODO This method is too bloated. It is a PUT method but requires the user to send back all of the existing
         //  property that the entity have.
         //  A better and more efficient approach would be if the user is allowed to send only the properties that needs
@@ -400,7 +400,7 @@ public class EventServiceImpl implements EventService {
             List<EventType> exclusives = eventTypeDb.stream()
                     .filter(EventType::isExclusive)
                     .toList();
-            if (exclusives.size() > 1) throw new EntityErrorException("Only one exclusive event type may be used.");
+            if (exclusives.size() > 1) throw new EntityException("Only one exclusive event type may be used.");
             Set<EventType> eventTypes = new HashSet<>(eventTypeDb);
             event.setEventTypes(eventTypes);
         }
@@ -415,7 +415,7 @@ public class EventServiceImpl implements EventService {
             eventDAO.saveAndFlush(event);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("event");
+            throw new EntitySaveException("event");
         }
 
         return eventUtil.wrapEvent(event);
@@ -423,7 +423,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public boolean deleteEvent(long id)
-            throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
+            throws DatabaseException, EntityException, AuthorizationException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -436,7 +436,7 @@ public class EventServiceImpl implements EventService {
             eventDAO.flush();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntityDeletionErrorException("event");
+            throw new EntityDeletionException("event");
         }
 //        return eventUtil.wrapEvent(event);
         return true;
@@ -455,7 +455,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Long getNumberOfEventsByUser(long id) throws EntityErrorException {
+    public Long getNumberOfEventsByUser(long id) throws EntityException {
         Optional<User> userData = userDAO.findById(id);
         if (userData.isEmpty()) throw new EntityNotFoundException("user", "id", Long.toString(id));
 
@@ -464,7 +464,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDTO getLatestEventByUser(String username) throws EntityErrorException {
+    public EventDTO getLatestEventByUser(String username) throws EntityException {
         Optional<User> userData = userDAO.findByUsername(username);
         if (userData.isEmpty()) throw new EntityNotFoundException("user", "username", username);
 

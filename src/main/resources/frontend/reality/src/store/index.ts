@@ -57,6 +57,17 @@ export default new Vuex.Store({
   actions: {
     DismissError ({ commit }: { commit: Commit }) {
       commit('clearError')
+    },
+
+    SetError ({ commit }: { commit: Commit }, message: string) {
+      const now = new Date().toISOString()
+      const newError = {
+        status: 400,
+        error: 'Bad Request',
+        message: message,
+        timestamp: now
+      }
+      commit('setError', newError)
     }
   },
 

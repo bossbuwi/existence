@@ -1,9 +1,9 @@
 package com.stargazerstudios.existence.requiem.service;
 
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.requiem.dto.ComponentDTO;
 import com.stargazerstudios.existence.requiem.entity.Coblog;
@@ -52,7 +52,7 @@ public class ComponentServiceImpl implements ComponentService {
 
     @Override
     public ComponentDTO getComponent(long id)
-            throws EntityErrorException {
+            throws EntityException {
         Optional<Component> componentData = componentDAO.findById(id);
         if (componentData.isEmpty()) throw new EntityNotFoundException("component", "id", Long.toString(id));
 
@@ -76,7 +76,7 @@ public class ComponentServiceImpl implements ComponentService {
 
     @Override
     public ComponentDTO createComponent(ComponentWrapper wComponent)
-            throws EntityErrorException, DatabaseErrorException {
+            throws EntityException, DatabaseException {
         String name = stringUtil.trimToUpper(wComponent.getName());
         String sequence = stringUtil.trimToUpper(wComponent.getSequence());
 
@@ -103,7 +103,7 @@ public class ComponentServiceImpl implements ComponentService {
             componentDAO.save(component);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("component");
+            throw new EntitySaveException("component");
         }
 
         return componentUtil.wrapComponent(component);

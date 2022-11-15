@@ -2,7 +2,7 @@ package com.stargazerstudios.existence.sonata.service;
 
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.sonata.repository.EventDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class DevelopmentService {
     @Autowired
     private EventDAO eventDAO;
 
-    public Boolean deleteAllEvents() throws AuthorizationErrorException {
+    public Boolean deleteAllEvents() throws AuthorizationException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.OWNER.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 

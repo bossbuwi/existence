@@ -1,9 +1,9 @@
 <template>
     <v-card
-    color="grey lighten-4"
-    min-width="350px"
-    flat
-  >
+      color="grey lighten-4"
+      min-width="350px"
+      flat
+    >
     <v-toolbar
       color="primary"
       dark
@@ -18,17 +18,23 @@
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
+        v-if="modifyButtonEnabled"
+        outlined
+        @click="changeFormMode"
+      >MODIFY</v-btn>
+      <v-btn
+        v-if="!modifyButtonEnabled"
         outlined
         :loading="buttonLoading"
-        @click="modifyToggle"
-      >
-        {{ buttonText }}
-      </v-btn>
+        @click="save()"
+      >SAVE</v-btn>
     </v-toolbar>
     <v-card-text>
       <v-row class="mt-5 px-6">
         <v-text-field
-          :disabled="!modifyMode"
+          :disabled="modifyButtonEnabled"
+          :error="buttonError"
+          :error-messages="buttonMessage"
           label="Current Value"
           v-model="setting.value"
           outlined
@@ -79,6 +85,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
+import { ValidValues } from '@/models/validvalues'
+import { FormMode } from '@/models/formmode'
 
 export default Vue.extend({
   name: 'SettingDialog',
@@ -91,51 +99,125 @@ export default Vue.extend({
 
   data () {
     return {
-      modifyMode: false,
+      formMode: FormMode.ENQUIRE,
+      modifyButtonEnabled: true,
       buttonText: 'Modify',
       buttonLoading: false,
-      // setting: {
-      //   id: 0,
-      //   key: '',
-      //   value: ''
-      // }
+      buttonError: false,
+      buttonMessage: '',
       setting: Object.assign({}, this.settingItem)
     }
   },
 
   computed: {
     ...mapGetters({
-      updatedSetting: 'getSetting'
+      updatedSetting: 'getSetting',
+      hasError: 'getErrorStatus'
     })
   },
 
   methods: {
     ...mapActions([
-      'PutSetting', 'SyncSettings'
+      'PutSetting', 'SyncSettings', 'SetError'
     ]),
 
     close () {
       this.$emit('close-popup')
     },
 
-    modifyToggle () {
-      this.modifyMode = !this.modifyMode
-      // this.modifyMode ? this.buttonText = 'Save' : this.buttonText = 'Modify'
-      if (this.modifyMode) {
-        // this.buttonLoading = false
-        this.buttonText = 'Save'
-      } else {
-        // this.buttonLoading = true
-        this.save()
-        this.buttonText = 'Modify'
+    changeFormMode () {
+      if (this.formMode === FormMode.ENQUIRE) {
+        this.modifyButtonEnabled = false
+        this.formMode = FormMode.UPDATE
+      } else if (this.formMode === FormMode.UPDATE) {
+        this.modifyButtonEnabled = true
+        this.formMode = FormMode.ENQUIRE
       }
     },
 
+    validateInput () {
+      const validValues = this.settingItem.valid_values
+      const inputValue = this.setting.value.trim()
+
+      if (!inputValue) {
+        this.SetError('Invalid input. The value must not be empty or blank spaces.')
+      } else if (inputValue.length > this.settingItem.length) {
+        this.SetError('Invalid input. The value exceeds the maximum length.')
+      } else {
+        switch (validValues) {
+          case ValidValues.ALPHA:
+            if (this.isAlpha(inputValue)) {
+              this.save()
+            } else {
+              this.SetError('Invalid input. The value must be of type alpha.')
+            }
+            break
+          case ValidValues.NUMERIC:
+            if (this.isNumeric(inputValue)) {
+              this.save()
+            } else {
+              this.SetError('Invalid input. The value must be of type numeric.')
+            }
+            break
+          case ValidValues.ALPHANUMERIC:
+            if (!this.isAlpha(inputValue) && !this.isNumeric(inputValue)) {
+              this.save()
+            } else {
+              this.SetError('Invalid input. The value must be of type alphanumeric.')
+            }
+            break
+          default: {
+            const validValuesArr = validValues.split(',')
+            if (validValuesArr.indexOf(inputValue) > -1) {
+              this.save()
+            } else {
+              this.SetError('Invalid input. The value must be from the valid values.')
+            }
+            break
+          }
+        }
+      }
+    },
+
+    isAlpha (params: string): boolean {
+      for (let i = 0; i < params.length; i++) {
+        const code = params.charCodeAt(i)
+        if (!(code > 64 && code < 91) &&
+        !(code > 96 && code < 123)) {
+          return false
+        }
+      }
+
+      return true
+    },
+
+    isNumeric (params: string): boolean {
+      for (let i = 0; i < params.length; i++) {
+        const code = params.charCodeAt(i)
+        if (!(code > 47 && code < 58)) {
+          return false
+        }
+      }
+
+      return true
+    },
+
     async save () {
+      console.log('save')
       this.buttonLoading = true
       await this.PutSetting(this.setting)
-      await this.SyncSettings(this.settingType)
-      this.buttonLoading = false
+
+      if (this.hasError) {
+        this.buttonLoading = false
+        this.buttonError = true
+        this.buttonMessage = 'Invalid input.'
+      } else {
+        this.buttonMessage = ''
+        this.buttonError = false
+        await this.SyncSettings(this.settingType)
+        this.buttonLoading = false
+        this.changeFormMode()
+      }
     }
   }
 })

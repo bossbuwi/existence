@@ -1,8 +1,8 @@
 package com.stargazerstudios.existence.conductor.erratum.database;
 
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
 
-public class DependentEntityException extends DatabaseErrorException {
+public class DependentEntityException extends DatabaseException {
 
     public DependentEntityException (String entity, String identifier) {
         super(entity + ": " + identifier + " has active dependencies. " +

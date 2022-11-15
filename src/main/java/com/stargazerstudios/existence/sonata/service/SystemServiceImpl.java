@@ -3,14 +3,14 @@ package com.stargazerstudios.existence.sonata.service;
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
 import com.stargazerstudios.existence.conductor.erratum.database.DependentEntityException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
 import com.stargazerstudios.existence.conductor.erratum.input.InvalidCollectionException;
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
@@ -107,7 +107,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public SystemDTO createSystem(SystemWrapper wSystem)
-            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+            throws EntityException, DatabaseException, AuthorizationException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -142,10 +142,10 @@ public class SystemServiceImpl implements SystemService {
             String constraint = ex.getConstraintName();
             if (constraint.equals(ConsSonataConstraint.UNIQUE_SYSTEM_PER_MACHINE))
                 throw new DuplicateEntityException("system", "machine", machineName);
-            throw new EntitySaveErrorException("system");
+            throw new EntitySaveException("system");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("system");
+            throw new EntitySaveException("system");
         }
 
         return systemUtil.outboundFullSystem(system);
@@ -153,7 +153,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public SystemDTO updateSystem(SystemWrapper wSystem)
-            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+            throws EntityException, DatabaseException, AuthorizationException {
         // User must be at least an admin to update a system
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
@@ -191,7 +191,7 @@ public class SystemServiceImpl implements SystemService {
         } catch (Exception e) {
             e.printStackTrace();
 
-            throw new EntitySaveErrorException("system");
+            throw new EntitySaveException("system");
         }
 
         return systemUtil.outboundFullSystem(system);
@@ -199,7 +199,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public SystemDTO deleteSystem(long id)
-            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+            throws EntityException, DatabaseException, AuthorizationException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -219,7 +219,7 @@ public class SystemServiceImpl implements SystemService {
                 throw new DependentEntityException("system", system.getGlobalPrefix());
             }
 
-            throw new EntityDeletionErrorException("system");
+            throw new EntityDeletionException("system");
         }
 
         return systemUtil.outboundFullSystem(system);
@@ -227,7 +227,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public SystemDTO createFullSystem(SystemWrapper wSystem)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
+            throws AuthorizationException, DatabaseException, EntityException, UnknownInputException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -247,7 +247,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public SystemDTO updateFullSystem(SystemWrapper wSystem)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
+            throws AuthorizationException, DatabaseException, EntityException, UnknownInputException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 

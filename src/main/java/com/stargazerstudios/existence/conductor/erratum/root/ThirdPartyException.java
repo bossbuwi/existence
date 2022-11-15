@@ -2,9 +2,9 @@ package com.stargazerstudios.existence.conductor.erratum.root;
 
 import org.springframework.http.HttpStatus;
 
-public class ThirdPartyErrorException extends Exception {
+public class ThirdPartyException extends Exception {
 
-    public ThirdPartyErrorException (String message) {
+    public ThirdPartyException(String message) {
         super(message);
     }
 

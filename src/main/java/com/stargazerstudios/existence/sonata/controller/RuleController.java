@@ -1,8 +1,8 @@
 package com.stargazerstudios.existence.sonata.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import com.stargazerstudios.existence.sonata.dto.RuleDTO;
@@ -35,20 +35,20 @@ public class RuleController {
     @PostMapping("/rules/rule")
     public ResponseEntity<RuleDTO> createRule(@Validated(PostValidation.class)
                                               @RequestBody RuleWrapper rule)
-            throws DatabaseErrorException {
+            throws DatabaseException {
         return new ResponseEntity<>(ruleService.createRule(rule), HttpStatus.OK);
     }
 
     @PutMapping("/rules/rule")
     public ResponseEntity<RuleDTO> updateRule(@Validated(PutValidation.class)
                                                   @RequestBody RuleWrapper rule)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException {
+            throws AuthorizationException, DatabaseException, EntityException {
         return new ResponseEntity<>(ruleService.updateRule(rule), HttpStatus.OK);
     }
 
     @DeleteMapping("/rules/rule/{id}")
     public ResponseEntity<RuleDTO> deleteRule(@NotBlank @PathVariable("id") long id)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException {
+            throws AuthorizationException, DatabaseException, EntityException {
         return new ResponseEntity<>(ruleService.deleteRule(id), HttpStatus.OK);
     }
 }

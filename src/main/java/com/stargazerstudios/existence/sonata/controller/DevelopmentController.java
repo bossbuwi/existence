@@ -1,6 +1,6 @@
 package com.stargazerstudios.existence.sonata.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
 import com.stargazerstudios.existence.sonata.service.DevelopmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ public class DevelopmentController {
     private DevelopmentService developmentService;
 
     @DeleteMapping("/dev/delete-all/events")
-    public ResponseEntity<Boolean> deleteAllEvents() throws AuthorizationErrorException {
+    public ResponseEntity<Boolean> deleteAllEvents() throws AuthorizationException {
         return new ResponseEntity<>(developmentService.deleteAllEvents(), HttpStatus.OK);
     }
 }

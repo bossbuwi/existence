@@ -2,13 +2,13 @@ package com.stargazerstudios.existence.conductor.erratum.root;
 
 import org.springframework.http.HttpStatus;
 
-public class DatabaseErrorException extends Exception {
+public class SystemException extends Exception {
 
-    public DatabaseErrorException(String message) {
+    public SystemException(String message) {
         super(message);
     }
 
     public HttpStatus getHttpStatus() {
-        return HttpStatus.INTERNAL_SERVER_ERROR;
+        return HttpStatus.SERVICE_UNAVAILABLE;
     }
 }

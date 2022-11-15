@@ -1,8 +1,8 @@
 package com.stargazerstudios.existence.sonata.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
@@ -41,20 +41,20 @@ public class MachineController {
     @PostMapping("/machines/machine")
     public ResponseEntity<MachineDTO> createMachine(@Validated(PostValidation.class)
                                                         @RequestBody MachineWrapper wMachine)
-            throws DatabaseErrorException {
+            throws DatabaseException {
         return new ResponseEntity<>(machineService.createMachine(wMachine), HttpStatus.OK);
     }
 
     @PutMapping("/machines/machine")
     public ResponseEntity<MachineDTO> updateMachine(@Validated(PutValidation.class)
                                                         @RequestBody MachineWrapper wMachine)
-            throws DatabaseErrorException, UnknownInputException, EntityErrorException {
+            throws DatabaseException, UnknownInputException, EntityException {
         return new ResponseEntity<>(machineService.updateMachine(wMachine), HttpStatus.OK);
     }
 
     @DeleteMapping("/machines/machine/{id}")
     public ResponseEntity<MachineDTO> deleteMachine(@NotBlank @PathVariable("id") long id)
-            throws AuthorizationErrorException, UnknownInputException, EntityErrorException, DatabaseErrorException {
+            throws AuthorizationException, UnknownInputException, EntityException, DatabaseException {
         return new ResponseEntity<>(machineService.deleteMachine(id), HttpStatus.OK);
     }
 }

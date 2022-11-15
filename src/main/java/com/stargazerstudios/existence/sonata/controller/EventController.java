@@ -1,8 +1,8 @@
 package com.stargazerstudios.existence.sonata.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
@@ -70,20 +70,20 @@ public class EventController {
     @PostMapping("/events/event")
     public ResponseEntity<EventDTO> createEvent(@Validated(PostValidation.class)
                                                     @RequestBody EventWrapper event)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+            throws UnknownInputException, EntityException, DatabaseException {
         return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.OK);
     }
 
     @PutMapping("/events/event")
     public ResponseEntity<EventDTO> updateEvent(@Validated(PutValidation.class)
                                                     @RequestBody EventWrapper event)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+            throws UnknownInputException, EntityException, DatabaseException, AuthorizationException {
         return new ResponseEntity<>(eventService.updateEvent(event), HttpStatus.OK);
     }
 
     @DeleteMapping("/events/event/{id}")
     public ResponseEntity<Boolean> deleteEvent(@NotBlank @PathVariable("id") long id)
-            throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
+            throws DatabaseException, EntityException, AuthorizationException {
         return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.OK);
     }
 

@@ -1,9 +1,9 @@
 package com.stargazerstudios.existence.symphony.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.SystemErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
+import com.stargazerstudios.existence.conductor.erratum.root.SystemException;
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import com.stargazerstudios.existence.symphony.dto.SettingDTO;
 import com.stargazerstudios.existence.symphony.service.SettingServiceImpl;
@@ -15,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @CrossOrigin
@@ -53,14 +52,14 @@ public class SettingController {
 
     @GetMapping("/settings/setting/{id}")
     public ResponseEntity<SettingDTO> getSettingById(@Min(1) @PathVariable("id") long id)
-            throws EntityErrorException {
+            throws EntityException {
         return new ResponseEntity<>(settingService.getSettingById(id), HttpStatus.OK);
     }
 
     @PutMapping("/settings/setting")
     public ResponseEntity<SettingDTO> modifySetting(@Validated(PutValidation.class)
                                                         @RequestBody SettingWrapper setting)
-            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, SystemErrorException {
+            throws EntityException, DatabaseException, AuthorizationException, SystemException {
         return new ResponseEntity<>(settingService.modifySetting(setting), HttpStatus.OK);
     }
 }

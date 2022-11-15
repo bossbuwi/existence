@@ -2,12 +2,12 @@ package com.stargazerstudios.existence.sonata.service;
 
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.sonata.dto.RuleDTO;
 import com.stargazerstudios.existence.sonata.entity.Rule;
@@ -48,7 +48,7 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public RuleDTO createRule(RuleWrapper wRule) throws DatabaseErrorException {
+    public RuleDTO createRule(RuleWrapper wRule) throws DatabaseException {
         Rule rule = new Rule();
         rule.setBody(wRule.getBody());
 
@@ -56,7 +56,7 @@ public class RuleServiceImpl implements RuleService {
             ruleDAO.save(rule);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("rule");
+            throw new EntitySaveException("rule");
         }
 
         return ruleUtil.wrapRule(rule);
@@ -64,7 +64,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public RuleDTO updateRule(RuleWrapper wRule)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException {
+            throws AuthorizationException, DatabaseException, EntityException {
         boolean isAuth = authUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
         if (!isAuth) throw new UserUnauthorizedException();
 
@@ -78,7 +78,7 @@ public class RuleServiceImpl implements RuleService {
             ruleDAO.save(rule);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("rule");
+            throw new EntitySaveException("rule");
         }
 
         return ruleUtil.wrapRule(rule);
@@ -86,7 +86,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public RuleDTO deleteRule(long id)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException {
+            throws AuthorizationException, DatabaseException, EntityException {
         boolean isAuth = authUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
         if (!isAuth) throw new UserUnauthorizedException();
 
@@ -99,7 +99,7 @@ public class RuleServiceImpl implements RuleService {
             ruleDAO.delete(rule);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntityDeletionErrorException("rule");
+            throw new EntityDeletionException("rule");
         }
 
         return ruleUtil.wrapRule(rule);

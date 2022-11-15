@@ -3,9 +3,9 @@ package com.stargazerstudios.existence.sonata.service;
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.sonata.constants.ConsSonataConstraint;
@@ -64,7 +64,7 @@ public class ReleaseServiceImpl implements ReleaseService {
 
     @Override
     public ReleaseDTO createRelease(ReleaseWrapper wRelease)
-            throws AuthorizationErrorException, DatabaseErrorException {
+            throws AuthorizationException, DatabaseException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -80,10 +80,10 @@ public class ReleaseServiceImpl implements ReleaseService {
             String constraint = ex.getConstraintName();
             if (constraint.equals(ConsSonataConstraint.UNIQUE_RELEASE_NAME))
                 throw new DuplicateEntityException("release", "name", name);
-            throw new EntitySaveErrorException("release");
+            throw new EntitySaveException("release");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("release");
+            throw new EntitySaveException("release");
         }
 
         return releaseUtil.wrapRelease(release);

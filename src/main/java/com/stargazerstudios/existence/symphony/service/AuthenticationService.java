@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface AuthenticationService {
     UserDTO login(AuthWrapper user)
-            throws UnknownInputException, AuthorizationErrorException,
-                SystemErrorException, ThirdPartyErrorException,
-                DatabaseErrorException, EntityErrorException;
-    UserDTO autologin(String token) throws AuthorizationErrorException;
+            throws UnknownInputException, AuthorizationException,
+            SystemException, ThirdPartyException,
+            DatabaseException, EntityException;
+    UserDTO autologin(String token) throws AuthorizationException;
     boolean logout(HttpServletRequest request, HttpServletResponse response);
 }

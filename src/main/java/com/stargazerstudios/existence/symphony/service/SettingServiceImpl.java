@@ -2,12 +2,12 @@ package com.stargazerstudios.existence.symphony.service;
 
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.SystemErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
+import com.stargazerstudios.existence.conductor.erratum.root.SystemException;
 import com.stargazerstudios.existence.conductor.erratum.system.InvalidSettingException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.symphony.constants.EnumSettingType;
@@ -17,12 +17,15 @@ import com.stargazerstudios.existence.symphony.repository.SettingDAO;
 import com.stargazerstudios.existence.symphony.entity.Setting;
 import com.stargazerstudios.existence.symphony.utils.SettingUtil;
 import com.stargazerstudios.existence.symphony.wrapper.SettingWrapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class SettingServiceImpl implements SettingService{
 
     @Autowired
@@ -90,7 +93,7 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
-    public SettingDTO getSettingById(long id) throws EntityErrorException {
+    public SettingDTO getSettingById(long id) throws EntityException {
         Optional<Setting> settingData = settingDAO.findById(id);
         if (settingData.isPresent()) {
             return settingUtil.wrapSetting(settingData.get());
@@ -100,7 +103,7 @@ public class SettingServiceImpl implements SettingService{
     }
 
     @Override
-    public SettingDTO getSettingByKey(String key) throws EntityErrorException {
+    public SettingDTO getSettingByKey(String key) throws EntityException {
         Optional<Setting> settingData = settingDAO.findSettingByKey(key);
         if (settingData.isPresent()) {
             Setting setting = settingData.get();
@@ -112,7 +115,7 @@ public class SettingServiceImpl implements SettingService{
 
     @Override
     public SettingDTO modifySetting(SettingWrapper wSetting)
-            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException, SystemErrorException {
+            throws EntityException, DatabaseException, AuthorizationException, SystemException {
         boolean isSuperuserOrHigher = authorityUtil.checkAuthority(EnumAuthorization.SUPERUSER.getValue());
         if (!isSuperuserOrHigher) throw new UserUnauthorizedException();
         String username = authorityUtil.getAuthUsername();
@@ -123,38 +126,49 @@ public class SettingServiceImpl implements SettingService{
         if (settingData.isEmpty()) throw new EntityNotFoundException("setting", "key", key);
 
         Setting setting = settingData.get();
-        String validValuesStr = setting.getValidValues();
-        int index = validValuesStr.indexOf(",");
-        if (index == -1) {
-            // length must be checked first if valid
-            if (validValuesStr.equals(EnumValidValues.ALPHA.getValue())) {
-                //check for valid alpha
-            } else if (validValuesStr.equals(EnumValidValues.NUMERIC.getValue())) {
-                //check for valid number
-            } else if (validValuesStr.equals(EnumValidValues.ALPHANUMERIC.getValue())) {
-                //basically anything is possible here
-                //is it still needed?
-            }
-            setting.setValue(newValue);
-            setting.setChangedBy(username);
+        String validValuesStr = setting.getValidValues().trim();
+        long validLength = setting.getLength();
+
+        // Validation sequence
+        // 1. Check if length is acceptable
+        if (newValue.length() > validLength) {
+            throw new InvalidSettingException(setting.getKey());
         } else {
-            List<String> validValues = Arrays.asList(validValuesStr.split(","));
-            if (validValues.contains(newValue) && newValue.length() == setting.getLength()) {
+            // 2. Check if valid values are specific or generic
+            // Specific valid values are required to be delimited by commas
+            int index = validValuesStr.indexOf(",");
+            if (index == -1) {
+                if (validValuesStr.equals(EnumValidValues.ALPHA.getValue())) {
+                    // Valid value of type alpha
+                    boolean allLetters = newValue.chars().allMatch(Character::isLetter);
+                    if (!allLetters) throw new InvalidSettingException(setting.getKey());
+                } else if (validValuesStr.equals(EnumValidValues.NUMERIC.getValue())) {
+                    // Valid value of type numeric
+                    boolean allNumbers = StringUtils.isNumeric(newValue);
+                    if (!allNumbers) throw new InvalidSettingException(setting.getKey());
+                }
+                // If not alpha or numeric, it means it is alphanumeric
+                // Thus it will not enter any of the if clauses
+                // This however accepts every known character without any validation
+                // If there are only specific characters to be accepted, a new validation must be added
+
                 setting.setValue(newValue);
                 setting.setChangedBy(username);
             } else {
-                if (settingUtil.getCurrentSetting("settingexpliciterror").equals("Y"))
+                List<String> validValues = Arrays.asList(validValuesStr.split(","));
+                if (validValues.contains(newValue) && newValue.length() == setting.getLength()) {
+                    setting.setValue(newValue);
+                    setting.setChangedBy(username);
+                } else {
                     throw new InvalidSettingException(setting.getKey());
-
-                setting.setValue(setting.getDefaultValue());
-                setting.setChangedBy(username);
+                }
             }
         }
 
         try {
-            settingDAO.save(setting);
+            settingDAO.saveAndFlush(setting);
         } catch (Exception e) {
-            throw new EntitySaveErrorException("setting");
+            throw new EntitySaveException("setting");
         }
 
         return settingUtil.wrapSetting(setting);

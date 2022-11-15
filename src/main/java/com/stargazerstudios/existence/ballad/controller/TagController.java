@@ -3,8 +3,8 @@ package com.stargazerstudios.existence.ballad.controller;
 import com.stargazerstudios.existence.ballad.dto.TagDTO;
 import com.stargazerstudios.existence.ballad.service.TagServiceImpl;
 import com.stargazerstudios.existence.ballad.wrapper.TagWrapper;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.validation.groups.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class TagController {
     @GetMapping("/con/tags/tag")
     public ResponseEntity<TagDTO> getTag(@Validated(GetValidation.class)
                                              @RequestBody TagWrapper tag)
-            throws UnknownInputException, EntityErrorException {
+            throws UnknownInputException, EntityException {
         return new ResponseEntity<>(tagService.getTag(tag), HttpStatus.OK);
     }
 
@@ -40,35 +40,35 @@ public class TagController {
     @PostMapping("/tags/tag")
     public ResponseEntity<TagDTO> createTag(@Validated(PostValidation.class)
                                                 @RequestBody TagWrapper tag)
-            throws DatabaseErrorException, UnknownInputException {
+            throws DatabaseException, UnknownInputException {
         return new ResponseEntity<>(tagService.createTag(tag), HttpStatus.OK);
     }
 
     @PutMapping("/tags/tag")
     public ResponseEntity<TagDTO> updateTag(@Validated(PutValidation.class)
                                                 @RequestBody TagWrapper tag)
-            throws DatabaseErrorException, UnknownInputException, EntityErrorException {
+            throws DatabaseException, UnknownInputException, EntityException {
         return new ResponseEntity<>(tagService.updateTag(tag), HttpStatus.OK);
     }
 
     @PutMapping("/tags/tag/add-stories")
     public ResponseEntity<TagDTO> addStory(@Validated(PutRelationValidation.class)
                                                @RequestBody TagWrapper tag)
-            throws DatabaseErrorException, UnknownInputException, EntityErrorException {
+            throws DatabaseException, UnknownInputException, EntityException {
         return new ResponseEntity<>(tagService.addStories(tag), HttpStatus.OK);
     }
 
     @PutMapping("/tags/tag/remove-stories")
     public ResponseEntity<TagDTO> removeStory(@Validated(PutRelationValidation.class)
                                                   @RequestBody TagWrapper tag)
-            throws DatabaseErrorException, UnknownInputException, EntityErrorException {
+            throws DatabaseException, UnknownInputException, EntityException {
         return new ResponseEntity<>(tagService.removeStories(tag), HttpStatus.OK);
     }
 
     @DeleteMapping("/tags/tag")
     public ResponseEntity<TagDTO> deleteTag(@Validated(DeleteValidation.class)
                                                 @RequestBody TagWrapper tag)
-            throws DatabaseErrorException, UnknownInputException, EntityErrorException {
+            throws DatabaseException, UnknownInputException, EntityException {
         return new ResponseEntity<>(tagService.deleteTag(tag), HttpStatus.OK);
     }
 }

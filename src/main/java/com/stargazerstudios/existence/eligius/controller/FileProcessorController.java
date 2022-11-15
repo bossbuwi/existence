@@ -1,13 +1,13 @@
 package com.stargazerstudios.existence.eligius.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.FileProcessingException;
-import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
+import com.stargazerstudios.existence.conductor.constants.SwitchableFeatures;
+import com.stargazerstudios.existence.conductor.erratum.root.*;
+import com.stargazerstudios.existence.conductor.erratum.system.InactiveSwitchableFeatureException;
 import com.stargazerstudios.existence.eligius.dto.FileResponseDTO;
 import com.stargazerstudios.existence.eligius.service.FileProcessorServiceImpl;
 import com.stargazerstudios.existence.eligius.service.SheetImportServiceImpl;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
+import com.stargazerstudios.existence.symphony.utils.SettingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,17 +28,34 @@ public class FileProcessorController {
     @Autowired
     private SheetImportServiceImpl sheetImportService;
 
+    @Autowired
+    private SettingUtil settingUtil;
+
+    /** Feature Dependency Check **/
+
+    private boolean isELS002Active () {
+        return settingUtil.isFeatureActive(SwitchableFeatures.ELS002.getValue());
+    }
+
     /* Guarded Endpoints */
 
     @PostMapping("/files/upload")
     public ResponseEntity<FileResponseDTO> uploadFile(@RequestParam("file") MultipartFile file)
-            throws FileProcessingException {
-        return new ResponseEntity<>(fileProcessorService.save(file), HttpStatus.OK);
+            throws FileProcessingException, SystemException {
+        if (isELS002Active()) {
+            return new ResponseEntity<>(fileProcessorService.save(file), HttpStatus.OK);
+        } else {
+            throw new InactiveSwitchableFeatureException(SwitchableFeatures.ELS002.getValue());
+        }
     }
 
     @PostMapping("files/restore/event")
     public ResponseEntity<List<EventDTO>> importEventsFromSpreadsheet(@RequestParam("filename") String filename)
-            throws DatabaseErrorException, UnknownInputException, IOException, EntityErrorException {
-        return new ResponseEntity<>(sheetImportService.importEventsFromSpreadsheet(filename), HttpStatus.OK);
+            throws DatabaseException, UnknownInputException, IOException, EntityException, SystemException {
+        if (isELS002Active()) {
+            return new ResponseEntity<>(sheetImportService.importEventsFromSpreadsheet(filename), HttpStatus.OK);
+        } else {
+            throw new InactiveSwitchableFeatureException(SwitchableFeatures.ELS002.getValue());
+        }
     }
 }

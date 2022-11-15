@@ -2,12 +2,12 @@ package com.stargazerstudios.existence.sonata.service;
 
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.sonata.constants.ConsSonataConstraint;
@@ -67,7 +67,7 @@ public class ZoneServiceImpl implements ZoneService{
 
     @Override
     public ZoneDTO createZone(ZoneWrapper wZone)
-            throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException {
+            throws AuthorizationException, EntityException, DatabaseException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -92,10 +92,10 @@ public class ZoneServiceImpl implements ZoneService{
             String constraint = ex.getConstraintName();
             if (constraint.equals(ConsSonataConstraint.UNIQUE_ZONE_PER_SYSTEM))
                 throw new DuplicateEntityException("zone", "zonal_prefix", zonalPrefix);
-            throw new EntitySaveErrorException("zone");
+            throw new EntitySaveException("zone");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("zone");
+            throw new EntitySaveException("zone");
         }
 
         return zoneUtil.outboundZone(zone);
@@ -103,7 +103,7 @@ public class ZoneServiceImpl implements ZoneService{
 
     @Override
     public ZoneDTO updateZone(ZoneWrapper wZone)
-            throws AuthorizationErrorException, EntityErrorException, DatabaseErrorException {
+            throws AuthorizationException, EntityException, DatabaseException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -135,7 +135,7 @@ public class ZoneServiceImpl implements ZoneService{
 
     @Override
     public ZoneDTO deleteZone(long id)
-            throws EntityErrorException {
+            throws EntityException {
         Optional<Zone> zoneData = zoneDAO.findById(id);
         if (zoneData.isEmpty()) throw new EntityNotFoundException("zone", "id", Long.toString(id));
         Zone zone = zoneData.get();

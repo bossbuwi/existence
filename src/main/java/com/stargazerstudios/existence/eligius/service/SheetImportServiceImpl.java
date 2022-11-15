@@ -1,10 +1,9 @@
 package com.stargazerstudios.existence.eligius.service;
 
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.eligius.config.FileStorageProperties;
-import com.stargazerstudios.existence.eligius.service.SheetImportService;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.service.EventServiceImpl;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
@@ -14,7 +13,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +34,7 @@ public class SheetImportServiceImpl implements SheetImportService {
 
     @Override
     public List<EventDTO> importEventsFromSpreadsheet(String filename)
-            throws IOException, DatabaseErrorException, UnknownInputException, EntityErrorException {
+            throws IOException, DatabaseException, UnknownInputException, EntityException {
         final String importPath = fileStorageProperties.getUploadPath() + "/" + filename;
         List<EventDTO> eventList = new ArrayList<>();
         FileInputStream file = new FileInputStream(importPath);

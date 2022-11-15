@@ -1,7 +1,7 @@
 package com.stargazerstudios.existence.symphony.controller;
 
 import com.stargazerstudios.existence.conductor.erratum.root.*;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
 import com.stargazerstudios.existence.symphony.service.AuthenticationServiceImpl;
@@ -26,13 +26,13 @@ public class AuthenticationController {
     @PostMapping("/con/login")
     public ResponseEntity<UserDTO> login(@Validated(PostValidation.class)
                                              @RequestBody AuthWrapper user)
-            throws AuthorizationErrorException, SystemErrorException, DatabaseErrorException,
-                UnknownInputException, ThirdPartyErrorException, EntityErrorException {
+            throws AuthorizationException, SystemException, DatabaseException,
+                UnknownInputException, ThirdPartyException, EntityException {
         return new ResponseEntity<>(authenticationService.login(user), HttpStatus.OK);
     }
 
     @PostMapping("/con/autologin")
-    public ResponseEntity<UserDTO> autoLogin(String token) throws AuthorizationErrorException {
+    public ResponseEntity<UserDTO> autoLogin(String token) throws AuthorizationException {
         return new ResponseEntity<>(authenticationService.autologin(token), HttpStatus.OK);
     }
 

@@ -2,9 +2,9 @@ package com.stargazerstudios.existence.conductor.erratum.root;
 
 import org.springframework.http.HttpStatus;
 
-public class EntityErrorException extends Exception {
+public class EntityException extends Exception {
 
-    public EntityErrorException (String message) {
+    public EntityException(String message) {
         super(message);
     }
 

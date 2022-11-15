@@ -2,13 +2,13 @@ package com.stargazerstudios.existence.conductor.erratum.root;
 
 import org.springframework.http.HttpStatus;
 
-public class AuthorizationErrorException extends Exception {
+public class DatabaseException extends Exception {
 
-    public AuthorizationErrorException (String message) {
+    public DatabaseException(String message) {
         super(message);
     }
 
     public HttpStatus getHttpStatus() {
-        return HttpStatus.UNAUTHORIZED;
+        return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 }
