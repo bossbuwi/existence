@@ -5,6 +5,7 @@ import com.stargazerstudios.existence.conductor.erratum.root.*;
 import com.stargazerstudios.existence.conductor.erratum.system.InactiveSwitchableFeatureException;
 import com.stargazerstudios.existence.eligius.dto.FileResponseDTO;
 import com.stargazerstudios.existence.eligius.service.FileProcessorServiceImpl;
+import com.stargazerstudios.existence.eligius.service.SheetExportServiceImpl;
 import com.stargazerstudios.existence.eligius.service.SheetImportServiceImpl;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.symphony.utils.SettingUtil;
@@ -27,6 +28,9 @@ public class FileProcessorController {
 
     @Autowired
     private SheetImportServiceImpl sheetImportService;
+
+    @Autowired
+    private SheetExportServiceImpl sheetExportService;
 
     @Autowired
     private SettingUtil settingUtil;
@@ -57,5 +61,10 @@ public class FileProcessorController {
         } else {
             throw new InactiveSwitchableFeatureException(SwitchableFeatures.ELS002.getValue());
         }
+    }
+
+    @GetMapping("files/backup/event")
+    public ResponseEntity<FileResponseDTO> exportEventsToSpreadsheet() throws IOException {
+        return new ResponseEntity<>(sheetExportService.exportEventsToSpreadsheet(), HttpStatus.OK);
     }
 }
