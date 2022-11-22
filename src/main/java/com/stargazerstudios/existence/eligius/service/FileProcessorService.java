@@ -7,5 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileProcessorService {
     void init();
     FileResponseDTO save(MultipartFile multipartFile) throws FileProcessingException;
-    void deleteAll();
+    void clearDirectories();
 }

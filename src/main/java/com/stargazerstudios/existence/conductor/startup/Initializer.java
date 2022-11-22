@@ -51,7 +51,7 @@ public class Initializer {
     @EventListener(ApplicationReadyEvent.class)
     private void postStartUp() {
         HAS_ERRORS = checkRoles() || checkJwtKey() || checkDefaultOwner()
-                || checkDefaultUser() || validateFileImportDirectory();
+                || checkDefaultUser() || validateFileDirectory();
     }
 
     /**
@@ -188,12 +188,13 @@ public class Initializer {
         return false;
     }
 
-    private boolean validateFileImportDirectory() {
+    private boolean validateFileDirectory() {
         try {
-            fileProcessorService.deleteAll();
+            fileProcessorService.clearDirectories();
             fileProcessorService.init();
         } catch (Exception e) {
             e.printStackTrace();
+            return true;
         }
         return false;
     }

@@ -13,11 +13,22 @@ public class FileStorageProperties {
     @NotBlank
     private String uploadPath;
 
+    @NotBlank
+    private String downloadPath;
+
     public String getUploadPath() {
         return uploadPath;
     }
 
+    public String getDownloadPath() {
+        return downloadPath;
+    }
+
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
+    }
+
+    public void setDownloadPath(String downloadPath) {
+        this.downloadPath = downloadPath;
     }
 }

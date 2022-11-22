@@ -31,11 +31,13 @@ public class FileProcessorServiceImpl implements FileProcessorService {
 
     @Override
     public void init() {
-        final Path root = Paths.get(fileStorageProperties.getUploadPath());
+        final Path uploadPath = Paths.get(fileStorageProperties.getUploadPath());
+        final Path downloadPath = Paths.get(fileStorageProperties.getDownloadPath());
         try {
-            Files.createDirectory(root);
+            Files.createDirectory(uploadPath);
+            Files.createDirectory(downloadPath);
         } catch (IOException e) {
-            throw new RuntimeException("Could not initialize folder for upload!");
+            throw new RuntimeException("Could not initialize folder for upload or download!");
         }
     }
 
@@ -64,8 +66,10 @@ public class FileProcessorServiceImpl implements FileProcessorService {
     }
 
     @Override
-    public void deleteAll() {
-        final Path root = Paths.get(fileStorageProperties.getUploadPath());
-        FileSystemUtils.deleteRecursively(root.toFile());
+    public void clearDirectories() {
+        final Path uploadPath = Paths.get(fileStorageProperties.getUploadPath());
+        final Path downloadPath = Paths.get(fileStorageProperties.getDownloadPath());
+        FileSystemUtils.deleteRecursively(uploadPath.toFile());
+        FileSystemUtils.deleteRecursively(downloadPath.toFile());
     }
 }
