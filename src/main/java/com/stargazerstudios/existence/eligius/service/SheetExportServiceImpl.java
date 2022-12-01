@@ -93,9 +93,56 @@ public class SheetExportServiceImpl implements SheetExportService {
                     int rowNumber = j + 1;
                     Row row = sheet.createRow(rowNumber);
                     // Create each cell and manually fill it with details based on the header column name
+                    // Add the event's id
+                    Cell eId = row.createCell(0);
+                    eId.setCellValue(events.get(j).getId());
+                    // Add the event's start date
+                    Cell eStartDate = row.createCell(1);
+                    eStartDate.setCellValue(events.get(j).getStartDate().toString());
+                    // Add the event's end date
+                    Cell eEndDate = row.createCell(2);
+                    eEndDate.setCellValue(events.get(j).getEndDate().toString());
+                    // Add the event's jira case
+                    Cell eJiraCase = row.createCell(3);
+                    eJiraCase.setCellValue(events.get(j).getJiraCase());
+                    // Add the event's features on
+                    Cell eFeatureOn = row.createCell(4);
+                    eFeatureOn.setCellValue(events.get(j).getFeaturesOn());
+                    // Add the event's features off
+                    Cell eFeatureOff = row.createCell(5);
+                    eFeatureOff.setCellValue(events.get(j).getFeaturesOff());
+                    // Add the event's compiled sources
+                    Cell eCompiledSources = row.createCell(6);
+                    eCompiledSources.setCellValue(events.get(j).getCompiledSources());
+                    // Add the event's api used
+                    Cell eApiUsed = row.createCell(7);
+                    eApiUsed.setCellValue(events.get(j).getApiUsed());
+                    // Add the event's created by
+                    Cell eCreatedBy = row.createCell(8);
+                    eCreatedBy.setCellValue(events.get(j).getCreatedBy());
+                    // Add the event's creation date
+                    Cell eCreationDate = row.createCell(9);
+                    eCreationDate.setCellValue(events.get(j).getDateCreated().toString());
+                    // Add the event's last changed by
+                    Cell eLastChangedBy = row.createCell(10);
+                    eLastChangedBy.setCellValue(events.get(j).getLastChangedBy());
+                    // Add the event's last changed date
+                    Cell eLastChangedDate = row.createCell(11);
+                    eLastChangedDate.setCellValue(events.get(j).getDateChanged().toString());
+                    // Add the event's machine
+                    Cell eMachine = row.createCell(12);
+                    eMachine.setCellValue(events.get(j).getSystem().getMachine().getName());
+                    // Add the event's system
+                    Cell eGlobalPrefix = row.createCell(13);
+                    eGlobalPrefix.setCellValue(events.get(j).getSystem().getGlobalPrefix());
+                    // Add the event's zones
+                    Cell eZones = row.createCell(14);
+                    // Add the event's event types
+                    Cell eEventTypes = row.createCell(15);
                 }
             }
 
+            // This is temporary
             File file = new File("import/test.xlsx");
             boolean isCreated = file.createNewFile();
             if (isCreated) {
