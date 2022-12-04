@@ -5,7 +5,9 @@ import com.stargazerstudios.existence.conductor.erratum.root.FileProcessingExcep
 import com.stargazerstudios.existence.eligius.config.FileStorageProperties;
 import com.stargazerstudios.existence.eligius.dto.FileResponseDTO;
 import com.stargazerstudios.existence.sonata.entity.Event;
+import com.stargazerstudios.existence.sonata.entity.EventType;
 import com.stargazerstudios.existence.sonata.entity.System;
+import com.stargazerstudios.existence.sonata.entity.Zone;
 import com.stargazerstudios.existence.sonata.repository.EventDAO;
 import com.stargazerstudios.existence.sonata.repository.SystemDAO;
 import com.stargazerstudios.existence.sonata.service.EventServiceImpl;
@@ -25,8 +27,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -137,16 +142,28 @@ public class SheetExportServiceImpl implements SheetExportService {
                     eGlobalPrefix.setCellValue(events.get(j).getSystem().getGlobalPrefix());
                     // Add the event's zones
                     Cell eZones = row.createCell(14);
+                    ArrayList<Zone> zones = new ArrayList<>(events.get(j).getZones());
+                    String zoneStr = zones.stream().map(Zone::getZonalPrefix).collect(Collectors.joining(","));
+                    eZones.setCellValue(zoneStr);
                     // Add the event's event types
                     Cell eEventTypes = row.createCell(15);
+                    ArrayList<EventType> eventTypes = new ArrayList<>(events.get(j).getEventTypes());
+                    String eventTypeStr = eventTypes.stream().map(EventType::getCode).collect(Collectors.joining(","));
+                    eEventTypes.setCellValue(eventTypeStr);
                 }
             }
 
-            // This is temporary
-            File file = new File("import/test.xlsx");
+            // Build the filename and the directory where it will be created
+            String filename = "backup_" +
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")) +
+                    ".xlsx";
+            final String downloadDir = fileStorageProperties.getDownloadPath() + filename;
+            // Try to create file
+            File file = new File(downloadDir);
             boolean isCreated = file.createNewFile();
             if (isCreated) {
                 FileOutputStream outputStream = new FileOutputStream(file, false);
+                // Write the workbook contents to the newly created file
                 workbook.write(outputStream);
                 return null;
             } else {
