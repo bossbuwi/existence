@@ -7,7 +7,9 @@
       <v-tab>Housekeeping</v-tab>
 
       <v-tab-item>
-        <empty-list></empty-list>
+        <v-container fluid>
+          <backup-stepper></backup-stepper>
+        </v-container>
       </v-tab-item>
       <v-tab-item>
         <v-container fluid>
@@ -26,12 +28,13 @@ import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 import EmptyList from '@/components/EmptyList.vue'
 import RestoreStepper from '@/components/backupandrestore/RestoreStepper.vue'
+import BackupStepper from '@/components/backupandrestore/BackupStepper.vue'
 
 export default Vue.extend({
   name: 'BackupRestoreView',
 
   components: {
-    RestoreStepper, EmptyList
+    RestoreStepper, BackupStepper, EmptyList
   },
 
   data () {
@@ -61,7 +64,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'GetSwitchableList', 'PostFileUpload', 'PostRestoreEvents'
+      'GetSwitchableList', 'PostFileUpload', 'PostRestoreEvents', 'GetFileDownload'
     ]),
 
     async submitFile () {
@@ -92,6 +95,10 @@ export default Vue.extend({
         default:
           break
       }
+    },
+
+    async test () {
+      this.GetFileDownload('backup_20221212_1035.xlsx')
     }
   }
 })

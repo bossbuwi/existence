@@ -4,13 +4,13 @@ import com.stargazerstudios.existence.conductor.erratum.file.FileCreationExcepti
 import com.stargazerstudios.existence.conductor.erratum.root.FileProcessingException;
 import com.stargazerstudios.existence.eligius.config.FileStorageProperties;
 import com.stargazerstudios.existence.eligius.dto.FileResponseDTO;
+import com.stargazerstudios.existence.eligius.utils.FileResponseUtil;
 import com.stargazerstudios.existence.sonata.entity.Event;
 import com.stargazerstudios.existence.sonata.entity.EventType;
 import com.stargazerstudios.existence.sonata.entity.System;
 import com.stargazerstudios.existence.sonata.entity.Zone;
 import com.stargazerstudios.existence.sonata.repository.EventDAO;
 import com.stargazerstudios.existence.sonata.repository.SystemDAO;
-import com.stargazerstudios.existence.sonata.service.EventServiceImpl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -44,6 +46,9 @@ public class SheetExportServiceImpl implements SheetExportService {
 
     @Autowired
     private EventDAO eventDAO;
+
+    @Autowired
+    private FileResponseUtil fileResponseUtil;
 
     @Autowired
     private FileStorageProperties fileStorageProperties;
@@ -162,14 +167,17 @@ public class SheetExportServiceImpl implements SheetExportService {
             File file = new File(downloadDir);
             boolean isCreated = file.createNewFile();
             if (isCreated) {
+                String originalPath = file.getPath();
                 FileOutputStream outputStream = new FileOutputStream(file, false);
                 // Write the workbook contents to the newly created file
                 workbook.write(outputStream);
-                return null;
+                // Return the path where the file is located
+                return fileResponseUtil.getFileDetails(Paths.get(originalPath));
             } else {
                 throw new IOException();
             }
         } catch (IOException e) {
+            e.printStackTrace();
             throw new FileCreationException();
         }
     }

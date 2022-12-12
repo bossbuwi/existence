@@ -1,5 +1,6 @@
 package com.stargazerstudios.existence.eligius.service;
 
+import com.stargazerstudios.existence.conductor.erratum.file.FileCreationException;
 import com.stargazerstudios.existence.conductor.erratum.file.FileUploadException;
 import com.stargazerstudios.existence.conductor.erratum.root.FileProcessingException;
 import com.stargazerstudios.existence.eligius.config.FileStorageProperties;
@@ -7,6 +8,7 @@ import com.stargazerstudios.existence.eligius.dto.FileResponseDTO;
 import com.stargazerstudios.existence.eligius.utils.FileResponseUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,9 @@ public class FileProcessorServiceImpl implements FileProcessorService {
 
     @Autowired
     private FileStorageProperties fileStorageProperties;
+
+    @Autowired
+    private SheetExportService sheetExportService;
 
     @Autowired
     private FileResponseUtil fileResponseUtil;
@@ -64,6 +69,29 @@ public class FileProcessorServiceImpl implements FileProcessorService {
             throw new FileUploadException();
         }
     }
+
+//    @Override
+//    public FileResponseDTO send(String file) throws FileProcessingException {
+//        final Path root = Paths.get(fileStorageProperties.getDownloadPath());
+//        try {
+//            Path finalPath = root.resolve(Objects.requireNonNull(file));
+//            return fileResponseUtil.getFileDetails(finalPath);
+//        } catch (IOException e) {
+//            throw new FileCreationException();
+//        }
+//    }
+
+    @Override
+    public ByteArrayResource send(String filename) throws FileProcessingException {
+        final Path root = Paths.get(fileStorageProperties.getDownloadPath());
+        try {
+            Path path = root.resolve(Objects.requireNonNull(filename));
+            return new ByteArrayResource(Files.readAllBytes(path));
+        } catch (IOException e) {
+            throw new FileCreationException();
+        }
+    }
+
 
     @Override
     public void clearDirectories() {
