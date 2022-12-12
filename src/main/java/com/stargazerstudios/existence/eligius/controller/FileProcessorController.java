@@ -93,7 +93,7 @@ public class FileProcessorController {
                 .body(resource);
     }
 
-    @PostMapping("files/backup/event")
+    @GetMapping("files/backup/event")
     public ResponseEntity<FileResponseDTO> exportEventsToSpreadsheet()
             throws FileProcessingException {
         return new ResponseEntity<>(sheetExportService.exportEventsToSpreadsheet(), HttpStatus.OK);

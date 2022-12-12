@@ -26,7 +26,7 @@
       </v-btn>
     </form>
     <v-alert
-      v-if="restoring || success"
+      v-if="exporting || success"
       border="left"
       colored-border
       :type="alertType"
@@ -34,11 +34,11 @@
     >
       {{ alertMessage }}
       <v-progress-linear
-        v-if="restoring && !success"
+        v-if="exporting && !success"
         indeterminate
       ></v-progress-linear>
     </v-alert>
-    <v-card v-if="success">
+    <!-- <v-card v-if="success">
       <v-card-title>Details</v-card-title>
       <v-card-text>
         <v-list-item two-line>
@@ -50,11 +50,11 @@
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>Number of records restored</v-list-item-title>
-            <v-list-item-subtitle>{{ restoredItems.length }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ exportResponse.length }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-card-text>
-    </v-card>
+    </v-card> -->
   </v-container>
 </template>
 
@@ -87,13 +87,13 @@ export default Vue.extend({
     ...mapGetters({
       uploadComplete: 'isSuccess',
       fileUpload: 'getFile',
-      restoredItems: 'getRestoredItems'
+      exportResponse: 'getExportResponse'
     })
   },
 
   methods: {
     ...mapActions([
-      'PostImportEvents'
+      'GetExportEvent'
     ]),
 
     optionSelected () {
@@ -129,7 +129,7 @@ export default Vue.extend({
           console.log('Not implemented yet.')
           break
         case 3:
-          // await this.PostImportEvents(this.fileUpload.filename)
+          await this.GetExportEvent('')
           this.endExport()
           break
         case 4:

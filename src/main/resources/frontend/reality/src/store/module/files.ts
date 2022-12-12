@@ -65,15 +65,18 @@ const actions = {
     })
   },
 
-  async PostExportEvent ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, params: any) {
+  async GetExportEvent ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, params: any) {
+    commit('resetFileState')
+
     const token = rootGetters.getToken
 
-    await axios.post('eligius/files/backup/event', {
+    await axios.get('eligius/files/backup/event', {
       headers: {
         Authorization: 'Bearer ' + token
       }
     }).then((result) => {
       console.log(result.data)
+      commit('setExportResponse', result.data)
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')
@@ -128,7 +131,7 @@ const mutations = {
     state.restoredItems = items
   },
 
-  setExportResponse (stateL any, response: any) {
+  setExportResponse (state: any, response: any) {
     state.exportResponse = response
   }
 }

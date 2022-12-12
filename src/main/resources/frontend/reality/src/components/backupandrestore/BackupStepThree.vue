@@ -12,14 +12,12 @@
         @change="fileChanged"
       ></v-file-input>
       <v-btn
-        :disabled="buttonDisabled"
-        :loading="isLoading"
         @click="submitFile"
       >
-        Upload
+        Download Backup
       </v-btn>
     </form>
-    <v-alert
+    <!-- <v-alert
       v-if="uploadComplete"
       border="left"
       colored-border
@@ -56,7 +54,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-card-text>
-    </v-card>
+    </v-card> -->
   </v-container>
 </template>
 
@@ -78,13 +76,14 @@ export default Vue.extend({
   computed: {
     ...mapGetters({
       uploadComplete: 'uploadComplete',
-      fileUpload: 'getFile'
+      fileUpload: 'getFile',
+      exportResponse: 'getExportResponse'
     })
   },
 
   methods: {
     ...mapActions([
-      'PostFileUpload'
+      'GetFileDownload'
     ]),
 
     fileChanged () {
@@ -98,7 +97,7 @@ export default Vue.extend({
     async submitFile () {
       this.isLoading = true
       this.$emit('process-ongoing')
-      await this.PostFileUpload(this.file)
+      await this.GetFileDownload(this.exportResponse.filename)
       this.$emit('process-done')
     }
   }
