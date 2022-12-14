@@ -5,22 +5,22 @@
       <v-card-text>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title>Step 1: Upload a spreadsheet</v-list-item-title>
+            <v-list-item-title>Step 1: Select the type of records that you want to backup.</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title>Step 2: Select what type of record is contained on the spreadsheet.</v-list-item-title>
+            <v-list-item-title>Step 2: Wait for the backup process to finish.</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title>Step 3: Profit!</v-list-item-title>
+            <v-list-item-title>Step 3: Download the spreadsheet.</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-card-text>
     </v-card>
-    <v-card class="mt-4">
+    <!-- <v-card class="mt-4">
       <v-card-title>Notes</v-card-title>
       <v-card-text>
         <v-list-item three-line>
@@ -51,7 +51,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-card-text>
-    </v-card>
+    </v-card> -->
   </v-container>
 </template>
 

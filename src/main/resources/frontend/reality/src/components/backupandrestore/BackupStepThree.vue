@@ -1,6 +1,11 @@
 <template>
   <v-container fluid>
-    <form v-if="!uploadComplete">
+    <v-btn
+      @click="submitFile"
+    >
+      Download Backup
+    </v-btn>
+    <!-- <form v-if="!uploadComplete">
       <v-file-input
         :loading="isLoading"
         :disabled="isLoading"
@@ -16,7 +21,7 @@
       >
         Download Backup
       </v-btn>
-    </form>
+    </form> -->
     <!-- <v-alert
       v-if="uploadComplete"
       border="left"
