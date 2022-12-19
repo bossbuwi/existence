@@ -44,12 +44,13 @@
         </v-btn>
       </v-stepper-content>
 
-      <!-- Upload File -->
+      <!-- Select Records -->
       <v-stepper-content step="2">
         <v-container fluid>
           <backup-step-two
             @process-ongoing="processStart"
             @process-done="processStop"
+            @process-error="processError"
           ></backup-step-two>
         </v-container>
         <v-btn
@@ -61,7 +62,7 @@
           Next
         </v-btn>
         <v-btn text
-          v-if="!uploadComplete"
+          v-if="!exportComplete"
           :disabled="buttonDisabled"
           @click="previousChapter"
         >
@@ -69,7 +70,7 @@
         </v-btn>
       </v-stepper-content>
 
-      <!-- Restore Events -->
+      <!-- Download File -->
       <v-stepper-content step="3">
         <v-container fluid>
           <backup-step-three
@@ -77,13 +78,13 @@
             @process-done="processStop"
           ></backup-step-three>
         </v-container>
-        <v-btn text
+        <!-- <v-btn text
           v-if="previousEnabled"
           :disabled="buttonDisabled"
           @click="previousChapter"
         >
           Previous
-        </v-btn>
+        </v-btn> -->
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
@@ -116,7 +117,7 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters({
-      uploadComplete: 'uploadComplete'
+      exportComplete: 'exportComplete'
     })
   },
 
@@ -155,6 +156,10 @@ export default Vue.extend({
         default:
           break
       }
+    },
+
+    processError () {
+      this.buttonDisabled = false
     }
   }
 })

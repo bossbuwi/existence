@@ -1,6 +1,6 @@
 package com.stargazerstudios.existence.eligius.service;
 
-import com.stargazerstudios.existence.conductor.erratum.file.FileCreationException;
+import com.stargazerstudios.existence.conductor.erratum.file.FileNotFoundException;
 import com.stargazerstudios.existence.conductor.erratum.file.FileUploadException;
 import com.stargazerstudios.existence.conductor.erratum.root.FileProcessingException;
 import com.stargazerstudios.existence.eligius.config.FileStorageProperties;
@@ -42,7 +42,7 @@ public class FileProcessorServiceImpl implements FileProcessorService {
             Files.createDirectory(uploadPath);
             Files.createDirectory(downloadPath);
         } catch (IOException e) {
-            throw new RuntimeException("Could not initialize folder for upload or download!");
+            throw new RuntimeException("Could not initialize directory for upload or download!");
         }
     }
 
@@ -70,17 +70,6 @@ public class FileProcessorServiceImpl implements FileProcessorService {
         }
     }
 
-//    @Override
-//    public FileResponseDTO send(String file) throws FileProcessingException {
-//        final Path root = Paths.get(fileStorageProperties.getDownloadPath());
-//        try {
-//            Path finalPath = root.resolve(Objects.requireNonNull(file));
-//            return fileResponseUtil.getFileDetails(finalPath);
-//        } catch (IOException e) {
-//            throw new FileCreationException();
-//        }
-//    }
-
     @Override
     public ByteArrayResource send(String filename) throws FileProcessingException {
         final Path root = Paths.get(fileStorageProperties.getDownloadPath());
@@ -88,7 +77,7 @@ public class FileProcessorServiceImpl implements FileProcessorService {
             Path path = root.resolve(Objects.requireNonNull(filename));
             return new ByteArrayResource(Files.readAllBytes(path));
         } catch (IOException e) {
-            throw new FileCreationException();
+            throw new FileNotFoundException(filename);
         }
     }
 

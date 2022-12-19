@@ -8,7 +8,12 @@ const getDefaultFileState = () => {
     uploadComplete: false,
     file: {},
     restoredItems: [],
-    exportResponse: {}
+    exportResponse: {
+      filename: '',
+      extension: '',
+      size: 0,
+      saved: false
+    }
   }
 }
 
@@ -16,6 +21,7 @@ const state = getDefaultFileState()
 
 const getters = {
   uploadComplete: (state: any) => state.uploadComplete,
+  exportComplete: (state: any) => state.exportResponse.saved,
   getFile: (state: any) => state.file,
   getRestoredItems: (state: any) => state.restoredItems,
   getExportResponse: (state: any) => state.exportResponse

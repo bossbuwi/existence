@@ -25,6 +25,7 @@
         Select
       </v-btn>
     </form>
+    <!-- Alert -->
     <v-alert
       v-if="exporting || success"
       border="left"
@@ -75,17 +76,17 @@ export default Vue.extend({
       alertType: '',
       alertMessage: '',
       contents: [
-        // { label: 'Machines (not implemented yet)', value: 1 },
-        // { label: 'Systems (not implemented yet)', value: 2 },
+        // { label: 'Machines', value: 1 },
+        // { label: 'Systems', value: 2 },
         { label: 'Events', value: 3 }
-        // { label: 'Coblogs (not implemented yet)', value: 4 }
+        // { label: 'Coblogs', value: 4 }
       ]
     }
   },
 
   computed: {
     ...mapGetters({
-      uploadComplete: 'isSuccess',
+      exportComplete: 'exportComplete',
       fileUpload: 'getFile',
       exportResponse: 'getExportResponse'
     })
@@ -116,6 +117,13 @@ export default Vue.extend({
       this.$emit('process-done')
     },
 
+    exportError () {
+      this.exporting = false
+      this.success = false
+      this.inputEnabled = true
+      this.$emit('process-error')
+    },
+
     async exportRecords () {
       this.startExport()
       switch (this.recordType) {
@@ -130,7 +138,11 @@ export default Vue.extend({
           break
         case 3:
           await this.GetExportEvent('')
-          this.endExport()
+          if (this.exportComplete) {
+            this.endExport()
+          } else {
+            this.exportError()
+          }
           break
         case 4:
           console.log('Not implemented yet.')

@@ -1,10 +1,5 @@
 <template>
   <v-container fluid>
-    <v-btn
-      @click="submitFile"
-    >
-      Download Backup
-    </v-btn>
     <!-- <form v-if="!uploadComplete">
       <v-file-input
         :loading="isLoading"
@@ -17,7 +12,7 @@
         @change="fileChanged"
       ></v-file-input>
       <v-btn
-        @click="submitFile"
+        @click="downloadFile"
       >
         Download Backup
       </v-btn>
@@ -30,36 +25,42 @@
       elevation="2"
     >
       Upload complete!
-    </v-alert>
-    <v-card v-if="uploadComplete">
+    </v-alert> -->
+    <v-card v-if="exportComplete">
       <v-card-title>File Details</v-card-title>
       <v-card-text>
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>Name</v-list-item-title>
-            <v-list-item-subtitle>{{ fileUpload.filename }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ exportResponse.filename }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>Extension</v-list-item-title>
-            <v-list-item-subtitle>{{ fileUpload.extension }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ exportResponse.extension }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item two-line>
+        <!-- <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>MIME Type</v-list-item-title>
             <v-list-item-subtitle>{{ fileUpload.type }}</v-list-item-subtitle>
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item> -->
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>Size (in bytes)</v-list-item-title>
-            <v-list-item-subtitle>{{ fileUpload.size }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ exportResponse.size }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-card-text>
-    </v-card> -->
+    </v-card>
+    <v-btn
+      class="mt-8"
+      @click="downloadFile"
+    >
+      Download Backup
+    </v-btn>
   </v-container>
 </template>
 
@@ -80,7 +81,7 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters({
-      uploadComplete: 'uploadComplete',
+      exportComplete: 'exportComplete',
       fileUpload: 'getFile',
       exportResponse: 'getExportResponse'
     })
@@ -99,7 +100,7 @@ export default Vue.extend({
       }
     },
 
-    async submitFile () {
+    async downloadFile () {
       this.isLoading = true
       this.$emit('process-ongoing')
       await this.GetFileDownload(this.exportResponse.filename)

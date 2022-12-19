@@ -5,6 +5,6 @@ import com.stargazerstudios.existence.conductor.erratum.root.FileProcessingExcep
 public class FileCreationException extends FileProcessingException  {
 
     public FileCreationException() {
-        super("File creation failed. Please try again or contact an admin.");
+        super("File creation failed. Please try again after a while or contact an admin.");
     }
 }

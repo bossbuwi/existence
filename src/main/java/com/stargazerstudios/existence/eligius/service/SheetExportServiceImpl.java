@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -72,7 +71,6 @@ public class SheetExportServiceImpl implements SheetExportService {
                     Column col = field.getAnnotation(Column.class);
                     if (col != null) {
                         sheetColumns.add(col.name());
-//                        logger.info("Columns: " + col);
                     }
                 }
                 // Create the header row
