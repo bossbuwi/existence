@@ -17,7 +17,8 @@
         </v-container>
       </v-tab-item>
       <v-tab-item>
-        <empty-list></empty-list>
+        <!-- <empty-list></empty-list> -->
+        <housekeeping-tab></housekeeping-tab>
       </v-tab-item>
     </v-tabs>
   </v-container>
@@ -29,12 +30,13 @@ import { mapActions, mapGetters } from 'vuex'
 import EmptyList from '@/components/EmptyList.vue'
 import RestoreStepper from '@/components/backupandrestore/RestoreStepper.vue'
 import BackupStepper from '@/components/backupandrestore/BackupStepper.vue'
+import HousekeepingTab from '@/components/backupandrestore/HousekeepingTab.vue'
 
 export default Vue.extend({
   name: 'BackupRestoreView',
 
   components: {
-    RestoreStepper, BackupStepper, EmptyList
+    RestoreStepper, BackupStepper, HousekeepingTab
   },
 
   data () {
