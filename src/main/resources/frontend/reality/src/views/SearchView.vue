@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import SearchPanel from '@/components/search/SearchPanel.vue'
 import SearchList from '@/components/search/SearchList.vue'
 

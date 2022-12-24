@@ -94,7 +94,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'GetExportEvent'
+      'PostExportEvent'
     ]),
 
     optionSelected () {
@@ -137,7 +137,7 @@ export default Vue.extend({
           console.log('Not implemented yet.')
           break
         case 3:
-          await this.GetExportEvent('')
+          await this.PostExportEvent('')
           if (this.exportComplete) {
             this.endExport()
           } else {

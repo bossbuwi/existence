@@ -27,7 +27,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
-import EmptyList from '@/components/EmptyList.vue'
 import RestoreStepper from '@/components/backupandrestore/RestoreStepper.vue'
 import BackupStepper from '@/components/backupandrestore/BackupStepper.vue'
 import HousekeepingTab from '@/components/backupandrestore/HousekeepingTab.vue'

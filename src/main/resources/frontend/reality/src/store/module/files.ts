@@ -5,6 +5,13 @@ import { saveAs } from 'file-saver'
 
 const getDefaultFileState = () => {
   return {
+    fileResponse: {
+      filename: '',
+      extension: '',
+      size: 0,
+      saved: false
+    },
+    isProcessComplete: false,
     uploadComplete: false,
     file: {},
     restoredItems: [],
@@ -20,6 +27,8 @@ const getDefaultFileState = () => {
 const state = getDefaultFileState()
 
 const getters = {
+  getFileResponse: (state: any) => state.fileResponse,
+  getProcessStatus: (state: any) => state.isProcessComplete,
   uploadComplete: (state: any) => state.uploadComplete,
   exportComplete: (state: any) => state.exportResponse.saved,
   getFile: (state: any) => state.file,
@@ -43,7 +52,8 @@ const actions = {
     }).then((result) => {
       console.log(result.data)
       commit('setFile', result.data)
-      commit('updateUploadStatus', true)
+      // commit('updateUploadStatus', true)
+      commit('updateUploadStatus')
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')
@@ -51,10 +61,10 @@ const actions = {
     })
   },
 
-  async PostImportEvents ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, param: any) {
+  async PostRestoreEvents ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, param: any) {
     const token = rootGetters.getToken
 
-    await axios.post('eligius/files/restore/event', null, {
+    await axios.post('eligius/records/restore/event', null, {
       headers: {
         Authorization: 'Bearer ' + token
       },
@@ -71,12 +81,12 @@ const actions = {
     })
   },
 
-  async GetExportEvent ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, params: any) {
+  async PostExportEvent ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, params: any) {
     commit('resetFileState')
 
     const token = rootGetters.getToken
 
-    await axios.get('eligius/files/backup/event', {
+    await axios.post('eligius/records/backup/event', null, {
       headers: {
         Authorization: 'Bearer ' + token
       }
@@ -93,7 +103,7 @@ const actions = {
   async GetFileDownload ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, filename: string) {
     const token = rootGetters.getToken
 
-    await axios.get('eligius/files/backup/download', {
+    await axios.get('eligius/files/download', {
       headers: {
         Authorization: 'Bearer ' + token
       },
@@ -105,6 +115,31 @@ const actions = {
       saveAs(response.data, filename)
     }).catch((error) => {
       console.log(error.response.data)
+      commit('clearError')
+      commit('setError', error.response.data)
+    })
+  },
+
+  async PostGenerateTemplate ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, model: string) {
+    const token = rootGetters.getToken
+
+    commit('resetFileState')
+
+    await axios.post('eligius/housekeeping/template/generate', null, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+      params: {
+        model: model
+      }
+    }).then((result) => {
+      console.log(result.data)
+      commit('setFileResponse', result.data)
+      commit('setProcessStatus', true)
+    }).catch((error) => {
+      console.log(error)
+      commit('clearError')
+      commit('setError', error.response.data)
     })
   }
 }
@@ -112,6 +147,14 @@ const actions = {
 const mutations = {
   resetFileState (state: any) {
     Object.assign(state, getDefaultFileState())
+  },
+
+  setFileResponse (state: any, response: any) {
+    state.fileResponse = response
+  },
+
+  setProcessStatus (state: any, processStatus: boolean) {
+    state.isProcessComplete = state.fileResponse.saved
   },
 
   updateUploadStatus (state: any, uploadComplete: boolean) {

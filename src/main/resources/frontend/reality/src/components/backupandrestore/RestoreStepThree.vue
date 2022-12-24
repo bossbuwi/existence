@@ -93,7 +93,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions([
-      'PostImportEvents'
+      'PostRestoreEvents'
     ]),
 
     optionSelected () {
@@ -129,7 +129,7 @@ export default Vue.extend({
           console.log('Not implemented yet.')
           break
         case 3:
-          await this.PostImportEvents(this.fileUpload.filename)
+          await this.PostRestoreEvents(this.fileUpload.filename)
           this.endImport()
           break
         case 4:
