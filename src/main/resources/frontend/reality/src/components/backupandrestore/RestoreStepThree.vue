@@ -75,19 +75,19 @@ export default Vue.extend({
       alertType: '',
       alertMessage: '',
       contents: [
-        { label: 'Machines (not implemented yet)', value: 1 },
-        { label: 'Systems (not implemented yet)', value: 2 },
-        { label: 'Events', value: 3 },
-        { label: 'Coblogs (not implemented yet)', value: 4 }
+        // { label: 'Machines (not implemented yet)', value: 1 },
+        // { label: 'Systems (not implemented yet)', value: 2 },
+        { label: 'Events', value: 3 }
+        // { label: 'Coblogs (not implemented yet)', value: 4 }
       ]
     }
   },
 
   computed: {
     ...mapGetters({
-      uploadComplete: 'isSuccess',
-      fileUpload: 'getFile',
-      restoredItems: 'getRestoredItems'
+      fileUpload: 'getFileResponse',
+      restoredItems: 'getRestoredItems',
+      hasError: 'getErrorStatus'
     })
   },
 
@@ -100,7 +100,7 @@ export default Vue.extend({
       this.buttonDisabled = false
     },
 
-    startImport () {
+    startProcess () {
       this.inputEnabled = false
       this.restoring = true
       this.alertType = 'info'
@@ -108,7 +108,7 @@ export default Vue.extend({
       this.$emit('process-ongoing')
     },
 
-    endImport () {
+    endProcess () {
       this.restoring = false
       this.success = true
       this.alertType = 'success'
@@ -116,8 +116,14 @@ export default Vue.extend({
       this.$emit('process-done')
     },
 
+    processError () {
+      this.inputEnabled = true
+      this.restoring = false
+      this.$emit('process-error')
+    },
+
     async importRecords () {
-      this.startImport()
+      this.startProcess()
       switch (this.recordType) {
         case 0:
           console.log('This should really never be selected.')
@@ -130,13 +136,18 @@ export default Vue.extend({
           break
         case 3:
           await this.PostRestoreEvents(this.fileUpload.filename)
-          this.endImport()
           break
         case 4:
           console.log('Not implemented yet.')
           break
         default:
           break
+      }
+
+      if (this.hasError) {
+        this.processError()
+      } else {
+        this.endProcess()
       }
     }
   }

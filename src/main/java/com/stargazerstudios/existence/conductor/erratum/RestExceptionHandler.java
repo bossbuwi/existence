@@ -45,6 +45,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(errorResponse);
     }
 
+    @ExceptionHandler(FileProcessingException.class)
+    protected ResponseEntity<Object> handleFileProcessingError(
+            FileProcessingException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
     @ExceptionHandler(SystemException.class)
     protected ResponseEntity<Object> handleSystemError(
             SystemException ex) {

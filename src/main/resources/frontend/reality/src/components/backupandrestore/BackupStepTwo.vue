@@ -1,9 +1,27 @@
 <template>
   <v-container fluid>
+    <!-- Alert -->
+    <v-alert
+      class="mb-8"
+      v-if="exporting || success || error"
+      border="left"
+      colored-border
+      :type="alertType"
+      elevation="2"
+    >
+      {{ alertMessage }}<br/>
+      {{ subMessage }}
+      <v-progress-linear
+        v-if="exporting"
+        indeterminate
+      ></v-progress-linear>
+    </v-alert>
+
     <form v-if="inputEnabled">
       <v-radio-group
         v-model="recordType"
         label="Select which records to backup:"
+        :error="error"
         @change="optionSelected"
       >
         <v-radio
@@ -25,20 +43,7 @@
         Select
       </v-btn>
     </form>
-    <!-- Alert -->
-    <v-alert
-      v-if="exporting || success"
-      border="left"
-      colored-border
-      :type="alertType"
-      elevation="2"
-    >
-      {{ alertMessage }}
-      <v-progress-linear
-        v-if="exporting && !success"
-        indeterminate
-      ></v-progress-linear>
-    </v-alert>
+
     <v-card v-if="success">
       <v-card-title>Details</v-card-title>
       <v-card-text>
@@ -51,7 +56,13 @@
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>File Type</v-list-item-title>
-            <v-list-item-subtitle>Microsoft Office Excel File Format</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ exportResponse.type}}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>Size (in bytes)</v-list-item-title>
+            <v-list-item-subtitle>{{ exportResponse.size}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-card-text>
@@ -72,9 +83,11 @@ export default Vue.extend({
       inputEnabled: true,
       exporting: false,
       success: false,
+      error: false,
       buttonDisabled: true,
       alertType: '',
       alertMessage: '',
+      subMessage: '',
       contents: [
         // { label: 'Machines', value: 1 },
         // { label: 'Systems', value: 2 },
@@ -86,9 +99,9 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters({
-      exportComplete: 'exportComplete',
-      fileUpload: 'getFile',
-      exportResponse: 'getExportResponse'
+      exportComplete: 'getProcessStatus',
+      exportResponse: 'getFileResponse',
+      hasError: 'getErrorStatus'
     })
   },
 
@@ -101,31 +114,38 @@ export default Vue.extend({
       this.buttonDisabled = false
     },
 
-    startExport () {
+    startProcess () {
       this.inputEnabled = false
+      this.error = false
       this.exporting = true
       this.alertType = 'info'
       this.alertMessage = 'Exporting records..'
+      this.subMessage = ''
       this.$emit('process-ongoing')
     },
 
-    endExport () {
+    endProcess () {
       this.exporting = false
       this.success = true
       this.alertType = 'success'
       this.alertMessage = 'Records exported!'
+      this.subMessage = ''
       this.$emit('process-done')
     },
 
-    exportError () {
+    processError () {
+      this.error = true
       this.exporting = false
       this.success = false
       this.inputEnabled = true
+      this.alertType = 'error'
+      this.alertMessage = 'Export error!'
+      this.subMessage = 'Please wait for a moment and try again. If the error persists, contact an admin.'
       this.$emit('process-error')
     },
 
     async exportRecords () {
-      this.startExport()
+      this.startProcess()
       switch (this.recordType) {
         case 0:
           console.log('This should really never be selected.')
@@ -138,17 +158,18 @@ export default Vue.extend({
           break
         case 3:
           await this.PostExportEvent('')
-          if (this.exportComplete) {
-            this.endExport()
-          } else {
-            this.exportError()
-          }
           break
         case 4:
           console.log('Not implemented yet.')
           break
         default:
           break
+      }
+
+      if (this.exportComplete) {
+        this.endProcess()
+      } else {
+        this.processError()
       }
     }
   }

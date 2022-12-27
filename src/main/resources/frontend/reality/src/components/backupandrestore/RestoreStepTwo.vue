@@ -1,9 +1,21 @@
 <template>
   <v-container fluid>
+    <v-alert
+      class="mb-8"
+      v-if="fileError"
+      border="left"
+      colored-border
+      type="error"
+      elevation="2"
+    >
+      Upload error!<br/>
+      Please check the file and try again. If the error persists, contact an admin.
+    </v-alert>
     <form v-if="!uploadComplete">
       <v-file-input
         :loading="isLoading"
         :disabled="isLoading"
+        :error="fileError"
         show-size
         label="Select spreadsheet for upload.."
         accept=".xlsx,.xls"
@@ -71,14 +83,16 @@ export default Vue.extend({
     return {
       isLoading: false,
       buttonDisabled: true,
+      fileError: false,
       file: null
     }
   },
 
   computed: {
     ...mapGetters({
-      uploadComplete: 'uploadComplete',
-      fileUpload: 'getFile'
+      uploadComplete: 'getProcessStatus',
+      fileUpload: 'getFileResponse',
+      hasError: 'getErrorStatus'
     })
   },
 
@@ -96,10 +110,29 @@ export default Vue.extend({
     },
 
     async submitFile () {
+      this.startProcess()
+      await this.PostFileUpload(this.file)
+      if (this.hasError) {
+        this.processError()
+      } else {
+        this.endProcess()
+      }
+    },
+
+    startProcess () {
       this.isLoading = true
       this.$emit('process-ongoing')
-      await this.PostFileUpload(this.file)
+    },
+
+    endProcess () {
+      this.fileError = false
       this.$emit('process-done')
+    },
+
+    processError () {
+      this.isLoading = false
+      this.fileError = true
+      this.$emit('process-error')
     }
   }
 })

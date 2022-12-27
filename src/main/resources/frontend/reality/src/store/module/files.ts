@@ -9,18 +9,11 @@ const getDefaultFileState = () => {
       filename: '',
       extension: '',
       size: 0,
-      saved: false
+      saved: false,
+      type: ''
     },
     isProcessComplete: false,
-    uploadComplete: false,
-    file: {},
     restoredItems: [],
-    exportResponse: {
-      filename: '',
-      extension: '',
-      size: 0,
-      saved: false
-    }
   }
 }
 
@@ -29,17 +22,13 @@ const state = getDefaultFileState()
 const getters = {
   getFileResponse: (state: any) => state.fileResponse,
   getProcessStatus: (state: any) => state.isProcessComplete,
-  uploadComplete: (state: any) => state.uploadComplete,
-  exportComplete: (state: any) => state.exportResponse.saved,
-  getFile: (state: any) => state.file,
-  getRestoredItems: (state: any) => state.restoredItems,
-  getExportResponse: (state: any) => state.exportResponse
+  getRestoredItems: (state: any) => state.restoredItems
 }
 
 const actions = {
   async PostFileUpload ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
     const token = rootGetters.getToken
-    commit('updateUploadStatus', false)
+    commit('resetFileState')
 
     const formData = new FormData()
     formData.append('file', form)
@@ -51,9 +40,9 @@ const actions = {
       }
     }).then((result) => {
       console.log(result.data)
-      commit('setFile', result.data)
-      // commit('updateUploadStatus', true)
-      commit('updateUploadStatus')
+      commit('setFileResponse', result.data)
+      commit('setProcessStatus')
+      commit('setFileType')
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')
@@ -92,7 +81,9 @@ const actions = {
       }
     }).then((result) => {
       console.log(result.data)
-      commit('setExportResponse', result.data)
+      commit('setFileResponse', result.data)
+      commit('setProcessStatus')
+      commit('setFileType')
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')
@@ -111,12 +102,27 @@ const actions = {
         filename: filename
       },
       responseType: 'blob'
-    }).then((response) => {
+    }).then((response) => { 
       saveAs(response.data, filename)
     }).catch((error) => {
-      console.log(error.response.data)
-      commit('clearError')
-      commit('setError', error.response.data)
+      // Read the blob response as JSON
+      // Create a new filereader instance
+      const reader = new FileReader()
+      // Set a function to execute when the reader loads
+      reader.onload = () => {
+        // Parse the response as JSON
+        const err = JSON.parse(reader.result as string)
+        // If the error's status is 400, modify the message because the server side
+        // message for error code 400 is not useful for the typical end user
+        if (err.status === 400) {
+          err.message = 'There is a problem downloading the file. Please wait a moment and try again. ' +
+            'If the error persists, contact an admin.'
+        }
+        commit('clearError')
+        commit('setError', err)
+      }
+      // Call the reader to read the error response
+      reader.readAsText(error.response.data)
     })
   },
 
@@ -137,7 +143,7 @@ const actions = {
       commit('setFileResponse', result.data)
       commit('setProcessStatus', true)
     }).catch((error) => {
-      console.log(error)
+      console.log(error.response.data)
       commit('clearError')
       commit('setError', error.response.data)
     })
@@ -153,23 +159,17 @@ const mutations = {
     state.fileResponse = response
   },
 
-  setProcessStatus (state: any, processStatus: boolean) {
+  setProcessStatus (state: any) {
     state.isProcessComplete = state.fileResponse.saved
   },
 
-  updateUploadStatus (state: any, uploadComplete: boolean) {
-    state.uploadComplete = uploadComplete
-  },
-
-  setFile (state: any, file: any) {
-    state.file = file
-
-    switch (file.extension) {
+  setFileType (state: any) {
+    switch (state.fileResponse.extension) {
       case 'xlsx':
-        state.file.type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        state.fileResponse.type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         break
       case 'xls':
-        state.file.type = 'application/vnd.ms-excel'
+        state.fileResponse.type = 'application/vnd.ms-excel'
         break
       default:
         break
@@ -178,10 +178,6 @@ const mutations = {
 
   setRestoredItems (state: any, items: any) {
     state.restoredItems = items
-  },
-
-  setExportResponse (state: any, response: any) {
-    state.exportResponse = response
   }
 }
 

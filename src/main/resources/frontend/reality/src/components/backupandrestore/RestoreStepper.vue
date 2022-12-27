@@ -50,6 +50,7 @@
           <restore-step-two
             @process-ongoing="processStart"
             @process-done="processStop"
+            @process-error="processError"
           ></restore-step-two>
         </v-container>
         <v-btn
@@ -75,6 +76,7 @@
           <restore-step-three
             @process-ongoing="processStart"
             @process-done="processStop"
+            @process-error="processError"
           ></restore-step-three>
         </v-container>
         <v-btn text
@@ -116,7 +118,7 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters({
-      uploadComplete: 'uploadComplete'
+      uploadComplete: 'getProcessStatus'
     })
   },
 
@@ -137,6 +139,10 @@ export default Vue.extend({
 
     processStart () {
       this.buttonDisabled = true
+    },
+
+    processError () {
+      this.buttonDisabled = false
     },
 
     processStop () {

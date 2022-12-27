@@ -1,31 +1,5 @@
 <template>
   <v-container fluid>
-    <!-- <form v-if="!uploadComplete">
-      <v-file-input
-        :loading="isLoading"
-        :disabled="isLoading"
-        show-size
-        label="Select spreadsheet for upload.."
-        accept=".xlsx,.xls"
-        chips
-        v-model="file"
-        @change="fileChanged"
-      ></v-file-input>
-      <v-btn
-        @click="downloadFile"
-      >
-        Download Backup
-      </v-btn>
-    </form> -->
-    <!-- <v-alert
-      v-if="uploadComplete"
-      border="left"
-      colored-border
-      type="success"
-      elevation="2"
-    >
-      Upload complete!
-    </v-alert> -->
     <v-card v-if="exportComplete">
       <v-card-title>File Details</v-card-title>
       <v-card-text>
@@ -37,8 +11,8 @@
         </v-list-item>
         <v-list-item two-line>
           <v-list-item-content>
-            <v-list-item-title>Extension</v-list-item-title>
-            <v-list-item-subtitle>{{ exportResponse.extension }}</v-list-item-subtitle>
+            <v-list-item-title>File Type</v-list-item-title>
+            <v-list-item-subtitle>{{ exportResponse.type }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item two-line>
@@ -67,17 +41,14 @@ export default Vue.extend({
 
   data () {
     return {
-      isLoading: false,
-      buttonDisabled: true,
-      file: null
     }
   },
 
   computed: {
     ...mapGetters({
-      exportComplete: 'exportComplete',
-      fileUpload: 'getFile',
-      exportResponse: 'getExportResponse'
+      exportComplete: 'getProcessStatus',
+      exportResponse: 'getFileResponse',
+      hasError: 'getErrorStatus'
     })
   },
 
@@ -86,18 +57,17 @@ export default Vue.extend({
       'GetFileDownload'
     ]),
 
-    fileChanged () {
-      if (this.file === null) {
-        this.buttonDisabled = true
-      } else {
-        this.buttonDisabled = false
-      }
+    async downloadFile () {
+      this.processStart()
+      await this.GetFileDownload(this.exportResponse.filename)
+      this.processEnd()
     },
 
-    async downloadFile () {
-      this.isLoading = true
+    processStart () {
       this.$emit('process-ongoing')
-      await this.GetFileDownload(this.exportResponse.filename)
+    },
+
+    processEnd () {
       this.$emit('process-done')
     }
   }
