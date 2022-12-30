@@ -124,7 +124,7 @@ const actions = {
     }).then((result) => {
       commit('setSetting', result.data)
     }).catch((error) => {
-      console.log(error.response)
+      console.log(error.response.data)
       commit('clearError')
       commit('setError', error.response.data)
     })
@@ -145,6 +145,12 @@ const actions = {
         console.log('Is it real, or is it not?')
         break;
     }
+  },
+
+  SetDisabledSwitchableFeatures ({ commit }: { commit: Commit }, list: any) {
+    list.forEach((element: any) => {
+      commit('addDisabledSwitchable', element)
+    })
   }
 }
 

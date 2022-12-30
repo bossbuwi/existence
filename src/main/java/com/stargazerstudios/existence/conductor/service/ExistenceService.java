@@ -3,9 +3,9 @@ package com.stargazerstudios.existence.conductor.service;
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
-import com.stargazerstudios.existence.conductor.erratum.root.SystemErrorException;
-import com.stargazerstudios.existence.conductor.erratum.system.FatalErrorException;
-import com.stargazerstudios.existence.conductor.erratum.system.InvalidPropertyErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.SystemException;
+import com.stargazerstudios.existence.conductor.erratum.system.FatalException;
+import com.stargazerstudios.existence.conductor.erratum.system.InvalidPropertyException;
 import com.stargazerstudios.existence.conductor.model.ExistenceIdentity;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.symphony.dto.UserDTO;
@@ -50,7 +50,7 @@ public class ExistenceService {
     }
 
     public UserDTO resetAdminPassword(AuthWrapper wUser)
-            throws UserUnauthorizedException, SystemErrorException {
+            throws UserUnauthorizedException, SystemException {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
 
@@ -59,12 +59,12 @@ public class ExistenceService {
         if (password.equals(EnumUtilOutput.EMPTY.getValue())) throw new UserUnauthorizedException();
 
         if (stringUtil.checkInput(masterPassword).equals(EnumUtilOutput.EMPTY.getValue()))
-            throw new InvalidPropertyErrorException("master.password");
+            throw new InvalidPropertyException("master.password");
 
         if (!password.equals(masterPassword)) throw new UserUnauthorizedException();
 
         Optional<User> adminData = userDAO.findByUsername(username);
-        if (adminData.isEmpty()) throw new FatalErrorException();
+        if (adminData.isEmpty()) throw new FatalException();
 
         User admin = adminData.get();
         String hashPassword = passwordEncoder.encode(EnumAuthorization.DEFAULT_OWNER.getValue());
@@ -74,14 +74,14 @@ public class ExistenceService {
             userDAO.save(admin);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new FatalErrorException();
+            throw new FatalException();
         }
 
         return userUtil.wrapUser(admin);
     }
 
     public UserDTO resetAdminRoles(AuthWrapper wUser)
-            throws UserUnauthorizedException, SystemErrorException {
+            throws UserUnauthorizedException, SystemException {
         String username = stringUtil.checkInput(wUser.getUsername());
         String password = stringUtil.checkInput(wUser.getPassword());
 
@@ -90,12 +90,12 @@ public class ExistenceService {
         if (password.equals(EnumUtilOutput.EMPTY.getValue())) throw new UserUnauthorizedException();
 
         if (stringUtil.checkInput(masterPassword).equals(EnumUtilOutput.EMPTY.getValue()))
-            throw new InvalidPropertyErrorException("master.password");
+            throw new InvalidPropertyException("master.password");
 
         if (!password.equals(masterPassword)) throw new UserUnauthorizedException();
 
         Optional<User> adminData = userDAO.findByUsername(username);
-        if (adminData.isEmpty()) throw new FatalErrorException();
+        if (adminData.isEmpty()) throw new FatalException();
 
         User admin = adminData.get();
         Set<String> roleNames = new HashSet<>(Arrays.asList(
@@ -107,8 +107,8 @@ public class ExistenceService {
 
         List<Role> dbRoles = roleDAO.findRolesBySet(roleNames);
         try {
-            if (dbRoles.size() != roleNames.size()) throw new FatalErrorException();
-        } catch (FatalErrorException e) {
+            if (dbRoles.size() != roleNames.size()) throw new FatalException();
+        } catch (FatalException e) {
             e.printStackTrace();
         }
 
@@ -118,7 +118,7 @@ public class ExistenceService {
             userDAO.save(admin);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new FatalErrorException();
+            throw new FatalException();
         }
 
         return userUtil.wrapUser(admin);

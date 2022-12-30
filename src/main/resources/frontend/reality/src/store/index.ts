@@ -17,6 +17,8 @@ import components from './module/components'
 import settings from './module/settings'
 import releases from './module/releases'
 import roles from './module/roles'
+import search from './module/search'
+import files from './module/files'
 
 Vue.use(Vuex)
 const ls = new SecureLS({ isCompression: false })
@@ -55,6 +57,17 @@ export default new Vuex.Store({
   actions: {
     DismissError ({ commit }: { commit: Commit }) {
       commit('clearError')
+    },
+
+    SetError ({ commit }: { commit: Commit }, message: string) {
+      const now = new Date().toISOString()
+      const newError = {
+        status: 400,
+        error: 'Bad Request',
+        message: message,
+        timestamp: now
+      }
+      commit('setError', newError)
     }
   },
 
@@ -72,7 +85,9 @@ export default new Vuex.Store({
     components,
     settings,
     releases,
-    roles
+    roles,
+    search,
+    files
   },
 
   plugins: [createPersistedState({

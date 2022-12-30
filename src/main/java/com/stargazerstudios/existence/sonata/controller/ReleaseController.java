@@ -1,7 +1,7 @@
 package com.stargazerstudios.existence.sonata.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import com.stargazerstudios.existence.sonata.dto.ReleaseDTO;
@@ -34,7 +34,7 @@ public class ReleaseController {
     @PostMapping("/releases/release")
     public ResponseEntity<ReleaseDTO> createRelease(@Validated(PostValidation.class)
                                                         @RequestBody ReleaseWrapper release)
-            throws AuthorizationErrorException, DatabaseErrorException {
+            throws AuthorizationException, DatabaseException {
         return new ResponseEntity<>(releaseService.createRelease(release), HttpStatus.OK);
     }
 

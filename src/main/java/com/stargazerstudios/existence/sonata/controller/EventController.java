@@ -1,16 +1,15 @@
 package com.stargazerstudios.existence.sonata.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PutValidation;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
 import com.stargazerstudios.existence.sonata.service.EventServiceImpl;
-import com.stargazerstudios.existence.sonata.service.SheetImportServiceImpl;
+import com.stargazerstudios.existence.eligius.service.SheetImportServiceImpl;
 import com.stargazerstudios.existence.sonata.utils.EventExporterUtil;
-import com.stargazerstudios.existence.sonata.wrapper.EventFilterWrapper;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +37,7 @@ public class EventController {
     private SheetImportServiceImpl importService;
 
     /* Unguarded Endpoints */
+
     @GetMapping("/con/events/index")
     public ResponseEntity<List<EventDTO>> getAllEvents() {
         return new ResponseEntity<>(eventService.getAllEvents(), HttpStatus.OK);
@@ -65,29 +65,25 @@ public class EventController {
         return new ResponseEntity<>(eventService.getEventCount(), HttpStatus.OK);
     }
 
-    @GetMapping("/con/events/filter")
-    public ResponseEntity<List<EventDTO>> filterEvents(@RequestBody EventFilterWrapper event) {
-        return new ResponseEntity<>(eventService.filterEvents(event), HttpStatus.OK);
-    }
-
     /* Guarded Endpoints */
+
     @PostMapping("/events/event")
     public ResponseEntity<EventDTO> createEvent(@Validated(PostValidation.class)
                                                     @RequestBody EventWrapper event)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+            throws UnknownInputException, EntityException, DatabaseException {
         return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.OK);
     }
 
     @PutMapping("/events/event")
     public ResponseEntity<EventDTO> updateEvent(@Validated(PutValidation.class)
                                                     @RequestBody EventWrapper event)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+            throws UnknownInputException, EntityException, DatabaseException, AuthorizationException {
         return new ResponseEntity<>(eventService.updateEvent(event), HttpStatus.OK);
     }
 
     @DeleteMapping("/events/event/{id}")
-    public ResponseEntity<EventDTO> deleteEvent(@NotBlank @PathVariable("id") long id)
-            throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
+    public ResponseEntity<Boolean> deleteEvent(@NotBlank @PathVariable("id") long id)
+            throws DatabaseException, EntityException, AuthorizationException {
         return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.OK);
     }
 
@@ -96,9 +92,9 @@ public class EventController {
         eventService.exportEvents(response);
     }
 
-    @PostMapping("/events/import")
-    public ResponseEntity<List<EventDTO>> importEventsFromWorkbook()
-            throws DatabaseErrorException, UnknownInputException, IOException, EntityErrorException {
-        return new ResponseEntity<>(importService.importSpreadSheet(), HttpStatus.OK);
-    }
+//    @PostMapping("/events/import")
+//    public ResponseEntity<List<EventDTO>> importEventsFromWorkbook(@RequestParam("filename") String filename)
+//            throws DatabaseErrorException, UnknownInputException, IOException, EntityErrorException {
+//        return new ResponseEntity<>(importService.importSpreadSheet(filename), HttpStatus.OK);
+//    }
 }

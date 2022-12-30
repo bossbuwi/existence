@@ -3,15 +3,15 @@ package com.stargazerstudios.existence.sonata.service;
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.erratum.authorization.UserUnauthorizedException;
 import com.stargazerstudios.existence.conductor.erratum.database.DependentEntityException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
 import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
 import com.stargazerstudios.existence.conductor.erratum.input.UnexpectedInputException;
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.utils.AuthorityUtil;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
@@ -81,7 +81,7 @@ public class MachineServiceImpl implements MachineService {
 
     @Override
     public MachineDTO createMachine(MachineWrapper wMachine)
-            throws DatabaseErrorException {
+            throws DatabaseException {
         String name = stringUtil.trimToUpper(wMachine.getName());
 
         Machine machine = new Machine();
@@ -95,10 +95,10 @@ public class MachineServiceImpl implements MachineService {
             String constraint = ex.getConstraintName();
             if (constraint.equals(ConsSonataConstraint.UNIQUE_MACHINE_NAME))
                 throw new DuplicateEntityException("machine", "name", name);
-            throw new EntitySaveErrorException("machine");
+            throw new EntitySaveException("machine");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("machine");
+            throw new EntitySaveException("machine");
         }
 
         return machineUtil.outboundMachine(machine);
@@ -106,7 +106,7 @@ public class MachineServiceImpl implements MachineService {
 
     @Override
     public MachineDTO updateMachine(MachineWrapper wMachine)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+            throws UnknownInputException, EntityException, DatabaseException {
         String name = stringUtil.trimToUpper(wMachine.getName());
         String newName = stringUtil.trimToUpper(wMachine.getNew_name());
         if (name.equals(newName)) throw new UnexpectedInputException("new_name is same as the current name");
@@ -125,10 +125,10 @@ public class MachineServiceImpl implements MachineService {
             String constraint = ex.getConstraintName();
             if (constraint.equals(ConsSonataConstraint.UNIQUE_MACHINE_NAME))
                 throw new DuplicateEntityException("machine", "name", newName);
-            throw new EntitySaveErrorException("machine");
+            throw new EntitySaveException("machine");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("machine");
+            throw new EntitySaveException("machine");
         }
 
         return machineUtil.outboundMachine(machine);
@@ -136,7 +136,7 @@ public class MachineServiceImpl implements MachineService {
 
     @Override
     public MachineDTO deleteMachine(long id)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
+            throws AuthorizationException, DatabaseException, EntityException, UnknownInputException {
         boolean isAuthorized = authorityUtil.checkAuthority(EnumAuthorization.ADMIN.getValue());
         if (!isAuthorized) throw new UserUnauthorizedException();
 
@@ -166,7 +166,7 @@ public class MachineServiceImpl implements MachineService {
                 throw new DependentEntityException("machine", machine.getName());
             }
 
-            throw new EntityDeletionErrorException("machine");
+            throw new EntityDeletionException("machine");
         }
 
         return machineUtil.outboundMachine(bMachine);

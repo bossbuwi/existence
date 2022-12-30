@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="postgresql"/>
+    <property name="now" value="now()" dbms="h2"/>
+    <changeSet author="v2.0-draco" id="20221108-036">
+        <comment>Remove setting with key: settingexpliciterror</comment>
+        <delete tableName="symphony_settings">
+            <where>key='settingexpliciterror'</where>
+        </delete>
+    </changeSet>
+</databaseChangeLog>

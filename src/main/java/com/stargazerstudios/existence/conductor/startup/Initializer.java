@@ -3,10 +3,11 @@ package com.stargazerstudios.existence.conductor.startup;
 import com.stargazerstudios.existence.conductor.constants.EnumAuthorization;
 import com.stargazerstudios.existence.conductor.constants.EnumRank;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.system.FatalErrorException;
-import com.stargazerstudios.existence.conductor.erratum.system.InvalidPropertyErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.system.FatalException;
+import com.stargazerstudios.existence.conductor.erratum.system.InvalidPropertyException;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
+import com.stargazerstudios.existence.eligius.service.FileProcessorServiceImpl;
 import com.stargazerstudios.existence.symphony.entity.Role;
 import com.stargazerstudios.existence.symphony.entity.User;
 import com.stargazerstudios.existence.symphony.repository.RoleDAO;
@@ -37,6 +38,9 @@ public class Initializer {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private FileProcessorServiceImpl fileProcessorService;
+
     @Value("${jwt.secret}")
     private String jwtKey;
 
@@ -46,7 +50,8 @@ public class Initializer {
      */
     @EventListener(ApplicationReadyEvent.class)
     private void postStartUp() {
-        HAS_ERRORS = checkRoles() || checkJwtKey() || checkDefaultOwner() || checkDefaultUser();
+        HAS_ERRORS = checkRoles() || checkJwtKey() || checkDefaultOwner()
+                || checkDefaultUser() || validateFileDirectory();
     }
 
     /**
@@ -72,8 +77,8 @@ public class Initializer {
 
             List<Role> dbRoles = roleDAO.findRolesBySet(roleNames);
             try {
-                if (dbRoles.size() != roleNames.size()) throw new FatalErrorException();
-            } catch (FatalErrorException e) {
+                if (dbRoles.size() != roleNames.size()) throw new FatalException();
+            } catch (FatalException e) {
                 e.printStackTrace();
             }
 
@@ -131,8 +136,8 @@ public class Initializer {
     private boolean checkJwtKey() {
         try {
             if (stringUtil.checkInput(jwtKey).equals(EnumUtilOutput.EMPTY.getValue()))
-                throw new InvalidPropertyErrorException("jwt.secret");
-        } catch (InvalidPropertyErrorException e) {
+                throw new InvalidPropertyException("jwt.secret");
+        } catch (InvalidPropertyException e) {
             e.printStackTrace();
             return true;
         }
@@ -156,9 +161,9 @@ public class Initializer {
         final List<Role> roles = roleDAO.findRolesBySet(roleNames);
 
         try {
-            if (roles.size() != roleNames.size()) throw new DatabaseErrorException("The roles database has been tampered with." +
+            if (roles.size() != roleNames.size()) throw new DatabaseException("The roles database has been tampered with." +
                     " Please contact an admin.");
-        } catch (DatabaseErrorException e) {
+        } catch (DatabaseException e) {
             e.printStackTrace();
         }
 
@@ -170,16 +175,27 @@ public class Initializer {
                         )
                         .findAny()
                         .orElse(null);
-                if (role == null) throw new DatabaseErrorException("The roles database has been tampered with." +
+                if (role == null) throw new DatabaseException("The roles database has been tampered with." +
                             " Please contact an admin.");
-                if (!role.getName().equals(rank.toString())) throw new DatabaseErrorException("The roles database has been tampered with." +
+                if (!role.getName().equals(rank.toString())) throw new DatabaseException("The roles database has been tampered with." +
                         " Please contact an admin.");
             }
-        } catch (DatabaseErrorException e) {
+        } catch (DatabaseException e) {
             e.printStackTrace();
             return true;
         }
 
+        return false;
+    }
+
+    private boolean validateFileDirectory() {
+        try {
+            fileProcessorService.clearDirectories();
+            fileProcessorService.init();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
         return false;
     }
 }

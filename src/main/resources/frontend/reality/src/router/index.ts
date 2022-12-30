@@ -9,20 +9,14 @@ import MiscView from '../views/MiscView.vue'
 import CalendarView from '../views/CalendarView.vue'
 import EventsView from '../views/EventsView.vue'
 import CoblogView from '../views/CoblogView.vue'
-import ReportsView from '../views/ReportsView.vue'
+import ReportsView from '../views/SearchView.vue'
+import BackupRestoreView from '../views/BackupRestoreView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
 import SettingsView from '../views/SettingsView.vue'
 import AboutView from '../views/AboutView.vue'
 
 Vue.use(VueRouter)
 Vue.use(VueMeta)
-
-function fetchDependencies () {
-  store.dispatch('GetDisabledSwitchableFeatures')
-  store.dispatch('GetFrontendList')
-}
-
-fetchDependencies()
 
 const isAuth = store.getters.isAuthenticated
 const user = store.getters.getUserState
@@ -56,11 +50,11 @@ const routes: Array<RouteConfig> = [
     component: CoblogView,
     beforeEnter: (to, from, next) => {
       const feature = 'RQM001'
-      const filteredArr = disabledFeatures.filter((x: any) => x.feature === feature)
+      const filteredArr = disabledFeatures.filter((x: any) => x.key === feature)
       if (filteredArr.length === 0) {
-        next('/')
-      } else {
         next()
+      } else {
+        next('/')
       }
     }
   },
@@ -69,13 +63,32 @@ const routes: Array<RouteConfig> = [
     name: 'search',
     component: ReportsView,
     beforeEnter: (to, from, next) => {
-      const feature = 'SNA001'
-      const filteredArr = disabledFeatures.filter((x: any) => x.feature === feature)
+      const feature = 'ELS001'
+      const filteredArr = disabledFeatures.filter((x: any) => x.key === feature)
       if (filteredArr.length === 0) {
+        next()
+      } else {
+        next('/')
+      }
+    }
+  },
+  {
+    path: '/backup-restore',
+    name: 'backup-restore',
+    component: BackupRestoreView,
+    beforeEnter: (to, from, next) => {
+      const feature = 'ELS002'
+      const filteredArr = disabledFeatures.filter((x: any) => x.key === feature)
+      if (!isAuth) {
         next('/')
       } else {
-        next()
+        if (filteredArr.length === 0) {
+          next()
+        } else {
+          next('/')
+        }
       }
+
     }
   },
   {

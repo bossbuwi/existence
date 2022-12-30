@@ -11,12 +11,12 @@ import com.stargazerstudios.existence.ballad.utils.TagUtil;
 import com.stargazerstudios.existence.ballad.wrapper.TagWrapper;
 import com.stargazerstudios.existence.conductor.constants.EnumUtilOutput;
 import com.stargazerstudios.existence.conductor.erratum.database.DuplicateEntityException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionErrorException;
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntityDeletionException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
 import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import org.hibernate.exception.ConstraintViolationException;
@@ -60,7 +60,7 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public TagDTO getTag(TagWrapper tag)
-            throws UnknownInputException, EntityErrorException {
+            throws UnknownInputException, EntityException {
         String tagName = stringUtil.checkInputTrimToUpper(tag.getName());
         Optional<Tag> tagData = tagDAO.findByName(tagName);
         if (tagData.isPresent()) {
@@ -71,7 +71,7 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public TagDTO createTag(TagWrapper wTag) throws DatabaseErrorException, UnknownInputException {
+    public TagDTO createTag(TagWrapper wTag) throws DatabaseException, UnknownInputException {
         String name = stringUtil.checkInputTrimToUpper(wTag.getName());
 
         Tag tag = new Tag();
@@ -87,7 +87,7 @@ public class TagServiceImpl implements TagService{
                 throw new DuplicateEntityException("tag", "name", name);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("tag");
+            throw new EntitySaveException("tag");
         }
 
         return tagUtil.wrapTag(tag);
@@ -95,7 +95,7 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public TagDTO updateTag(TagWrapper wTag)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+            throws UnknownInputException, EntityException, DatabaseException {
         String name = stringUtil.checkInputTrimToUpper(wTag.getName());
 
         String newName = stringUtil.checkInputTrimToUpper(wTag.getNew_name());
@@ -116,7 +116,7 @@ public class TagServiceImpl implements TagService{
                 throw new DuplicateEntityException("tag", "name", name);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("tag");
+            throw new EntitySaveException("tag");
         }
 
         return tagUtil.wrapTag(tag);
@@ -124,7 +124,7 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public TagDTO addStories(TagWrapper wTag)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException{
+            throws UnknownInputException, EntityException, DatabaseException {
         String name = stringUtil.checkInputTrimToUpper(wTag.getName());
 
         String[] stories = wTag.getStories();
@@ -157,7 +157,7 @@ public class TagServiceImpl implements TagService{
             tagDAO.save(tag);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("tag");
+            throw new EntitySaveException("tag");
         }
 
         return tagUtil.wrapTag(tag);
@@ -165,7 +165,7 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public TagDTO removeStories(TagWrapper wTag)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException {
+            throws UnknownInputException, EntityException, DatabaseException {
         String name = stringUtil.checkInputTrimToUpper(wTag.getName());
 
         String[] stories = wTag.getStories();
@@ -196,7 +196,7 @@ public class TagServiceImpl implements TagService{
             tagDAO.save(tag);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("tag");
+            throw new EntitySaveException("tag");
         }
 
         return tagUtil.wrapTag(tag);
@@ -204,7 +204,7 @@ public class TagServiceImpl implements TagService{
 
     @Override
     public TagDTO deleteTag(TagWrapper wTag)
-            throws UnknownInputException, DatabaseErrorException, EntityErrorException{
+            throws UnknownInputException, DatabaseException, EntityException {
         String tagName = stringUtil.checkInputTrimToUpper(wTag.getName());
 
         Optional<Tag> tagData = tagDAO.findByName(tagName);
@@ -215,7 +215,7 @@ public class TagServiceImpl implements TagService{
                 tagDAO.delete(tag);
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new EntityDeletionErrorException("tag");
+                throw new EntityDeletionException("tag");
             }
 
             return tagUtil.wrapTag(tag);

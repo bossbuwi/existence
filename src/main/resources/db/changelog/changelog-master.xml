@@ -11,4 +11,6 @@
     <include file="db/changelog/changes/changelog-v0.2-beta.xml"/>
     <!-- v1.0-cassiopeia changelog -->
     <include file="db/changelog/changes/changelog-v1.0-cassiopeia.xml"/>
+    <!-- v2.0-draco changelog -->
+    <include file="db/changelog/changes/changelog-v2.0-draco.xml"/>
 </databaseChangeLog>

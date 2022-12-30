@@ -60,7 +60,6 @@ const actions = {
         Authorization: 'Bearer ' + token
       }
     }).then((result) => {
-      console.log(result.data)
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')
@@ -75,7 +74,6 @@ const actions = {
         Authorization: 'Bearer ' + token
       }
     }).then((result) => {
-      console.log(result.data)
     }).catch((error) => {
       console.log(error.response.data)
       commit('clearError')

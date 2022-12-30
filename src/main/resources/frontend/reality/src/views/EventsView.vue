@@ -206,7 +206,6 @@ export default Vue.extend({
     },
 
     openForm () {
-      this.dialog = true
       this.createMode()
     },
 
@@ -226,6 +225,7 @@ export default Vue.extend({
     async createMode () {
       await this.SetEvent('')
       this.recreate += 1
+      this.dialog = true
       this.formTitle = 'New Event'
       this.formTitleBarColor = 'primary'
       this.formMode = 'create'
@@ -256,7 +256,7 @@ export default Vue.extend({
           this.formTitle = 'Event #' + this.event.id + ' updated!'
           break
         case 'delete':
-          this.formTitle = 'Event #' + this.event.id + ' deleted!'
+          this.formTitle = 'Event deleted!'
           break
         default:
           break

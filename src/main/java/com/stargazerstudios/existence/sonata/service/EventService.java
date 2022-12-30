@@ -1,11 +1,10 @@
 package com.stargazerstudios.existence.sonata.service;
 
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.sonata.dto.EventDTO;
-import com.stargazerstudios.existence.sonata.wrapper.EventFilterWrapper;
 import com.stargazerstudios.existence.sonata.wrapper.EventWrapper;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,13 +18,13 @@ public interface EventService {
     EventDTO getLatestEvent();
     Long getEventCount();
     EventDTO createEvent(EventWrapper event)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException;
+            throws UnknownInputException, EntityException, DatabaseException;
     EventDTO updateEvent(EventWrapper event)
-            throws UnknownInputException, EntityErrorException, DatabaseErrorException, AuthorizationErrorException;
-    EventDTO deleteEvent(long id)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException;
+            throws UnknownInputException, EntityException, DatabaseException, AuthorizationException;
+    boolean deleteEvent(long id)
+            throws AuthorizationException, DatabaseException, EntityException;
     void exportEvents(HttpServletResponse response) throws IOException;
-    Long getNumberOfEventsByUser(long id) throws EntityErrorException;
-    EventDTO getLatestEventByUser(String username) throws EntityErrorException;
-    List<EventDTO> filterEvents(EventFilterWrapper event);
+    Long getNumberOfEventsByUser(long id) throws EntityException;
+    EventDTO getLatestEventByUser(String username) throws EntityException;
+    void generateTSVData(long id) throws UnknownInputException;
 }

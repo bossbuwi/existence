@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet author="v2.0-draco" id="20220928-052">
+        <sql
+            dbms="postgresql"
+            endDelimiter="\nGO"
+            splitStatements="true"
+            stripComments="true">CREATE FUNCTION tsvector_update_events() returns trigger as
+            $$
+            begin
+                new.tsv :=
+                    setweight(to_tsvector('pg_catalog.simple', new.api_used), 'A') ||
+                    setweight(to_tsvector('pg_catalog.simple', new.compiled_sources), 'B') ||
+                    setweight(to_tsvector('pg_catalog.simple', new.features_on), 'C') ||
+                    setweight(to_tsvector('pg_catalog.simple', new.features_off), 'C') ||
+                    setweight(to_tsvector('pg_catalog.simple', new.jira_case), 'D');
+                return new;
+            end
+            $$ LANGUAGE plpgsql;
+        </sql>
+        <comment>Create a function to run during sonata_events table changes.</comment>
+    </changeSet>
+</databaseChangeLog>

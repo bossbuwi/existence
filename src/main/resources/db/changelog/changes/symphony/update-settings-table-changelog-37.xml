@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="postgresql"/>
+    <property name="now" value="now()" dbms="h2"/>
+    <changeSet author="v2.0-draco" id="202211115-037">
+        <comment>Update details of switchable features on symphony_settings.</comment>
+        <update tableName="symphony_settings">
+            <column name="value" value="N"/>
+            <column name="default_value" value="N"/>
+            <column name="description" value="COB Logs Feature"/>
+            <where>key = 'RQM001'</where>
+        </update>
+        <update tableName="symphony_settings">
+            <column name="value" value="N"/>
+            <column name="default_value" value="N"/>
+            <column name="description" value="Search Feature"/>
+            <where>key = 'ELS001'</where>
+        </update>
+        <update tableName="symphony_settings">
+            <column name="value" value="Y"/>
+            <column name="default_value" value="Y"/>
+            <column name="description" value="Backup and Restore Feature"/>
+            <where>key = 'ELS002'</where>
+        </update>
+        <comment>Update default changed_by value.</comment>
+        <update tableName="symphony_settings">
+            <column name="changed_by" value="owner"/>
+            <where>changed_by = 'admin'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

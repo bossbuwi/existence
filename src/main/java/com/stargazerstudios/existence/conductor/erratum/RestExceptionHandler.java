@@ -21,41 +21,49 @@ import java.util.Objects;
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(AuthorizationErrorException.class)
+    @ExceptionHandler(AuthorizationException.class)
     protected ResponseEntity<Object> handleAuthenticationError(
-            AuthorizationErrorException ex) {
+            AuthorizationException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
         return buildResponseEntity(errorResponse);
     }
 
-    @ExceptionHandler(DatabaseErrorException.class)
+    @ExceptionHandler(DatabaseException.class)
     protected ResponseEntity<Object> handleDatabaseError(
-            DatabaseErrorException ex) {
+            DatabaseException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
         return buildResponseEntity(errorResponse);
     }
 
-    @ExceptionHandler(EntityErrorException.class)
+    @ExceptionHandler(EntityException.class)
     protected ResponseEntity<Object> handleEntityError(
-            EntityErrorException ex) {
+            EntityException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
         return buildResponseEntity(errorResponse);
     }
 
-    @ExceptionHandler(SystemErrorException.class)
+    @ExceptionHandler(FileProcessingException.class)
+    protected ResponseEntity<Object> handleFileProcessingError(
+            FileProcessingException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
+        errorResponse.setMessage(ex.getMessage());
+        return buildResponseEntity(errorResponse);
+    }
+
+    @ExceptionHandler(SystemException.class)
     protected ResponseEntity<Object> handleSystemError(
-            SystemErrorException ex) {
+            SystemException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
         return buildResponseEntity(errorResponse);
     }
 
-    @ExceptionHandler(ThirdPartyErrorException.class)
+    @ExceptionHandler(ThirdPartyException.class)
     protected ResponseEntity<Object> handleThirdPartyError(
-            ThirdPartyErrorException ex) {
+            ThirdPartyException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getHttpStatus());
         errorResponse.setMessage(ex.getMessage());
         return buildResponseEntity(errorResponse);

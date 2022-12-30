@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.stargazerstudios</groupId>
 	<artifactId>existence</artifactId>
-	<version>1.0cassiopeia</version>
+	<version>2.0draco</version>
 	<name>Existence</name>
 	<description>Existence is data in its purest form.</description>
 	<properties>
@@ -94,7 +94,14 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.2</version>
 		</dependency>
-    </dependencies>
+		<!-- Apache Commons IO -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
+	</dependencies>
 
 	<build>
 		<!-- This specifies the project's resource directory.

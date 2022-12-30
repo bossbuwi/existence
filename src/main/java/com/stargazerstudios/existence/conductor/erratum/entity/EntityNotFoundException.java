@@ -1,9 +1,9 @@
 package com.stargazerstudios.existence.conductor.erratum.entity;
 
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import org.springframework.http.HttpStatus;
 
-public class EntityNotFoundException extends EntityErrorException {
+public class EntityNotFoundException extends EntityException {
 
     public EntityNotFoundException(String entityName, String key, String value) {
         super(entityName + " with " + key + ": " + value + " not found.");

@@ -3,9 +3,9 @@
 ### Project Details
 
 **Framework:** [Spring Boot](https://spring.io/projects/spring-boot) version 2.7.3, [VueJS](https://vuejs.org/) version 2.7.10  
-**Status:** Active - Ongoing  
-**Last Release Date:** 24 September 2022  
-**Latest Version:** v1.1cassiopeia  
+**Status:** Active - Functionally finished  
+**Last Release Date:** 31 December 2022  
+**Latest Version:** v2.0draco  
 **Author:** [bossbuwi](https://github.com/bossbuwi)
 
 _This project contains sources from the late project [reality](https://github.com/bossbuwi/reality),
@@ -19,7 +19,7 @@ _The below steps must be done in order for first time project setup._
 **Tools Needed:**
 * Java IDE, preferably [IntelliJ IDEA](https://www.jetbrains.com/idea/). _Note that if other IDEs are used, there might be additional setup needed._
 * [PostgreSQL](https://www.postgresql.org/download/) installation, at least version 13. **pgAdmin** must be included in the installation.
-* [node.js](https://nodejs.org/en/) installation at version 16.17.0. Other versions may work but are not guaranteed.  This is required by the frontend.
+* [node.js](https://nodejs.org/en/) installation at version 16.17.0. Lower versions may work but are not guaranteed. Higher versions are incompatible based on my most recent test. This is required by the frontend.
 * A tool for testing REST APIs, preferably [Postman](https://www.postman.com/downloads/).
 * A simple but capable text editing tool, preferably [Visual Studio Code](https://code.visualstudio.com/download). _Note that if the IntelliJ IDEA used is the Ultimate version, this may not be needed._
 
@@ -119,8 +119,13 @@ _Note that for the Vuejs server to run properly, an instance of the Spring Boot 
 3. Blank out the `VUE_DEV_SERVER` property and replace `VUE_DEFAULT_URL` property with the IP address and port to be used on the deployment server.
 4. Execute **Setting Up Dependencies for the First Time** heading. Note that if a database of name _db_test_ is already existing, delete it and create a new one.
 This will result in a `target` folder being created on the source directory.
-5. Copy the resulting *.jar file and the `libs` folder on the production machine. From now on, this directory will be known as _proddir_
+5. Copy the resulting *.jar file and the `libs` folder from the target folder into a directory on the production machine. From now on, this directory will be known as _proddir_
 6. Create a folder named `config` on the _proddir_. Copy the properties files from `prod\properties` (both prod and test) into this folder.
-7. Create two new databases named `db_existence` and `db_test`. If this is an initial deployment and either of the databases are already existing, delete them and create new ones.
+7. Create two new databases named `db_prod` and `db_test`. If this is an initial deployment and either of the databases are already existing, delete them and create new ones.
 8. Copy all other files located on folder `prod` into the _proddir_.
-9. Run a command prompt window as administrator and navigate to the _proddir_. Run the `runserver.bat` on the command prompt window and follow the prompts. The application is now ready to use!
+9. Create a new environment variable on the production machine. Set the name as `EXISTENCE_PATH` and set the value as the directory where the java.exe is located on the machine.  
+Note that the Java installation set on the `EXISTENCE_PATH` must at least be Java 17. Any version lower than this will cause runtime problems.  
+Also note that instructions concerning the setting up of environment variables are not within the scope of this document.
+10. Run a command prompt window as administrator and navigate to the _proddir_. Run the `runserver.bat` on the command prompt window and follow the prompts. The application is now ready to use!
+
+The default address for the application would be `http://<machine_name>:9080`. This, along with other environment settings, may be changed on their respective (_prod or test_) properties file.

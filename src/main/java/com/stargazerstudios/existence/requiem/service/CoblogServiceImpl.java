@@ -1,10 +1,10 @@
 package com.stargazerstudios.existence.requiem.service;
 
-import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveErrorException;
+import com.stargazerstudios.existence.conductor.erratum.database.EntitySaveException;
 import com.stargazerstudios.existence.conductor.erratum.entity.EntityNotFoundException;
 import com.stargazerstudios.existence.conductor.erratum.input.InvalidInputException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.utils.StringUtil;
 import com.stargazerstudios.existence.requiem.constants.EnumCoblogConclusion;
@@ -60,7 +60,7 @@ public class CoblogServiceImpl implements CoblogService {
     }
 
     @Override
-    public CoblogDTO findCoblogById(long id) throws EntityErrorException {
+    public CoblogDTO findCoblogById(long id) throws EntityException {
         Optional<Coblog> coblogData = coblogDAO.findById(id);
         if (coblogData.isEmpty()) throw new EntityNotFoundException("coblog", "id", Long.toString(id));
 
@@ -70,7 +70,7 @@ public class CoblogServiceImpl implements CoblogService {
 
     @Override
     public CoblogDTO createCoblog(CoblogWrapper wCoblog)
-            throws UnknownInputException, DatabaseErrorException, EntityErrorException {
+            throws UnknownInputException, DatabaseException, EntityException {
         String description = wCoblog.getDescription();
 
         String runDayIn = stringUtil.trimToUpper(wCoblog.getRun_day());
@@ -117,7 +117,7 @@ public class CoblogServiceImpl implements CoblogService {
             coblogDAO.save(coblog);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new EntitySaveErrorException("coblog");
+            throw new EntitySaveException("coblog");
         }
 
         return coblogUtil.wrapCoblog(coblog);

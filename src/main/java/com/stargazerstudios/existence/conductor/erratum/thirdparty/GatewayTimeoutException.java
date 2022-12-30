@@ -1,9 +1,9 @@
 package com.stargazerstudios.existence.conductor.erratum.thirdparty;
 
-import com.stargazerstudios.existence.conductor.erratum.root.ThirdPartyErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.ThirdPartyException;
 import org.springframework.http.HttpStatus;
 
-public class GatewayTimeoutException extends ThirdPartyErrorException {
+public class GatewayTimeoutException extends ThirdPartyException {
 
     public GatewayTimeoutException() {
         super("Third party server returned a time out error. Please try again.");

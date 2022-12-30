@@ -8,7 +8,7 @@
           transition="scale-transition"
         >
         </v-skeleton-loader>
-        <v-card>
+        <v-card v-if="userLoaded">
           <v-card-title>
             <v-row
               align="center"

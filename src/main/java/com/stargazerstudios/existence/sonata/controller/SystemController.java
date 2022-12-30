@@ -1,8 +1,8 @@
 package com.stargazerstudios.existence.sonata.controller;
 
-import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.DatabaseErrorException;
-import com.stargazerstudios.existence.conductor.erratum.root.EntityErrorException;
+import com.stargazerstudios.existence.conductor.erratum.root.AuthorizationException;
+import com.stargazerstudios.existence.conductor.erratum.root.DatabaseException;
+import com.stargazerstudios.existence.conductor.erratum.root.EntityException;
 import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.validation.groups.PostFullValidation;
 import com.stargazerstudios.existence.conductor.validation.groups.PostValidation;
@@ -44,38 +44,43 @@ public class SystemController {
         return new ResponseEntity<>(systemService.countSystems(), HttpStatus.OK);
     }
 
+    @GetMapping("/con/systems/machine")
+    public ResponseEntity<List<SystemDTO>> getSystemsOnMachine(@RequestParam("machine") String machine) {
+        return new ResponseEntity<>(systemService.getSystemsOnMachine(machine), HttpStatus.OK);
+    }
+
     /* Guarded Endpoints */
     @PostMapping("/systems/system")
     public ResponseEntity<SystemDTO> createSystem(@Validated(PostValidation.class)
                                                       @RequestBody SystemWrapper wSystem)
-            throws EntityErrorException, DatabaseErrorException, AuthorizationErrorException {
+            throws EntityException, DatabaseException, AuthorizationException {
         return new ResponseEntity<>(systemService.createSystem(wSystem), HttpStatus.OK);
     }
 
     @PutMapping("/systems/system")
     public ResponseEntity<SystemDTO> updateSystem(@Validated(PutValidation.class)
                                                       @RequestBody SystemWrapper wSystem)
-            throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException, UnknownInputException {
+            throws DatabaseException, EntityException, AuthorizationException, UnknownInputException {
         return new ResponseEntity<>(systemService.updateSystem(wSystem), HttpStatus.OK);
     }
 
     @DeleteMapping("/systems/system/{id}")
     public ResponseEntity<SystemDTO> deleteSystem(@NotBlank @PathVariable("id") long id)
-            throws DatabaseErrorException, EntityErrorException, AuthorizationErrorException {
+            throws DatabaseException, EntityException, AuthorizationException {
         return new ResponseEntity<>(systemService.deleteSystem(id), HttpStatus.OK);
     }
 
     @PostMapping("/systems/system/full")
     public ResponseEntity<SystemDTO> createFullSystem(@Validated(PostFullValidation.class)
                                                       @RequestBody SystemWrapper wSystem)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
+            throws AuthorizationException, DatabaseException, EntityException, UnknownInputException {
         return new ResponseEntity<>(systemService.createFullSystem(wSystem), HttpStatus.OK);
     }
 
     @PutMapping("/systems/system/full")
     public ResponseEntity<SystemDTO> updateFullSystem(@Validated(PutFullValidation.class)
                                                       @RequestBody SystemWrapper wSystem)
-            throws AuthorizationErrorException, DatabaseErrorException, EntityErrorException, UnknownInputException {
+            throws AuthorizationException, DatabaseException, EntityException, UnknownInputException {
         return new ResponseEntity<>(systemService.updateFullSystem(wSystem), HttpStatus.OK);
     }
 }

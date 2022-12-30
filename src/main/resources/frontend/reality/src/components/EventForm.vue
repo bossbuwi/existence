@@ -403,7 +403,7 @@ export default Vue.extend({
           this.formSubmitted()
           break
         case 'delete':
-          this.formDisabled = false
+          // this.formDisabled = false
           await this.DeleteEvent(event)
           this.formSubmitted()
           break
@@ -506,8 +506,8 @@ export default Vue.extend({
     this.typesLoading = true
 
     await Promise.all([
-      this.getSystemsList(),
-      this.getEventTypesList()
+      this.GetSystemsList(),
+      this.GetEventTypesList()
     ])
 
     const systemArr = this.systemsList

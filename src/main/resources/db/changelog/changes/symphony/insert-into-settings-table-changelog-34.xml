@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="postgresql"/>
+    <property name="now" value="now()" dbms="h2"/>
+    <changeSet author="v2.0-draco" id="20220027-034">
+        <comment>Insert settings available since v2.0-draco.</comment>
+        <insert tableName="symphony_settings">
+            <column name="key" value="ELS001"/>
+            <column name="value" value="N"/>
+            <column name="length" value="1"/>
+            <column name="type" value="SW"/>
+            <column name="description" value="Controls the availability of the constellation Eligius."/>
+            <column name="default_value" value="N"/>
+            <column name="valid_values" value="Y,N"/>
+            <column name="added_by" value="v2.0-draco"/>
+            <column name="changed_by" value="admin"/>
+            <column name="last_changed_date" valueDate="${now}"/>
+        </insert>
+        <comment>Delete SNA001 switchable feature introduced by v1.0-cassiopeia</comment>
+        <delete tableName="symphony_settings">
+            <where>key='SNA001'</where>
+        </delete>
+    </changeSet>
+</databaseChangeLog>
