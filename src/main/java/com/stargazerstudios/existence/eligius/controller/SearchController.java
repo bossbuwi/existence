@@ -2,6 +2,7 @@ package com.stargazerstudios.existence.eligius.controller;
 
 import com.stargazerstudios.existence.conductor.constants.SwitchableFeatures;
 import com.stargazerstudios.existence.conductor.erratum.root.SystemException;
+import com.stargazerstudios.existence.conductor.erratum.root.UnknownInputException;
 import com.stargazerstudios.existence.conductor.erratum.system.InactiveSwitchableFeatureException;
 import com.stargazerstudios.existence.eligius.service.SearchServiceImpl;
 import com.stargazerstudios.existence.eligius.wrapper.EventFilterWrapper;
@@ -33,9 +34,9 @@ public class SearchController {
 
     /* Unguarded Endpoints*/
 
-    @GetMapping("/con/filters/events")
+    @PostMapping("/con/filters/events")
     public ResponseEntity<List<EventDTO>> filterEvents(@RequestBody EventFilterWrapper eventFilterWrapper)
-            throws SystemException {
+            throws SystemException, UnknownInputException {
         if (isELS001Active()) {
             return new ResponseEntity<>(searchService.filterEvents(eventFilterWrapper), HttpStatus.OK);
         } else {

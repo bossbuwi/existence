@@ -11,8 +11,8 @@
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="machineList"
-          :items-per-page="5"
+          :items="searchResults"
+          :items-per-page="10"
           item-key="id"
           :loading="loading"
           sort-by="id"
@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default Vue.extend({
   name: 'SearchList',
@@ -68,28 +68,50 @@ export default Vue.extend({
       loading: false,
       headers: [
         {
-          text: 'Record ID',
+          text: 'ID',
           align: 'start',
           sortable: true,
           value: 'id'
         },
         {
-          text: 'Name',
+          text: 'System',
           align: 'start',
           sortable: true,
-          value: 'name'
+          value: 'system'
         },
         {
-          text: 'No. of Systems',
+          text: 'Zones',
           align: 'start',
           sortable: false,
-          value: 'system_count'
+          value: 'zones'
+        },
+        {
+          text: 'Event Type',
+          align: 'start',
+          sortable: true,
+          value: 'event_types'
+        },
+        {
+          text: 'Start Date',
+          align: 'start',
+          sortable: true,
+          value: 'start_date'
+        },
+        {
+          text: 'End Date',
+          align: 'start',
+          sortable: true,
+          value: 'end_date'
+        },
+        {
+          text: 'Created By',
+          align: 'start',
+          sortable: true,
+          value: 'created_by'
         }
       ],
-      selectedMachine: {
-        name: '',
-        systems: [],
-        system_count: ''
+      selectedItem: {
+
       },
       showMenu: false,
       x: 0,
@@ -99,41 +121,23 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters({
-      machineList: 'getMachineList',
+      searchResults: 'getSearchResults',
       user: 'getUserState',
       isAuth: 'isAuthenticated'
     })
   },
 
   methods: {
-    ...mapActions([
-      'GetMachinesList'
-    ]),
-
-    async fetchMachines () {
-      try {
-        this.loading = true
-        await this.GetMachinesList()
-        this.loading = false
-      } catch (error) {
-
-      }
-    },
-
-    newMachine () {
-      this.$emit('open-form')
-    },
-
     // eslint-disable-next-line
     itemClicked (args: any, { item }: { item: any }) {
-      this.selectedMachine = item
-      this.$emit('item-clicked', this.selectedMachine)
+      this.selectedItem = item
+      this.$emit('item-clicked', this.selectedItem)
     },
 
     // eslint-disable-next-line
     itemRightClicked (event: any, { item }: { item: any}) {
       this.showMenu = false
-      this.selectedMachine = item
+      this.selectedItem = item
       this.x = event.clientX
       this.y = event.clientY
       this.$nextTick(() => {
@@ -142,19 +146,15 @@ export default Vue.extend({
     },
 
     editItem () {
-      this.$emit('edit-item', this.selectedMachine)
+      this.$emit('edit-item', this.selectedItem)
     },
 
     deleteItem () {
-      this.$emit('delete-item', this.selectedMachine)
+      this.$emit('delete-item', this.selectedItem)
     }
   },
 
   async mounted () {
-    const role = this.user.roles.find((x: string) =>
-      x === 'ROLE_ADMIN'
-    )
-
     if (this.isAuth) {
       this.editAllowed = true
       const superuser = this.user.roles.find((x: string) => x === 'ROLE_SUPERUSER')
@@ -162,12 +162,6 @@ export default Vue.extend({
         this.deleteAllowed = true
       }
     }
-
-    if (role === undefined) {
-      this.newBtnShown = false
-    }
-
-    await this.fetchMachines()
   }
 })
 </script>

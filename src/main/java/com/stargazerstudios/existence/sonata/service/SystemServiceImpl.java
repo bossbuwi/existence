@@ -101,6 +101,21 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
+    public List<SystemDTO> getSystemsOnMachine(String machine) {
+        List<System> systems = systemDAO.getSystemsOnMachine(machine);
+        List<SystemDTO> systemList = new ArrayList<>();
+
+        if (!systems.isEmpty()) {
+            for (System system: systems) {
+                SystemDTO systemDTO = systemUtil.outboundSystem(system);
+                systemList.add(systemDTO);
+            }
+        }
+
+        return systemList;
+    }
+
+    @Override
     public Long countSystems() {
         return systemDAO.count();
     }

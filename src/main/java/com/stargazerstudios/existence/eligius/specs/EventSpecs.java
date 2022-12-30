@@ -11,7 +11,7 @@ public class EventSpecs {
         if (jira == null) {
             return null;
         } else {
-            return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("jiraCase"), jira));
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("jiraCase"), "%" + jira + "%"));
         }
     }
 
@@ -19,7 +19,7 @@ public class EventSpecs {
         if (featuresOn == null) {
             return null;
         } else {
-            return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("featuresOn"), featuresOn));
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("featuresOn"), "%" + featuresOn + "%"));
         }
     }
 
@@ -27,7 +27,7 @@ public class EventSpecs {
         if (featuresOff == null) {
             return null;
         } else {
-            return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("featuresOff"), featuresOff));
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("featuresOff"), "%" + featuresOff + "%"));
         }
     }
 
@@ -35,7 +35,7 @@ public class EventSpecs {
         if (compiledSources == null) {
             return null;
         } else {
-            return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("compiledSources"), compiledSources));
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("compiledSources"), "%" + compiledSources + "%"));
         }
     }
 
@@ -43,7 +43,7 @@ public class EventSpecs {
         if (apiUsed == null) {
             return null;
         } else {
-            return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("apiUsed"), apiUsed));
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("apiUsed"), "%" + apiUsed + "%"));
         }
     }
 
@@ -126,6 +126,30 @@ public class EventSpecs {
             return null;
         } else {
             return (root, query, cb) -> cb.equal(root.join("system").get("machine").get("name"), machine);
+        }
+    }
+
+    public static Specification<Event> withZone(String zone) {
+        if (zone == null) {
+            return null;
+        } else {
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.join("zones").get("zonalPrefix"), zone));
+        }
+    }
+
+    public static Specification<Event> withEventTypeCode(String eventType) {
+        if (eventType == null) {
+            return null;
+        } else {
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.join("eventTypes").get("code"), eventType));
+        }
+    }
+
+    public static Specification<Event> withEventTypeName(String eventType) {
+        if (eventType == null) {
+            return null;
+        } else {
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.join("eventTypes").get("name"), eventType));
         }
     }
 }

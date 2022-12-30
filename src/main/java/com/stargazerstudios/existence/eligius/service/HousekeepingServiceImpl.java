@@ -51,6 +51,11 @@ public class HousekeepingServiceImpl implements HousekeepingService {
         }
     }
 
+    @Override
+    public Boolean buildEventsIndex() {
+        return null;
+    }
+
     private Path exportEventModelToSpreadsheet() throws FileProcessingException {
         // Try to create a new workbook
         try (Workbook workbook = new XSSFWorkbook()) {

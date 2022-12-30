@@ -44,6 +44,11 @@ public class SystemController {
         return new ResponseEntity<>(systemService.countSystems(), HttpStatus.OK);
     }
 
+    @GetMapping("/con/systems/machine")
+    public ResponseEntity<List<SystemDTO>> getSystemsOnMachine(@RequestParam("machine") String machine) {
+        return new ResponseEntity<>(systemService.getSystemsOnMachine(machine), HttpStatus.OK);
+    }
+
     /* Guarded Endpoints */
     @PostMapping("/systems/system")
     public ResponseEntity<SystemDTO> createSystem(@Validated(PostValidation.class)

@@ -69,6 +69,22 @@ const actions = {
     })
   },
 
+  async GetSystemsOnMachine ({ commit }: { commit: Commit }, machine: string) {
+    await axios.get('sonata/con/systems/machine', {
+      params: {
+        machine: machine
+      }
+    }).then((result) => {
+      commit('resetSystemState')
+      const systemArr = result.data as System[]
+      systemArr.forEach((element: System) => {
+        commit('addSystemToList', element)
+      })
+    }).catch((error) => {
+      console.log(error.response.data)
+    })
+  },
+
   async PostFullSystem ({ commit, getters, rootGetters }: { commit: Commit, getters: any, rootGetters: any }, form: any) {
     const token = rootGetters.getToken
     await axios.post('sonata/systems/system/full', form, {

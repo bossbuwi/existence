@@ -117,7 +117,7 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters({
-      exportComplete: 'exportComplete'
+      exportComplete: 'getProcessStatus'
     })
   },
 

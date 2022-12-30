@@ -5,4 +5,5 @@ import com.stargazerstudios.existence.eligius.dto.FileResponseDTO;
 
 public interface HousekeepingService {
     FileResponseDTO generateTemplate(String model) throws FileProcessingException;
+    Boolean buildEventsIndex();
 }

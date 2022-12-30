@@ -12,6 +12,7 @@ import java.util.List;
 public interface SystemService {
     List<SystemDTO> getSystems();
     List<SystemDTO> getFullSystems();
+    List<SystemDTO> getSystemsOnMachine(String machine);
     Long countSystems();
     SystemDTO createSystem(SystemWrapper wSystem)
             throws EntityException, DatabaseException, AuthorizationException;

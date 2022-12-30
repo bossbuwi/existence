@@ -36,4 +36,9 @@ public class HousekeepingController {
             throw new InactiveSwitchableFeatureException(SwitchableFeatures.ELS002.getValue());
         }
     }
+
+    @PostMapping("/housekeeping/index/build")
+    public ResponseEntity<Boolean> buildDatabaseIndex() {
+        return null;
+    }
 }

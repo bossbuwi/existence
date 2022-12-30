@@ -124,7 +124,7 @@ const actions = {
     }).then((result) => {
       commit('setSetting', result.data)
     }).catch((error) => {
-      console.log(error.response)
+      console.log(error.response.data)
       commit('clearError')
       commit('setError', error.response.data)
     })

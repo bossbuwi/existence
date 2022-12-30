@@ -10,7 +10,7 @@ public class AboutExistence {
 
     public static class Developer {
         public static String DEV_NAME = "Michael John Mananghaya";
-        public static String DEV_SITE = "https://github.com/bossbuwi/existence";
+        public static String DEV_SITE = "https://github.com/bossbuwi";
     }
 
     public static class BackendStack {

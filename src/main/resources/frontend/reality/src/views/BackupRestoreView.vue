@@ -71,12 +71,10 @@ export default Vue.extend({
     async submitFile () {
       this.isLoading = true
       await this.PostFileUpload(this.file)
-      console.log(this.uploadComplete)
       this.isLoading = false
     },
 
     async restoreRecords () {
-      console.log(this.recordType)
       switch (this.recordType) {
         case 0:
           console.log('This should really never be selected.')

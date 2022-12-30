@@ -11,9 +11,11 @@ public class EventFilterWrapper {
 
     private String machine;
 
-    private String[] zones;
+//    private String[] zones;
+    private String zone;
 
-    private String[] event_types;
+//    private String[] event_types;
+    private String event_type;
 
     private String start_date;
 

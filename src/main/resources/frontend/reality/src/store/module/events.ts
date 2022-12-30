@@ -102,7 +102,6 @@ const actions = {
         Authorization: 'Bearer ' + token
       }
     }).then((result) => {
-      console.log(result.data)
       commit('setEvent', result.data)
     }).catch((error) => {
       console.log(error.response.data)

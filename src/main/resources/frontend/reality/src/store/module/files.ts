@@ -39,7 +39,6 @@ const actions = {
         Authorization: 'Bearer ' + token
       }
     }).then((result) => {
-      console.log(result.data)
       commit('setFileResponse', result.data)
       commit('setProcessStatus')
       commit('setFileType')
@@ -61,7 +60,6 @@ const actions = {
         filename: param
       }
     }).then((result) => {
-      console.log(result.data)
       commit('setRestoredItems', result.data)
     }).catch((error) => {
       console.log(error.response.data)
@@ -80,7 +78,6 @@ const actions = {
         Authorization: 'Bearer ' + token
       }
     }).then((result) => {
-      console.log(result.data)
       commit('setFileResponse', result.data)
       commit('setProcessStatus')
       commit('setFileType')
@@ -139,7 +136,6 @@ const actions = {
         model: model
       }
     }).then((result) => {
-      console.log(result.data)
       commit('setFileResponse', result.data)
       commit('setProcessStatus', true)
     }).catch((error) => {

@@ -203,7 +203,6 @@ export default Vue.extend({
     },
 
     async save () {
-      console.log('save')
       this.buttonLoading = true
       await this.PutSetting(this.setting)
 

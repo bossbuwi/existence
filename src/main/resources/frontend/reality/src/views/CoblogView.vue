@@ -92,10 +92,6 @@ export default Vue.extend({
       this.recreateComponentlist += 1
       this.coblogDialog = false
     }
-  },
-
-  mounted () {
-    console.log('mounted')
   }
 })
 </script>
